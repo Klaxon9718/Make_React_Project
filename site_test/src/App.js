@@ -15,7 +15,6 @@ function Header(props) {
   /* 
 1. event.preventDefault(); => <a> 태그는 클릭하면 일반적으로 새로운 페이지로 이동하는데, 이것이 "기본 동작".하지만 
   								event.preventDefault()를 호출하면 이러한 기본 동작이 중단되고, 대신에 JavaScript 코드에서 정의한 동작이 실행
-2.
   */
   function Nav(props) {
 	console.log(props)
