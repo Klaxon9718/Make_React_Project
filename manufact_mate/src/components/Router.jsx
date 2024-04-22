@@ -1,9 +1,15 @@
-import { BrowserRouter, Routes, Route, Router } from "react-router-dom";
+// Router.jsx 파일
+import React from 'react';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-<BrowserRouter>
-    <Routes>
-        <Route />
-    </Routes>
-</BrowserRouter>
+const Router = () => {
+    return (
+        <BrowserRouter>
+            <Routes>
+                <Route />
+            </Routes>
+        </BrowserRouter>
+    );
+};
 
 export default Router;
