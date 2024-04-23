@@ -1,6 +1,11 @@
+import * as LoginCom from 'src/pages/components/LoginComponents'
+
 function Login() {
     return (
-      <div>창대한 회원가입</div>
+      <div>
+        <LoginCom.default />
+        창대한 회원가입
+      </div>
     );
   }
   

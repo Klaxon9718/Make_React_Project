@@ -2,7 +2,7 @@
 import React from 'react';
 import { IconButton, Typography, Menu, MenuItem} from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import * as Headercss from 'src/section/css/Headercss'; // Headercss 파일에서 스타일을 불러옵니다.
+import * as Headercss from 'src/pages/section/css/Headercss'; // Headercss 파일에서 스타일을 불러옵니다.
 
 export const LogoTypography = ({ children }) => (
   <Typography

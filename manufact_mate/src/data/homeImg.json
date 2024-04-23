@@ -1,0 +1,24 @@
+{
+    "stepperImg" : [
+        {
+          "label": "San Francisco – Oakland Bay Bridge, United States",
+          "imgPath":
+            "../public/img/상어회의.jpg"
+        },
+        {
+            "label": "Bird",
+            "imgPath":
+            "../public/img/상어노래.jpg"
+        },
+        {
+            "label": "Bali, Indonesia",
+            "imgPath":
+            "../public/img/상어식사.jpg"
+        },
+        {
+            "label": "Goč, Serbia",
+            "imgPath":
+            "../public/img/곰면담.jpg"
+        }
+    ]
+}

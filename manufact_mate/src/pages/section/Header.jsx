@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { AppBar, Box, Toolbar, IconButton, Container, Avatar, Button, Tooltip } from '@mui/material';
-import * as HeaderComponents from 'src/section/components/HeaderComponents';
+import * as HeaderComponents from 'src/pages/section/components/HeaderComponents';
 
 const pages = ['시스템 관리', '생산관리', '자재관리'];
 const settings = ['Profile', 'Account', 'Logout'];
@@ -62,7 +62,7 @@ function ResponsiveAppBar() {
               </IconButton>
             </Tooltip>
 
-            <HeaderComponents.UserMenu settings={settings} anchorElUser={anchorElNav} handleCloseUserMenu={handleCloseUserMenu} />
+            <HeaderComponents.UserMenu settings={settings} anchorElUser={anchorElUser} handleCloseUserMenu={handleCloseUserMenu} />
           </Box>
 
         </Toolbar>
