@@ -3,7 +3,7 @@ import { AppBar, Box, Toolbar, IconButton, Container, Avatar, Button, Tooltip } 
 import * as HeaderComponents from 'src/pages/section/components/HeaderComponents';
 
 const pages = ['시스템 관리', '생산관리', '자재관리'];
-const settings = ['Profile', 'Account', 'Logout'];
+const settings = ['Profile', 'Account', 'Login'];
 
 function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
