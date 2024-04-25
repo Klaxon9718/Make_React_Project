@@ -1,7 +1,6 @@
 import * as React from 'react';
-import {Avatar, Button, CssBaseline, TextField, FormControlLabel, Checkbox, Link, Grid, Box, Typography, Container, createTheme, ThemeProvider} from '@mui/material';
+import {Avatar, Button,  TextField, FormControlLabel, Checkbox, Link, Grid, Box, Typography,  createTheme, } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import { CenterFocusStrong } from '@mui/icons-material';
 
 export function Copyright(props) {
 	return (
