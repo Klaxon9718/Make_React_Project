@@ -17,7 +17,7 @@ export function Copyright(props) {
 
 export const defaultTheme = createTheme();
 
-export const LoginSection = ({getHandleSubmit}) => (
+export const LoginSection = ({getHandleSubmit, getHandleInputId, getHandleInputPw}) => (
   <Box
           sx={{
             marginTop: 8,
@@ -32,7 +32,7 @@ export const LoginSection = ({getHandleSubmit}) => (
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
-          <Box component="form" onSubmit={getHandleSubmit} noValidate sx={{ mt: 1 }}>
+          <Box component="form" onSubmit={getHandleSubmit}  noValidate sx={{ mt: 1 }}>
             <TextField
               margin="normal"
               required
@@ -42,6 +42,7 @@ export const LoginSection = ({getHandleSubmit}) => (
               name="email"
               autoComplete="email"
               autoFocus
+			  onChange={getHandleInputId}
             />
             <TextField
               margin="normal"
@@ -52,6 +53,7 @@ export const LoginSection = ({getHandleSubmit}) => (
               type="password"
               id="password"
               autoComplete="current-password"
+			  onChange={getHandleInputPw}
             />
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}

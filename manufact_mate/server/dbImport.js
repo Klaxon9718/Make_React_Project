@@ -2,6 +2,7 @@
 const express = require('express');
 const cors = require('cors');
 const app = express();
+const bodyPaser = require('body-parser');
 const {connectToDatabase, outPort} = require("./dbConnection");
 
 const dbImport = () => {
@@ -24,4 +25,4 @@ const dbImport = () => {
 	});
 };
 
-module.exports = {dbImport, express, cors, app, connectToDatabase};
+module.exports = {dbImport, express, cors, app, connectToDatabase, bodyPaser};

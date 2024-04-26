@@ -23,7 +23,7 @@ function SignIn() {
 
 	const fetchTodos = async () => {
 		try {
-			const response = await axios.get('/test');
+			const response = await axios.get('/test/data');
 			setData(response.data); // 받아온 데이터를 상태에 저장
 			console.log(data); // 콘솔에 데이터 출력
 		} catch (error) {
@@ -51,40 +51,32 @@ function SignIn() {
 	//로그인 정보 submit
 	const handleSubmit = async (event) => {
 
-		const data = new FormData(event.currentTarget);
+		// const data = new FormData(event.currentTarget);
 
-		console.log({
-			email: data.get('email'),
-			password: data.get('password'),
-		});
+		// console.log({
+		// 	email: data.get('email'),
+		// 	password: data.get('password'),
+		// });
 
-		event.preventDefault();
+		handleInputId(event.currentTarget);
+		handleInputPw(event.currentTarget);
+
+		//버튼만 누르면 리프레시 되는 것을 막아줌
+		event.preventDefault();		
+
 		await new Promise((r) => setTimeout(r, 1000));
 
-		const response = await axios.post('',{
-			id: inputId,
-			pw: inputPw
-		},)
-		const result = await response.json();
-		console.log("출력 : "+ inputId, inputPw);
-
-		if (response.status === 200) {
-			setLoginCheck(false);
-			// Store token in local storage
-			sessionStorage.setItem("token", result.token);
-			sessionStorage.setItem("email", result.email); // 여기서 userid를 저장합니다.
-			sessionStorage.setItem("role", result.role); // 여기서 role를 저장합니다.
-			sessionStorage.setItem("storeid", result.storeId); // 여기서 role를 저장합니다.
-			console.log("로그인성공, 이메일주소:" + result.email);
-			navigate("/"); // 로그인 성공시 홈으로 이동합니다.
-		} else {
-			setLoginCheck(true);
-		}
-
+		const response = await axios.post('/test/01',{
+			'id': inputId,
+			'pw': inputPw
+			})
+		.then(function (response) {
+			console.log(response);
+		})
+		.catch(function (error) {
+			console.log("Login.jsx handleSubmit : " + error);
+		});
 	};
-
-
-
 
 	const defaultTheme = createTheme();
 
@@ -92,7 +84,7 @@ function SignIn() {
 		<ThemeProvider theme={defaultTheme}>
 			<Container component="main" maxWidth="xs">
 				<CssBaseline />
-				<LoginComponents.LoginSection getHandleSubmit={handleSubmit} />
+				<LoginComponents.LoginSection getHandleSubmit={handleSubmit} getHandleInputId={handleInputId} getHandleInputPw={handleInputPw} />
 				<LoginComponents.Copyright sx={{ mt: 8, mb: 4 }} />
 			</Container>
 		</ThemeProvider>
