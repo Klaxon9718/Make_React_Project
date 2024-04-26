@@ -25,24 +25,25 @@ connectToDatabase().then(pool => {
 			});
 	});
 
+	app.get('/api/workorder', function (req, res) {
+		pool.request()
+		   // .input('DTE_WORK_FROM', mssql.VarChar)
+		   // .input('DTE_WORK_TO', mssql.VarChar)
+		   // .input('ITEM_CODE', mssql.VarChar)
+		   // .input('ITEM_NAME', mssql.VarChar)
+		   // .input('WORK_ORDER_NO', mssql.VarChar)
+		   // .input('WO_STATUS', mssql.VarChar)
+		   // .input('EMP', mssql.VarChar)
+		   .execute('dbo.SSP_SCG_MID_004_01')
+		   .then((result) => {
+			   res.json(result.recordset);
+	
+		   });
+	});
 	
 });
 
-app.get('/api/workorder', function (req, res) {
-	pool.request()
-	   // .input('DTE_WORK_FROM', mssql.VarChar)
-	   // .input('DTE_WORK_TO', mssql.VarChar)
-	   // .input('ITEM_CODE', mssql.VarChar)
-	   // .input('ITEM_NAME', mssql.VarChar)
-	   // .input('WORK_ORDER_NO', mssql.VarChar)
-	   // .input('WO_STATUS', mssql.VarChar)
-	   // .input('EMP', mssql.VarChar)
-	   .execute('dbo.SSP_SCG_MID_004_01')
-	   .then((result) => {
-		   res.json(result.recordset);
 
-	   });
-});
 
 
 		

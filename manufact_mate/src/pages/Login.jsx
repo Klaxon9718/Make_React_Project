@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
+import { Link, useNavigate } from "react-router-dom";
 import axios from 'axios';
 import { CssBaseline, Container, createTheme, ThemeProvider } from '@mui/material';
 import * as LoginComponents from 'src/pages/components/LoginComponents';
@@ -14,13 +15,15 @@ const defaultTheme = createTheme();
 function SignIn() {
 	const [inputId, setInputId] = useState('')
 	const [inputPw, setInputPw] = useState('')
+	const [loginCheck, setLoginCheck] = useState(false);
+	const navigate = useNavigate();		//성공 시 이동 경로
 
 	//////////////////////////////////
 	const [data, setData] = useState('')
 
-	const fetchTodos = async ()=> {
+	const fetchTodos = async () => {
 		try {
-			const response = await axios.get("http://localhost:3001/test");
+			const response = await axios.get('/test');
 			setData(response.data); // 받아온 데이터를 상태에 저장
 			console.log(data); // 콘솔에 데이터 출력
 		} catch (error) {
@@ -28,12 +31,12 @@ function SignIn() {
 		}
 	};
 
-  //https://velog.io/@chaeshee0908/React-Axios%EB%A1%9C-User-%EB%8D%B0%EC%9D%B4%ED%84%B0-%EB%B0%9B%EC%95%84-%EC%B6%9C%EB%A0%A5%ED%95%98%EA%B8%B0
+	//https://velog.io/@chaeshee0908/React-Axios%EB%A1%9C-User-%EB%8D%B0%EC%9D%B4%ED%84%B0-%EB%B0%9B%EC%95%84-%EC%B6%9C%EB%A0%A5%ED%95%98%EA%B8%B0
 	// 페이지 렌더링 후 가장 처음 호출되는 함수
 	useEffect(() => {
 		fetchTodos();
-	},[]);	
-	
+	}, []);
+
 	//////////////////////////////////
 
 	//input data의 변화가 있을 때마다 value 값을 변경해서 useState 해준다.
@@ -46,14 +49,38 @@ function SignIn() {
 	}
 
 	//로그인 정보 submit
-	const handleSubmit = (event) => {
-		event.preventDefault();
+	const handleSubmit = async (event) => {
+
 		const data = new FormData(event.currentTarget);
 
 		console.log({
 			email: data.get('email'),
 			password: data.get('password'),
 		});
+
+		event.preventDefault();
+		await new Promise((r) => setTimeout(r, 1000));
+
+		const response = await axios.post('',{
+			id: inputId,
+			pw: inputPw
+		},)
+		const result = await response.json();
+		console.log("출력 : "+ inputId, inputPw);
+
+		if (response.status === 200) {
+			setLoginCheck(false);
+			// Store token in local storage
+			sessionStorage.setItem("token", result.token);
+			sessionStorage.setItem("email", result.email); // 여기서 userid를 저장합니다.
+			sessionStorage.setItem("role", result.role); // 여기서 role를 저장합니다.
+			sessionStorage.setItem("storeid", result.storeId); // 여기서 role를 저장합니다.
+			console.log("로그인성공, 이메일주소:" + result.email);
+			navigate("/"); // 로그인 성공시 홈으로 이동합니다.
+		} else {
+			setLoginCheck(true);
+		}
+
 	};
 
 
