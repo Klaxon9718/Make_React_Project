@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import { CssBaseline, Container, createTheme, ThemeProvider, Alert } from '@mui/material';
 import * as LoginComponents from 'src/pages/components/LoginComponents';
-import * as Home from 'src/pages/Home'
 
 // TODO remove, this demo shouldn't need to reset the theme.
 
@@ -73,8 +72,12 @@ function SignIn() {
 		.then(function (response) {
 			//console.log("로그인 상태 " + response.status);
 
+			//로그인 성공
 			if(response.status == "200") {
 				navigate("/home"); // "/home"으로 페이지 이동
+
+				// console.log("로그인 상태 " + response.data.session_id);
+				sessionStorage.setItem("session_id", response.data.session_id);
 			}
 			
 		})
@@ -100,3 +103,7 @@ function SignIn() {
 }
 
 export default SignIn;
+
+//로그인 세션, 쿠키 처리
+// https://velog.io/@jihukimme/React-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%EB%A1%9C%EA%B7%B8%EC%9D%B8-%ED%9A%8C%EC%9B%90%EA%B0%80%EC%9E%85-%EB%A1%9C%EA%B7%B8%EC%95%84%EC%9B%83-%EA%B5%AC%ED%98%84%ED%95%98%EA%B8%B0
+// https://velog.io/@sua_ahn/React-%EC%84%B8%EC%85%98-%EC%BF%A0%ED%82%A4 
