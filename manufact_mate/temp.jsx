@@ -13,3 +13,8 @@
 	"editor.detectIndentation": false
  * 4. 저장
  */
+
+	/**
+	 * 리덕스 사용
+	 * https://junvelee.tistory.com/97 
+	 */

@@ -74,7 +74,7 @@ function SignIn() {
 			console.log(response);
 		})
 		.catch(function (error) {
-			console.log("Login.jsx handleSubmit : " + error);
+			console.error('Error occurred during login processing:', error.message);
 		});
 	};
 

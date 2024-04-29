@@ -49,7 +49,7 @@ connectToDatabase().then(pool => {
 	// 	next();
 	//   });
 
-	app.post('/test/01', async (req, res) => {
+	app.post('/test/01', async function (req, res) {
 		console.log("Login실행");
 
 
@@ -60,39 +60,41 @@ connectToDatabase().then(pool => {
 
 		try {
 			// SQL 쿼리 실행
-			const result = await pool.request()
+				const result = await pool.request()
 				.input('User_ID', mssql.VarChar, req.body.id)
 				.input('User_Pw', mssql.VarChar, req.body.pw)
-				.query('SELECT \'user Ok\' AS LoginStatus FROM User_Master WHERE User_ID = @User_ID AND User_PW = @User_Pw', function (err, result) {
+				.query('SELECT \'user ok\' AS LoginStatus FROM User_Master WHERE User_ID = @User_ID AND User_PW = @User_Pw')
 
-					if (err) {
-						console.log(err);
-
-					}
-					console.log("사용자 로그인 정보 SELECT : " + result.recordset[0]);
-					console.log(result.recordset[0]);
-				})
-
-			// 조회 결과 검증
-			if (result.recordset.length > 0 && result.recordset[0].LoginStatus === 'user Ok')  {
-				// 사용자 인증 성공
-				console.log('로그인 성공a');
-				console.log(result.recordset);
-				console.log('로그인 성공 result');
-				return res.status(200).send({ message: "로그인 성공" });
-			} else {
-				// 사용자 인증 실패
-				console.log('로그인 실패');
-				return res.status(401).send({ message: "로그인 실패" });
-			}
-
+				console.log("사용자 로그인 정보 SELECT : " + result.recordset[0] );
+				console.log(result.recordset[0]);
+				console.log("결과 행 수 : " + result.recordset.length);
+				
+			loginPass(result, res)
 		} catch (error) {
-			console.error('로그인 처리 중 오류 발생:' + error);
+			console.error('로그인 처리 중 오류 발생:' + error );
 			res.status(500).send({ message: "서버 오류" });
 		}
-
-
 	});
+
+	function loginPass(result, res){
+		console.log("로그인 행수 : " + result.recordset[0].LoginStatus);
+
+		// 조회 결과 검증
+		if (result.recordset[0].LoginStatus === "user ok")  {
+			// 사용자 인증 성공
+			return res.status(200).send({ message: "로그인 성공" });
+		} else {
+			// 사용자 인증 실패
+			console.log('로그인 실패');
+			return res.status(401).send({ message: "로그인 실패" });
+		}
+	}
+			
+
+
+
+
+
 
 
 });
