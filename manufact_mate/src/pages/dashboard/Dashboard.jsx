@@ -18,7 +18,7 @@ import Link from '@mui/material/Link';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import { MainListItems, SecondaryListItems } from 'src/pages/dashboard/components/listItems';
+import { MainListItems, SecondaryListItems } from 'src/pages/dashboard/listItems';
 import Chart from 'src/pages/dashboard/components/Chart';
 import Deposits from 'src/pages/dashboard/components/Deposits';
 import Orders from 'src/pages/dashboard/components/Orders';

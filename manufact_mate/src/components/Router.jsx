@@ -2,9 +2,9 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import Home from 'src/pages/Home';
+import Home from 'src/pages/Home/Home';
 import InsShip from 'src/pages/InsShip';
-import Login from 'src/pages/Login';
+import Login from 'src/pages/Login/Login';
 import NotFound from 'src/pages/NotFound';
 import Dashboard from 'src/pages/dashboard/Dashboard';
 

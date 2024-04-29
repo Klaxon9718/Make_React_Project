@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import { CssBaseline, Container, createTheme, ThemeProvider, Alert, Box } from '@mui/material';
-import * as LoginComponents from 'src/pages/components/LoginComponents';
+import * as LoginComponents from 'src/pages/Login/LoginComponents';
 
 // TODO remove, this demo shouldn't need to reset the theme.
 
