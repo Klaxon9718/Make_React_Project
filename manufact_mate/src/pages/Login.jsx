@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
-import { CssBaseline, Container, createTheme, ThemeProvider, Alert } from '@mui/material';
+import { CssBaseline, Container, createTheme, ThemeProvider, Alert, Box } from '@mui/material';
 import * as LoginComponents from 'src/pages/components/LoginComponents';
 
 // TODO remove, this demo shouldn't need to reset the theme.
@@ -61,42 +61,47 @@ function SignIn() {
 		handleInputPw(event.currentTarget);
 
 		//버튼만 누르면 리프레시 되는 것을 막아줌
-		event.preventDefault();		
+		event.preventDefault();
 
 		await new Promise((r) => setTimeout(r, 0));
 
-		const response = await axios.post('/test/01',{
+		const response = await axios.post('/test/01', {
 			'id': inputId,
 			'pw': inputPw
-			})
-		.then(function (response) {
-			//console.log("로그인 상태 " + response.status);
-
-			//로그인 성공
-			if(response.status == "200") {
-				navigate("/home"); // "/home"으로 페이지 이동
-
-				// console.log("로그인 상태 " + response.data.session_id);
-				sessionStorage.setItem("session_id", response.data.session_id);
-			}
-			
 		})
-		.catch(function (error) {
-			console.error('Error occurred during login processing:', error.message);
-                setNoLogin(true); // 로그인 실패 상태를 true로 설정
-				setTimeout(()=>setNoLogin(false), 1500); //2초 후 안내창 삭제
-		});
+			.then(function (response) {
+				//console.log("로그인 상태 " + response.status);
+
+				//로그인 성공
+				if (response.status == "200") {
+					// console.log("로그인 상태 " + response.data.session_id);
+
+					sessionStorage.setItem("session_id", response.data.session_id); //세션부여
+					navigate("/home"); // "/home"으로 페이지 이동
+				}
+			})
+			.catch(function (error) {
+				console.error('Error occurred during login processing:', error.message);
+				setNoLogin(true); // 로그인 실패 상태를 true로 설정
+				setTimeout(() => setNoLogin(false), 1500); //2초 후 안내창 삭제
+			});
 	};
 
 	const defaultTheme = createTheme();
 
 	return (
 		<ThemeProvider theme={defaultTheme}>
-			<Container component="main" maxWidth="xs">
-				<CssBaseline />
-				{noLogin && <Alert severity="error" >로그인 정보를 확인해 주세요.</Alert>}
-				<LoginComponents.LoginSection getHandleSubmit={handleSubmit} getHandleInputId={handleInputId} getHandleInputPw={handleInputPw} />
+			<Container component="main" maxWidth="xl">
+				<Box display="flex" flexDirection="row" justifyContent="center" alignItems="center" sx={{ marginTop: { xs: 5, sm: 10, md: 15, lg: 20, }, }} >
+					<CssBaseline />
+					{noLogin && <Alert severity="error" >로그인 정보를 확인해 주세요.</Alert>}
+					<Box mr={10}>
+						<LoginComponents.SwipeableTextMobileStepper /> {/* 이미지 슬라이드*/}
+					</Box>
+					<LoginComponents.LoginSection getHandleSubmit={handleSubmit} getHandleInputId={handleInputId} getHandleInputPw={handleInputPw} /> {/* 로그인 컴포넌트*/}
+				</Box>
 				<LoginComponents.Copyright sx={{ mt: 8, mb: 4 }} />
+
 			</Container>
 		</ThemeProvider>
 	);
