@@ -16,7 +16,7 @@ app.get('/test/post', (req, res) => {
 
 connectToDatabase().then(pool => {
 
-	//GET ALL USERS
+	//모든 사용자 데이터 가져오기
 	app.get('/test/data', function (req, res) {
 		console.log("/test/data실행");
 		pool.request()
@@ -49,53 +49,44 @@ connectToDatabase().then(pool => {
 	// 	next();
 	//   });
 
+	//사용자 로그인
 	app.post('/test/01', async function (req, res) {
 		console.log("Login실행");
 
 
 		// 요청에서 사용자 아이디와 패스워드 추출
-		const { user_id, user_pw } = req.body;
+		//const { user_id, user_pw } = req.body;
 		console.log("사용자 아이디 확인용 로그 " + req.body.id);
 		console.log("사용자 비밀번호 확인용 로그 " + req.body.pw);
 
 		try {
+			
 			// SQL 쿼리 실행
-				const result = await pool.request()
+			const result = await pool.request()
 				.input('User_ID', mssql.VarChar, req.body.id)
 				.input('User_Pw', mssql.VarChar, req.body.pw)
 				.query('SELECT \'user ok\' AS LoginStatus FROM User_Master WHERE User_ID = @User_ID AND User_PW = @User_Pw')
+			//#region 로그
+			// console.log("사용자 로그인 정보 SELECT : " + result.recordset[0] );
+			// console.log(result.recordset[0]);
+			// console.log("결과 행 수 : " + result.recordset.length);
+			// console.log("로그인 행수 : " + result.recordset[0].LoginStatus);
+			//#endregion
 
-				console.log("사용자 로그인 정보 SELECT : " + result.recordset[0] );
-				console.log(result.recordset[0]);
-				console.log("결과 행 수 : " + result.recordset.length);
-				
-			loginPass(result, res)
-		} catch (error) {
-			console.error('로그인 처리 중 오류 발생:' + error );
-			res.status(500).send({ message: "서버 오류" });
-		}
-	});
-
-	function loginPass(result, res){
-		console.log("로그인 행수 : " + result.recordset[0].LoginStatus);
-
-		// 조회 결과 검증
-		if (result.recordset[0].LoginStatus === "user ok")  {
-			// 사용자 인증 성공
-			return res.status(200).send({ message: "로그인 성공" });
-		} else {
+			// 조회 결과 검증
+			if (result.recordset.length && result.recordset[0].LoginStatus === "user ok") {
+				// 사용자 인증 성공
+				return res.status(200).send({ message: "로그인 성공" });
+			}
 			// 사용자 인증 실패
 			console.log('로그인 실패');
 			return res.status(401).send({ message: "로그인 실패" });
-		}
-	}
 			
-
-
-
-
-
-
+		} catch (error) {
+			console.error('로그인 처리 중 오류 발생:' + error);
+			res.status(500).send({ message: "서버 오류" });
+		}
+	});
 
 });
 

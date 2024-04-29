@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from 'axios';
-import { CssBaseline, Container, createTheme, ThemeProvider } from '@mui/material';
+import { CssBaseline, Container, createTheme, ThemeProvider, Alert } from '@mui/material';
 import * as LoginComponents from 'src/pages/components/LoginComponents';
-
+import * as Home from 'src/pages/Home'
 
 // TODO remove, this demo shouldn't need to reset the theme.
 
@@ -15,8 +15,8 @@ const defaultTheme = createTheme();
 function SignIn() {
 	const [inputId, setInputId] = useState('')
 	const [inputPw, setInputPw] = useState('')
-	const [loginCheck, setLoginCheck] = useState(false);
-	const navigate = useNavigate();		//성공 시 이동 경로
+	const [noLogin, setNoLogin] = useState(false); // 로그인 상태 확인 함수
+	const navigate = useNavigate(); // 로그인 성공 시, 경로 이동을 위한 함수
 
 	//////////////////////////////////
 	const [data, setData] = useState('')
@@ -64,17 +64,24 @@ function SignIn() {
 		//버튼만 누르면 리프레시 되는 것을 막아줌
 		event.preventDefault();		
 
-		await new Promise((r) => setTimeout(r, 1000));
+		await new Promise((r) => setTimeout(r, 0));
 
 		const response = await axios.post('/test/01',{
 			'id': inputId,
 			'pw': inputPw
 			})
 		.then(function (response) {
-			console.log(response);
+			//console.log("로그인 상태 " + response.status);
+
+			if(response.status == "200") {
+				navigate("/home"); // "/home"으로 페이지 이동
+			}
+			
 		})
 		.catch(function (error) {
 			console.error('Error occurred during login processing:', error.message);
+                setNoLogin(true); // 로그인 실패 상태를 true로 설정
+				setTimeout(()=>setNoLogin(false), 1500); //2초 후 안내창 삭제
 		});
 	};
 
@@ -84,6 +91,7 @@ function SignIn() {
 		<ThemeProvider theme={defaultTheme}>
 			<Container component="main" maxWidth="xs">
 				<CssBaseline />
+				{noLogin && <Alert severity="error" >로그인 정보를 확인해 주세요.</Alert>}
 				<LoginComponents.LoginSection getHandleSubmit={handleSubmit} getHandleInputId={handleInputId} getHandleInputPw={handleInputPw} />
 				<LoginComponents.Copyright sx={{ mt: 8, mb: 4 }} />
 			</Container>

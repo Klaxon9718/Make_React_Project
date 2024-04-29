@@ -53,6 +53,7 @@ export const LoginSection = ({getHandleSubmit, getHandleInputId, getHandleInputP
               type="password"
               id="password"
               autoComplete="current-password"
+
 			  onChange={getHandleInputPw}
             />
             <FormControlLabel
