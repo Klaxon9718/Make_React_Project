@@ -1,32 +1,56 @@
-import Header from 'src/pages/section/Header';
+//#region import문
 import * as React from 'react';
-import { useNavigate } from "react-router-dom";
-import * as HomeCom from 'src/pages/Home/HomeComponents'
+import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
+import Grid from '@mui/material/Grid';
+import Paper from '@mui/material/Paper';
+import Chart from 'src/pages/Home/components/Chart';
+import Deposits from 'src/pages/Home/components/Deposits';
+import Orders from 'src/pages/Home/components/Orders';
+import Bar from 'src/pages/section/Bar'
+//#endregion
 
-function Home() {
+const defaultTheme = createTheme();
 
-	//#region 사용자 세션처리
-	const navigate = useNavigate();
+export default function Dashboard() {
 
-	const chk_session = () => {
-		if (sessionStorage.getItem('session_id') === null ){
-			sessionStorage.clear();
-			navigate("/login"); // "/login"으로 이동
-		}
-	}
-	//#endregion
-
-	React.useEffect(() => {
-		chk_session();
-	  }, []); // 빈 배열을 
 
   return (
-    <div>
-      <Header />
-		<HomeCom.default />
-      창대한 인사말
-    </div>
+	<Bar>
+            <Grid container spacing={3}>
+              {/* Chart */}
+              <Grid item xs={12} md={8} lg={9}>
+                <Paper
+                  sx={{
+                    p: 2,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    height: 240,
+                  }}
+                >
+                  <Chart />
+                </Paper>
+              </Grid>
+              {/* Recent Deposits */}
+              <Grid item xs={12} md={4} lg={3}>
+                <Paper
+                  sx={{
+                    p: 2,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    height: 240,
+                  }}
+                >
+                  <Deposits />
+                </Paper>
+              </Grid>
+              {/* Recent Orders */}
+              <Grid item xs={12}>
+                <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
+                  <Orders />
+                </Paper>
+              </Grid>
+            </Grid>
+	</Bar>
+
   );
 }
-
-export default Home;

@@ -6,8 +6,6 @@ import ListSubheader from '@mui/material/ListSubheader';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import PeopleIcon from '@mui/icons-material/People';
-import BarChartIcon from '@mui/icons-material/BarChart';
-import LayersIcon from '@mui/icons-material/Layers';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
 import Collapse from '@mui/material/Collapse';
@@ -15,6 +13,8 @@ import List from '@mui/material/List';
 import StarBorder from '@mui/icons-material/StarBorder';
 import HomeIcon from '@mui/icons-material/Home';
 import { useNavigate } from "react-router-dom";
+import HorizontalRuleIcon from '@mui/icons-material/HorizontalRule';
+
 
 
 export function MainListItems () {
@@ -68,7 +68,7 @@ export function MainListItems () {
 			{/*세부 메뉴 : 생산현황*/}
           <ListItemButton id="pps_mor" sx={{ pl: 4 }}>
             <ListItemIcon>
-              <StarBorder />
+              <HorizontalRuleIcon />
             </ListItemIcon>
             <ListItemText primary="생산현황" />
           </ListItemButton>
@@ -76,7 +76,7 @@ export function MainListItems () {
 			{/*세부 메뉴 : 생산부 모니터링*/}
 		  <ListItemButton id="pps_mor" sx={{ pl: 4 }}>
             <ListItemIcon>
-              <StarBorder />
+              <HorizontalRuleIcon />
             </ListItemIcon>
             <ListItemText primary="생산부 모니터링" />
           </ListItemButton>
