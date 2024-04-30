@@ -91,9 +91,10 @@ function SignIn() {
 	return (
 		<ThemeProvider theme={defaultTheme}>
 			<Container component="main" maxWidth="xl">
+			{noLogin && <Alert severity="error" >로그인 정보를 확인해 주세요.</Alert>}
 				<Box display="flex" flexDirection="row" justifyContent="center" alignItems="center" sx={{ marginTop: { xs: 5, sm: 10, md: 15, lg: 20, }, }} >
 					<CssBaseline />
-					{noLogin && <Alert severity="error" >로그인 정보를 확인해 주세요.</Alert>}
+					
 					<Box mr={10}>
 						<LoginComponents.SwipeableTextMobileStepper /> {/* 이미지 슬라이드*/}
 					</Box>

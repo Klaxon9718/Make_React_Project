@@ -1,3 +1,5 @@
+const ShipDB = require('./ShipDB');
+
 const { dbImport, express, cors, app, connectToDatabase, bodyPaser } = require("../dbImport");
 dbImport(); //함수 호출
 const mssql = require("mssql");
@@ -5,28 +7,14 @@ app.use(express.json({ extended: true }));
 app.use(cors());
 app.use(bodyPaser.urlencoded({ extended: false }))
 
-app.get('/api', (req, res) => {
-	res.send({ message: 'hello' });
-});
-
-app.get('/test/post', (req, res) => {
-	const { val1, val2 } = req.body;
-	res.send('값 확인 : ' + val1 + val2);
-});
-
 connectToDatabase().then(pool => {
 
+
+	//ShipDB.js : 수주
 	//모든 사용자 데이터 가져오기
-	app.get('/test/data', function (req, res) {
-		console.log("/test/data실행");
-		pool.request()
-			.query('SELECT Emp_Code CODE, Emp_Name NAME FROM Emp_Master')
-			.then(result => {
-				//res.send(result);	// 받아온 데이터 전달
-				res.json(result.recordset); //받아온 데이터를 json형식으로 가져옴
-				res.end(); // end the response
-			});
-	});
+	app.get('/test/data', async (req, res) => ShipDB.SelectShipa(pool, req, res));
+
+	app.get('test/ship/select', (req, res) => ShipDB.SelectShip(pool, req, res));
 
 
 	app.get('/api/workorder', function (req, res) {
@@ -52,7 +40,6 @@ connectToDatabase().then(pool => {
 	//사용자 로그인
 	app.post('/test/01', async function (req, res) {
 		console.log("Login실행");
-
 
 		// 요청에서 사용자 아이디와 패스워드 추출
 		const user_id = req.body.id;
