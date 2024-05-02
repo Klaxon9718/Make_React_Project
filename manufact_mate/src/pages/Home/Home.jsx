@@ -26,7 +26,6 @@ const chk_session = () => {
 		navigate("/login"); // "/login"으로 이동
 	}
 }
-//#endregion
 
 const selectList = async () => {
 	try {
