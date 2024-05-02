@@ -64,7 +64,7 @@ function SignIn() {
 
 		await new Promise((r) => setTimeout(r, 0));
 
-		const response = await axios.post('/test/01', {
+		const response = await axios.post('/test/login', {
 			'id': inputId,
 			'pw': inputPw
 		})

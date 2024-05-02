@@ -30,7 +30,7 @@ const chk_session = () => {
 
 const selectList = async () => {
 	try {
-		const response = await axios.get('/test/ship/select');
+		const response = await axios.get('/test/');
 		setData(response.data); // 받아온 데이터를 상태에 저장
 		console.log(data); // 콘솔에 데이터 출력
 	} catch (error) {

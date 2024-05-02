@@ -1,10 +1,7 @@
 import * as React from 'react';
-import Bar from 'src/pages/section/Bar'
-import { styled } from '@mui/material/styles';
-import Paper from '@mui/material/Paper';
-import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
+import { useState, useEffect } from 'react';
 import dayjs from 'dayjs';
+import axios from 'axios';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -18,6 +15,10 @@ import SearchIcon from '@mui/icons-material/Search';
 import { Button } from '@mui/base/Button';
 import Container from '@mui/material/Container';
 import { DataGrid } from '@mui/x-data-grid';
+import Bar from 'src/pages/section/Bar'
+import Paper from '@mui/material/Paper';
+import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
 
 
 const columns = [
@@ -38,26 +39,12 @@ const columns = [
 ];
 
 const rows = [
-
-	{ SHIP_NO: 1, lastName: 'Snow', firstName: 'Jon', age: 35 },
-	{ SHIP_NO: 2, lastName: 'Lannister', firstName: 'Cersei', age: 42 },
-	{ SHIP_NO: 3, lastName: 'Lannister', firstName: 'Jaime', age: 45 },
-	{ SHIP_NO: 4, lastName: 'Stark', firstName: 'Arya', age: 16 },
-	{ SHIP_NO: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: null },
-	{ SHIP_NO: 6, lastName: 'Melisandre', firstName: null, age: 150 },
-	{ SHIP_NO: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
-	{ SHIP_NO: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
-	{ SHIP_NO: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
-	{ SHIP_NO: 11, lastName: 'Snow', firstName: 'Jon', age: 35 },
-	{ SHIP_NO: 12, lastName: 'Lannister', firstName: 'Cersei', age: 42 },
-	{ SHIP_NO: 13, lastName: 'Lannister', firstName: 'Jaime', age: 45 },
-	{ SHIP_NO: 14, lastName: 'Stark', firstName: 'Arya', age: 16 },
-	{ SHIP_NO: 15, lastName: 'Targaryen', firstName: 'Daenerys', age: null },
 ];
 
 
 
 export default function Ship() {
+	const [grid, setGrid] = React.useState([]);
 	const [value, setValue] = React.useState(dayjs('2022-04-17')); //날짜
 	const [age, setAge] = React.useState(''); //cbo박스
 
@@ -65,6 +52,37 @@ export default function Ship() {
 	const handleChange = (event) => {
 		setAge(event.target.value);
 	};
+
+	const handelSelect = async (event) =>{
+		event?.preventDefault(); // event가 존재하면 preventDefault() 호출
+
+		await new Promise((r) => setTimeout(r,0));
+
+		const response = axios.post('/test/shipSelect',{
+			'dte_shipfrom': '2000-06-06',
+			'dte_shipto': '2024-05-02',
+			'dte_delidate':'2000-06-06',
+			'dte_delito': '2024-05-02',
+			'shipflag': '',
+			'orderflag': '',
+			'cust_code': '',
+			'cust_name': '',
+			'item_code': '',
+			'item_name': '',
+		})
+		.then(function (response) {
+			console.log("그리드 조회 성공 " + response.status);
+			console.log("그리드 조회 성공 " + response.data);
+			setGrid(response.data);
+		})
+		.catch(function (error){
+			console.error('Error occurred during login processing:', error.message);
+		})
+	}
+
+	useEffect(() => {
+		handelSelect();
+	}, []);
 
 	return (
 
@@ -85,16 +103,19 @@ export default function Ship() {
 							<LocalizationProvider dateAdapter={AdapterDayjs}>
 								<DemoContainer components={['DatePicker', 'DatePicker']}
 								>
-									<DatePicker label="수주일자 From"
+									<DatePicker
+										id="shipFrom"
+										label="수주일자 From"
 										views={['year', 'month', 'day']}
-										format="YYYY/MM/DD"
+										format="YYYY-MM-DD"
 										value={value}
 										onChange={(newValue) => setValue(newValue)}
 										slotProps={{ textField: { size: 'small' } }} />
 									<DatePicker
+										id="shipTo"
 										label="수주일자 To"
 										views={['year', 'month', 'day']}
-										format="YYYY/MM/DD"
+										format="YYYY-MM/-DD"
 										value={value}
 										onChange={(newValue) => setValue(newValue)}
 										slotProps={{ textField: { size: 'small' } }} />
@@ -111,14 +132,14 @@ export default function Ship() {
 									}}>
 									<DatePicker label="납품일자 From"
 										views={['year', 'month', 'day']}
-										format="YYYY/MM/DD"
+										format="YYYY-MM-DD"
 										value={value}
 										onChange={(newValue) => setValue(newValue)}
 										slotProps={{ textField: { size: 'small' } }} />
 									<DatePicker
 										label="납품일자 To"
 										views={['year', 'month', 'day']}
-										format="YYYY/MM/DD"
+										format="YYYY-MM-DD"
 										value={value}
 										onChange={(newValue) => setValue(newValue)}
 										slotProps={{ textField: { size: 'small' } }} />
@@ -175,7 +196,8 @@ export default function Ship() {
 
 						<Grid item xs={4}>
 							<Container maxWidth="sm">
-								<TextField id="standard-basic" label="거래처 코드" variant="standard" size={"small"} sx={{ p: 1, mt: -1 }} />
+								<TextField id="standard-basic" label="거래처 코드" variant="standard" size={"small"}
+									 sx={{ p: 1, mt: -1 }} />
 								<TextField id="standard-basic" label="거래처 명" variant="standard" size={"small"} sx={{ p: 1, mt: -1 }} />
 								<Button><SearchIcon /></Button>
 							</Container>
@@ -197,20 +219,20 @@ export default function Ship() {
 								height: 40,
 								display: 'flex',
 							}}>
-								<Button size={"medium"} sx={{ mr: 2, }} >조회</Button>
-								<Button sx={{ mr: 2 }}>저장</Button>
+								<Button size={"medium"} onSubmit={handelSelect} sx={{ mr: 2, }} >조회</Button>
+								<Button sx={{ mr: 2 }}>추가</Button>
 								<Button sx={{ mr: 2 }}>삭제</Button>
 							</Container>
 						</Grid>
 
-{/*onRowCountChange: 행 개수가 변경되면 콜백이 시작됩니다. */}
+						{/*onRowCountChange: 행 개수가 변경되면 콜백이 시작됩니다. */}
 						<Grid item xs={12} sx={{ maxHeight: 670, maxWidth: '100%' }}>
 							<DataGrid rows={rows} columns={columns} getRowId={(row) => row.SHIP_NO}
 								hideFooterPagination
 								checkboxSelection
 								disableRowSelectionOnClick
 								sx={{ pagination: false }}
-								
+
 							/>
 						</Grid>
 					</Grid>

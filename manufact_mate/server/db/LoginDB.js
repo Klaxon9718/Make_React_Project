@@ -12,9 +12,11 @@ connectToDatabase().then(pool => {
 
 	//ShipDB.js : 수주
 	//모든 사용자 데이터 가져오기
+	//테스트용
 	app.get('/test/data', async (req, res) => ShipDB.SelectShipa(pool, req, res));
 
-	app.get('test/ship/select', (req, res) => ShipDB.SelectShip(pool, req, res));
+	//수주 정보 가져오기
+	app.post('/test/shipSelect', (req, res) => ShipDB.SelectShip(mssql, pool, req, res));
 
 
 	app.get('/api/workorder', function (req, res) {
@@ -38,7 +40,7 @@ connectToDatabase().then(pool => {
 	//   });
 
 	//사용자 로그인
-	app.post('/test/01', async function (req, res) {
+	app.post('/test/login', async function (req, res) {
 		console.log("Login실행");
 
 		// 요청에서 사용자 아이디와 패스워드 추출
