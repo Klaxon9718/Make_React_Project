@@ -1,4 +1,5 @@
 const ShipDB = require('./ShipDB');
+const CompoDB = require('./CompoDB')
 
 const { dbImport, express, cors, app, connectToDatabase, bodyPaser } = require("../dbImport");
 dbImport(); //함수 호출
@@ -17,6 +18,11 @@ connectToDatabase().then(pool => {
 
 	//수주 정보 가져오기
 	app.post('/test/shipSelect', (req, res) => ShipDB.SelectShip(mssql, pool, req, res));
+
+
+
+	//CompoDB.js : 컴포넌트 쿼리 실행
+	app.post('/test/popupSelect', (req, res) => CompoDB.PopupSelect(mssql, pool, req, res));
 
 
 	app.get('/api/workorder', function (req, res) {
