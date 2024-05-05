@@ -26,12 +26,13 @@ import Grid from '@mui/material/Grid';
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 //#endregion
 
+export default function Ship() {
 
-//그리드 설정
+	//그리드 설정
 const columns = [
 	{ field: 'SHIP_NO', headerName: '수주번호', width: 120, editable: true },
-	{ field: 'SHIP_FLAG', headerName: '수주구분', editable: true },
-	{ field: 'ORDER_FLAG', headerName: '주문유형', editable: true },
+	{ field: 'SHIP_FLAG', headerName: '수주구분', editable: true , valueGetter: (params) => findNameByCode(params, cboShip)},
+	{ field: 'ORDER_FLAG', headerName: '주문유형', editable: true, valueGetter: (params) => findNameByCode(params, cboOrder)},
 	{ field: 'CUST_CODE', headerName: '거래처 코드', width: 120, editable: true },
 	{ field: 'CUST_NAME', headerName: '거래처 명', width: 150, editable: true },
 	{ field: 'CUST_ADD', headerName: '거래처 주소', width: 150, editable: true },
@@ -44,9 +45,20 @@ const columns = [
 	{ field: 'INS_EMP', headerName: '등록자', width: 100, editable: true },
 	{ field: 'RE_CONTENT', headerName: '특이사항', width: 150, editable: true },
 ];
+	
+//그리드 CODE에 따른 NAME값 출력
+	const findNameByCode = (code, array) => {
+		const item = array.find((item) => item.CODE === code);
+		return item ? item.NAME : 'Not Found';
+	};
 
+	// //그리드 CODE에 따른 NAME값 출력
+	// const findNameByCode1 = (code) => {
+	// 	const item = cboOrder.find((item) => item.CODE === code);
+	// 	return item ? item.NAME : 'Not Found';
+	// };
+	
 
-export default function Ship() {
 	const defaultTheme = createTheme(); // 테마 적용
 
 	const [rows, setRows] = React.useState([]);
@@ -56,6 +68,8 @@ export default function Ship() {
 	const [selectedCustomer, setSelectedCustomer] = React.useState({ CODE: '', NAME: '' }); //팝업으로부터 값을 가져옴 + 사용자 입력 값 저장
 	const [isItemPopupOpen, setIsItemPopupOpen] = useState(false);  // 팝업을 띄울지 말지 결정하는 상태 및 그 상태를 바꾸는 함수
 	const [selectedItem, setSelectedItem] = React.useState({ CODE: '', NAME: '' }); //팝업으로부터 값을 가져옴 + 사용자 입력 값 저장
+	const [cboShip, setCboShip] = React.useState([]);
+	const [cboOrder, setCboOrder] = React.useState([]);
 
 	const navigate = useNavigate(); //#region 사용자 세션처리
 
@@ -65,6 +79,8 @@ export default function Ship() {
 			navigate("/login"); // "/login"으로 이동
 		}
 	}
+
+	//#region 팝업처리
 	//CustPopup
 	// 팝업을 열기위한 함수
 	const handleOpenCustPopup = () => {
@@ -87,6 +103,7 @@ export default function Ship() {
 		setIsItemPopupOpen(false);
 	};
 
+
 	// CustPopup 값 적용
 	const handleSelectCustomer = (customer) => {
 		setSelectedCustomer(customer); // 선택된 거래처 정보 저장
@@ -98,19 +115,20 @@ export default function Ship() {
 		setSelectedItem(Item); // 선택된 품목 정보 저장
 		handleSelect();
 	};
+	//#endregion
 
 	//텍스트필드 값 변경
-	const handleChange = (setter, key, event) => {
+	const handleChange = (setter, key, event) => { //setter는 컴포넌트를 가짐
 		setter(prevState => ({
-			...prevState,
-			[key]: event.target.value
+			...prevState, //이전 상태 저장
+			[key]: event.target.value //해당 키에 대한 값을 변경
 		}));
 	};
 
 	const handleSelect = async (event) => {
 		event?.preventDefault(); // event가 존재하면 preventDefault() 호출
 
-		const response = await axios.post('/test/shipSelect', {
+		await axios.post('/test/shipSelect', {
 			'dte_shipfrom': '2000-06-06',
 			'dte_shipto': '2024-05-02',
 			'dte_delidate': '2000-06-06',
@@ -132,9 +150,31 @@ export default function Ship() {
 			})
 	}
 
+	// 수주 콤보박스 리스트 가져옴
+	const fetchShipOptions = async () => {
+		try {
+			const response = await axios.post('/test/cboShipList');
+			setCboShip(response.data); // 콤보박스 상태 업데이트
+		} catch (error) {
+			console.error('Error fetching ship options:', error);
+		}
+	};
+
+	//주문유형 콤보박스 리스트 가져옴
+	const fetchOrderOptions = async () => {
+		try {
+			const response = await axios.post('/test/cboOrderList');
+			setCboOrder(response.data); // 콤보박스 상태 업데이트
+		} catch (error) {
+			console.error('Error fetching order options:', error);
+		}
+	};
+
 	useEffect(() => {
 		chk_session();
 		handleSelect();
+		fetchShipOptions();
+		fetchOrderOptions();
 	}, [selectedCustomer, selectedItem]);
 
 	return (
@@ -149,7 +189,7 @@ export default function Ship() {
 						width: { xs: '100%', sm: '100%', md: '100%', lg: '100%' },
 					}}
 				>
-					<Box sx={{ flexGrow: 1 }}>
+					<Box sx={{ flexGrow: 1, }}>
 						<Grid container spacing={2}>
 
 							<Grid item xs={4} >
@@ -214,15 +254,16 @@ export default function Ship() {
 									<FormControl fullWidth>
 										<InputLabel id="demo-simple-select-label" sx={{ marginTop: -1 }}>수주구분</InputLabel>
 										<Select
-											labelId="demo-simple-select-label"
-											id="demo-simple-select"
-											label="Age"
-											onChange={handleChange}
+											value={cboShip.CODE}
+											label="수주구분"
+											onChange={(event) => handleChange(setCboShip, 'CODE', event)}
 											size={"small"}
 										>
-											<MenuItem value={10}>Ten</MenuItem>
-											<MenuItem value={20}>Twenty</MenuItem>
-											<MenuItem value={30}>Thirty</MenuItem>
+											{cboShip.map((option) => (
+												<MenuItem key={option.CODE} value={option.CODE}>
+													{option.NAME}
+												</MenuItem>
+											))}
 										</Select>
 									</FormControl>
 
@@ -233,12 +274,14 @@ export default function Ship() {
 											labelId="demo-simple-select-label"
 											id="demo-simple-select"
 											label="Age"
-											onChange={handleChange}
+											onChange={(event) => handleChange(setCboOrder, 'CODE', event)}
 											size={"small"}
 										>
-											<MenuItem value={10}>Ten</MenuItem>
-											<MenuItem value={20}>Twenty</MenuItem>
-											<MenuItem value={30}>Thirty</MenuItem>
+											{cboOrder.map((option) => (
+												<MenuItem key={option.CODE} value={option.CODE}>
+													{option.NAME}
+												</MenuItem>
+											))}
 										</Select>
 									</FormControl>
 
@@ -268,10 +311,10 @@ export default function Ship() {
 								<Container sx={{
 									display: 'flex',
 									paddingTop: 8,
-									marginLeft: -20
+									marginLeft: -10
 								}}>
-									<Button sx={{ mr: 2 }}>추가</Button>
-									<Button sx={{ mr: 2 }}>삭제</Button>
+									<Button variant="outlined" sx={{ mr: 2 }}>추가</Button>
+									<Button variant="outlined" sx={{ mr: 2 }}>삭제</Button>
 								</Container>
 							</Grid>
 

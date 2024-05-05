@@ -19,6 +19,12 @@ connectToDatabase().then(pool => {
 	//수주 정보 가져오기
 	app.post('/test/shipSelect', (req, res) => ShipDB.SelectShip(mssql, pool, req, res));
 
+	//수주 콤보박스 처리
+	app.post('/test/cboShipList', (req, res) => ShipDB.CboShipList(pool, req, res));
+
+	//주문유형 콤보박스 처리
+	app.post('/test/cboOrderList', (req, res) => ShipDB.CboOrderList(pool, req, res))
+
 
 
 	//CompoDB.js : 컴포넌트 쿼리 실행

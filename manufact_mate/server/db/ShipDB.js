@@ -1,3 +1,5 @@
+const { PoolOutlined } = require("@mui/icons-material")
+
 function SelectShip(mssql, pool, req, res) {
 
 	const dte_shipfrom = req.body.dte_shipfrom
@@ -46,8 +48,32 @@ function SelectShipa(pool, req, res) {
 		});
 }
 
+function CboShipList(pool, req, res){
+	console.log("/test/CboShipList실행");
+	pool.request()
+	.query("SELECT '' CODE, '전체' NAME " + 
+	"UNION ALL SELECT UserDefine_Mi_Code CODE, UserDefine_Mi_Name NAME " + 
+	"FROM UserDefine_Mi_Master WHERE UserDefine_Ma_Code = 'SAL_TYPE'")
+	.then(result => {
+		return res.json(result.recordset);
+	})
+}
+
+function CboOrderList(pool, req, res){
+	console.log("/test/CboOrderList실행");
+	pool.request()
+	.query("SELECT '' CODE, '전체' NAME " + 
+	"UNION ALL SELECT UserDefine_Mi_Code CODE, UserDefine_Mi_Name NAME " + 
+	"FROM UserDefine_Mi_Master WHERE UserDefine_Ma_Code = 'SOTYPE'")
+	.then(result => {
+		return res.json(result.recordset);
+	})
+}
+
 
 module.exports = {
 	SelectShip,
 	SelectShipa,
+	CboShipList,
+	CboOrderList,
 }
