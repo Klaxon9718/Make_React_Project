@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import dayjs from 'dayjs';
 import axios from 'axios';
 import Popup from 'src/pages/ship/components/Popup';
+import Drawer from 'src/pages/ship/components/Drawer';
 import { useNavigate } from "react-router-dom";
 
 //#region MUI 속성
@@ -29,24 +30,24 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 export default function Ship() {
 
 	//그리드 설정
-const columns = [
-	{ field: 'SHIP_NO', headerName: '수주번호', width: 120, editable: true },
-	{ field: 'SHIP_FLAG', headerName: '수주구분', editable: true , valueGetter: (params) => findNameByCode(params, cboShip)},
-	{ field: 'ORDER_FLAG', headerName: '주문유형', editable: true, valueGetter: (params) => findNameByCode(params, cboOrder)},
-	{ field: 'CUST_CODE', headerName: '거래처 코드', width: 120, editable: true },
-	{ field: 'CUST_NAME', headerName: '거래처 명', width: 150, editable: true },
-	{ field: 'CUST_ADD', headerName: '거래처 주소', width: 150, editable: true },
-	{ field: 'ITEM_CODE', headerName: '품목 코드', width: 120, editable: true },
-	{ field: 'ITEM_NAME', headerName: '품목 명', width: 150, editable: true },
-	{ field: 'QTY', type: 'number', headerName: '수주수량', width: 120, editable: true },
-	{ field: 'UNIT', headerName: '단위', editable: true },
-	{ field: 'SHIP_DATE', headerName: '수주일자', width: 120, editable: true },
-	{ field: 'DELI_DATE', headerName: '납품일자', width: 120, editable: true },
-	{ field: 'INS_EMP', headerName: '등록자', width: 100, editable: true },
-	{ field: 'RE_CONTENT', headerName: '특이사항', width: 150, editable: true },
-];
-	
-//그리드 CODE에 따른 NAME값 출력
+	const columns = [
+		{ field: 'SHIP_NO', headerName: '수주번호', width: 120, editable: true },
+		{ field: 'SHIP_FLAG', headerName: '수주구분', editable: true, valueGetter: (params) => findNameByCode(params, cboShip) },
+		{ field: 'ORDER_FLAG', headerName: '주문유형', editable: true, valueGetter: (params) => findNameByCode(params, cboOrder) },
+		{ field: 'CUST_CODE', headerName: '거래처 코드', width: 120, editable: true },
+		{ field: 'CUST_NAME', headerName: '거래처 명', width: 150, editable: true },
+		{ field: 'CUST_ADD', headerName: '거래처 주소', width: 150, editable: true },
+		{ field: 'ITEM_CODE', headerName: '품목 코드', width: 120, editable: true },
+		{ field: 'ITEM_NAME', headerName: '품목 명', width: 150, editable: true },
+		{ field: 'QTY', type: 'number', headerName: '수주수량', width: 120, editable: true },
+		{ field: 'UNIT', headerName: '단위', editable: true },
+		{ field: 'SHIP_DATE', headerName: '수주일자', width: 120, editable: true },
+		{ field: 'DELI_DATE', headerName: '납품일자', width: 120, editable: true },
+		{ field: 'INS_EMP', headerName: '등록자', width: 100, editable: true },
+		{ field: 'RE_CONTENT', headerName: '특이사항', width: 150, editable: true },
+	];
+
+	//그리드 CODE에 따른 NAME값 출력
 	const findNameByCode = (code, array) => {
 		const item = array.find((item) => item.CODE === code);
 		return item ? item.NAME : 'Not Found';
@@ -70,6 +71,8 @@ const columns = [
 	const [cboShip, setCboShip] = React.useState([]);	//cbo리스트를 받아와 배열로 저장
 	const [cboOrder, setCboOrder] = React.useState([]); //cbo리스트를 받아와 배열로 저장
 
+	const [isDrawerOpen, setIsDrawerOpen] = useState(false); //하단 Drawer 생성
+
 	const navigate = useNavigate(); //#region 사용자 세션처리
 
 	const chk_session = () => {
@@ -79,27 +82,14 @@ const columns = [
 		}
 	}
 
-	//#region 팝업처리
-	//CustPopup
-	// 팝업을 열기위한 함수
-	const handleOpenCustPopup = () => {
-		setIsCustPopupOpen(true);
+	// 팝업을 열기 위한 범용 함수
+	const handleOpenPopup = (setPopupState) => {
+		setPopupState(true);
 	};
 
-	// 팝업을 닫기위한 함수
-	const handleCloseCustPopup = () => {
-		setIsCustPopupOpen(false);
-	};
-
-	//ItemPopup
-	// 팝업을 열기위한 함수
-	const handleOpenItemPopup = () => {
-		setIsItemPopupOpen(true);
-	};
-
-	// 팝업을 닫기위한 함수
-	const handleCloseItemPopup = () => {
-		setIsItemPopupOpen(false);
+	// 팝업을 닫기 위한 범용 함수
+	const handleClosePopup = (setPopupState) => {
+		setPopupState(false);
 	};
 
 
@@ -114,7 +104,8 @@ const columns = [
 		setSelectedItem(Item); // 선택된 품목 정보 저장
 		handleSelect();
 	};
-	//#endregion
+
+
 
 	//텍스트필드 값 변경
 	const handleChange = (setter, key, event) => { //setter는 컴포넌트를 가짐
@@ -270,7 +261,7 @@ const columns = [
 									<FormControl fullWidth sx={{ marginTop: 2 }}>
 										<InputLabel id="demo-simple-select-label" sx={{ marginTop: -1 }}>주문유형</InputLabel>
 										<Select
-										value={selectedCboOrder.CODE || ''}
+											value={selectedCboOrder.CODE || ''}
 											labelId="demo-simple-select-label"
 											id="demo-simple-select"
 											label="Age"
@@ -293,16 +284,16 @@ const columns = [
 								<Container maxWidth="sm">
 									<TextField id="standard-basic" label="거래처 코드" variant="standard" size={"small"} sx={{ p: 1, mt: -1 }} value={selectedCustomer.CODE} onChange={(event) => handleChange(setSelectedCustomer, 'CODE', event)} />
 									<TextField id="standard-basic" label="거래처 명" variant="standard" size={"small"} sx={{ p: 1, mt: -1, editable: true }} value={selectedCustomer.NAME} onChange={(event) => handleChange(setSelectedCustomer, 'NAME', event)} />
-									<Button onClick={handleOpenCustPopup} ><SearchIcon /></Button>
-									{isCustPopupOpen && <Popup isopen={isCustPopupOpen} onClose={handleCloseCustPopup} labelCode={'거래처 코드'} labelName={'거래처 명'} tname={'Customer_Master'} calcode={'customer_code'} calname={'customer_name'} onSelect={handleSelectCustomer} />}
+									<Button onClick={() => handleOpenPopup(setIsCustPopupOpen)} ><SearchIcon /></Button>
+									{isCustPopupOpen && <Popup isopen={isCustPopupOpen} onClose={() => handleClosePopup(setIsCustPopupOpen)} labelCode={'거래처 코드'} labelName={'거래처 명'} tname={'Customer_Master'} calcode={'customer_code'} calname={'customer_name'} onSelect={handleSelectCustomer} />}
 								</Container>
 
 								{/*품목코드, 품목 명*/}
 								<Container maxWidth="sm">
 									<TextField id="standard-basic" label="픔목 코드" variant="standard" size={"small"} sx={{ p: 1, editable: true }} value={selectedItem.CODE} onChange={(event) => handleChange(setSelectedItem, 'CODE', event)} />
 									<TextField id="standard-basic" label="품목 명" variant="standard" size={"small"} sx={{ p: 1, editable: true }} value={selectedItem.NAME} onChange={(event) => handleChange(setSelectedItem, 'NAME', event)} />
-									<Button onClick={handleOpenItemPopup} sx={{ p: 2, }}><SearchIcon /></Button>
-									{isItemPopupOpen && <Popup isopen={isItemPopupOpen} onClose={handleCloseItemPopup} labelCode={'품목 코드'} labelName={'품목 명'} tname={'Item_Master'} calcode={'Item_code'} calname={'Item_name'} onSelect={handleSelectItem} />}
+									<Button onClick={() => handleOpenPopup(setIsItemPopupOpen)} sx={{ p: 2, }}><SearchIcon /></Button>
+									{isItemPopupOpen && <Popup isopen={isItemPopupOpen} onClose={() => handleClosePopup(setIsItemPopupOpen)} labelCode={'품목 코드'} labelName={'품목 명'} tname={'Item_Master'} calcode={'Item_code'} calname={'Item_name'} onSelect={handleSelectItem} />}
 								</Container>
 							</Grid>
 
@@ -313,7 +304,8 @@ const columns = [
 									paddingTop: 8,
 									marginLeft: -10
 								}}>
-									<Button variant="outlined" sx={{ mr: 2 }}>추가</Button>
+									<Button variant="outlined" sx={{ mr: 2 }} onClick={() => handleOpenPopup(setIsDrawerOpen)}>추가</Button>
+									{isDrawerOpen && <Drawer isopen={isDrawerOpen} onClose={() => handleClosePopup(setIsDrawerOpen)} />}
 									<Button variant="outlined" sx={{ mr: 2 }}>삭제</Button>
 								</Container>
 							</Grid>

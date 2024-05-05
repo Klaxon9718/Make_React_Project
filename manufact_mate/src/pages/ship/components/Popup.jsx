@@ -23,7 +23,7 @@ function Popup(props) {
 
 	const columns = [
 		{ field: 'CODE', headerName: props.labelCode, width: 120, editable: false },
-		{ field: 'NAME', headerName: props.labelCode, width: 120, editable: false },
+		{ field: 'NAME', headerName: props.labelName, width: 120, editable: false },
 
 	];
 
@@ -81,8 +81,9 @@ function Popup(props) {
 
 	return (
 		
-		<Draggable>
+		
 			<ThemeProvider theme={defaultTheme}>
+				<Draggable>
 			<Modal
 				open={props.isopen}
 				// Draggable 라이브러리가 모달과 잘 동작하도록 해주는 스타일
@@ -90,7 +91,7 @@ function Popup(props) {
 				hideBackdrop='false'
 			>
 				<Box sx={modalStyle}>
-					<Box sx={{ position: 'absolute', right: 8, top: 8 }}>
+					<Box sx={{ position: 'absolute', right: 8, top: 8, }}>
 						<CloseIcon onClick={props.onClose} fontSize="large"></CloseIcon>
 					</Box>
 					<TextField id="idCode" label={props.labelCode} variant="standard" size="small" sx={{ p: 1, mt: -1 }} onChange={(event) => SetCode(event.target.value)} onKeyDown={handleKeyDown}/>
@@ -112,8 +113,9 @@ function Popup(props) {
 					</div>
 				</Box>
 			</Modal>
+			</Draggable>
 			</ThemeProvider>
-		</Draggable>
+		
 	);
 }
 
