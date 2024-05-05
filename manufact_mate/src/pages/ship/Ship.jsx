@@ -52,24 +52,23 @@ const columns = [
 		return item ? item.NAME : 'Not Found';
 	};
 
-	// //그리드 CODE에 따른 NAME값 출력
-	// const findNameByCode1 = (code) => {
-	// 	const item = cboOrder.find((item) => item.CODE === code);
-	// 	return item ? item.NAME : 'Not Found';
-	// };
-	
-
 	const defaultTheme = createTheme(); // 테마 적용
 
 	const [rows, setRows] = React.useState([]);
-	const [value, setValue] = React.useState(dayjs('2022-04-17')); //날짜
+	const [shipFrom, setShipFrom] = React.useState(dayjs().subtract(1, 'month')); //날짜
+	const [shipTo, setShipTo] = React.useState(dayjs()); //날짜
+	const [deliFrom, setDeliFrom] = React.useState(dayjs().subtract(1, 'month')); //날짜
+	const [deliTo, setDeliTo] = React.useState(dayjs()); //날짜
 
 	const [isCustPopupOpen, setIsCustPopupOpen] = useState(false);  // 팝업을 띄울지 말지 결정하는 상태 및 그 상태를 바꾸는 함수
 	const [selectedCustomer, setSelectedCustomer] = React.useState({ CODE: '', NAME: '' }); //팝업으로부터 값을 가져옴 + 사용자 입력 값 저장
 	const [isItemPopupOpen, setIsItemPopupOpen] = useState(false);  // 팝업을 띄울지 말지 결정하는 상태 및 그 상태를 바꾸는 함수
 	const [selectedItem, setSelectedItem] = React.useState({ CODE: '', NAME: '' }); //팝업으로부터 값을 가져옴 + 사용자 입력 값 저장
-	const [cboShip, setCboShip] = React.useState([]);
-	const [cboOrder, setCboOrder] = React.useState([]);
+	const [selectedCboShip, setSelectedCboShip] = React.useState({ CODE: '', NAME: '' }); //cbo 선택시 값 저장
+	const [selectedCboOrder, setSelectedCboOrder] = React.useState({ CODE: '', NAME: '' }); //cbo 선택시 값 저장
+
+	const [cboShip, setCboShip] = React.useState([]);	//cbo리스트를 받아와 배열로 저장
+	const [cboOrder, setCboOrder] = React.useState([]); //cbo리스트를 받아와 배열로 저장
 
 	const navigate = useNavigate(); //#region 사용자 세션처리
 
@@ -129,12 +128,12 @@ const columns = [
 		event?.preventDefault(); // event가 존재하면 preventDefault() 호출
 
 		await axios.post('/test/shipSelect', {
-			'dte_shipfrom': '2000-06-06',
-			'dte_shipto': '2024-05-02',
-			'dte_delidate': '2000-06-06',
-			'dte_delito': '2024-05-02',
-			'shipflag': '',
-			'orderflag': '',
+			'dte_shipfrom': shipFrom,
+			'dte_shipto': shipTo,
+			'dte_delidate': deliFrom,
+			'dte_delito': deliTo,
+			'shipflag': selectedCboShip.CODE,
+			'orderflag': selectedCboOrder.CODE,
 			'cust_code': selectedCustomer.CODE,
 			'cust_name': selectedCustomer.NAME,
 			'item_code': selectedItem.CODE,
@@ -175,7 +174,7 @@ const columns = [
 		handleSelect();
 		fetchShipOptions();
 		fetchOrderOptions();
-	}, [selectedCustomer, selectedItem]);
+	}, [selectedCustomer, selectedItem, selectedCboOrder, selectedCboShip, shipFrom, shipTo, deliFrom, deliTo]);
 
 	return (
 		<ThemeProvider theme={defaultTheme}>
@@ -202,16 +201,16 @@ const columns = [
 											label="수주일자 From"
 											views={['year', 'month', 'day']}
 											format="YYYY-MM-DD"
-											value={value}
-											onChange={(newValue) => setValue(newValue)}
+											value={shipFrom}
+											onChange={(newValue) => setShipFrom(newValue)}
 											slotProps={{ textField: { size: 'small' } }} />
 										<DatePicker
 											id="shipTo"
 											label="수주일자 To"
 											views={['year', 'month', 'day']}
 											format="YYYY-MM-DD"
-											value={value}
-											onChange={(newValue) => setValue(newValue)}
+											value={shipTo}
+											onChange={(newValue) => setShipTo(newValue)}
 											slotProps={{ textField: { size: 'small' } }} />
 									</DemoContainer>
 								</LocalizationProvider>
@@ -227,15 +226,15 @@ const columns = [
 										<DatePicker label="납품일자 From"
 											views={['year', 'month', 'day']}
 											format="YYYY-MM-DD"
-											value={value}
-											onChange={(newValue) => setValue(newValue)}
+											value={deliFrom}
+											onChange={(newValue) => setDeliFrom(newValue)}
 											slotProps={{ textField: { size: 'small' } }} />
 										<DatePicker
 											label="납품일자 To"
 											views={['year', 'month', 'day']}
 											format="YYYY-MM-DD"
-											value={value}
-											onChange={(newValue) => setValue(newValue)}
+											value={deliTo}
+											onChange={(newValue) => setDeliTo(newValue)}
 											slotProps={{ textField: { size: 'small' } }} />
 									</DemoContainer>
 								</LocalizationProvider>
@@ -254,9 +253,9 @@ const columns = [
 									<FormControl fullWidth>
 										<InputLabel id="demo-simple-select-label" sx={{ marginTop: -1 }}>수주구분</InputLabel>
 										<Select
-											value={cboShip.CODE}
+											value={selectedCboShip.CODE || ''}
 											label="수주구분"
-											onChange={(event) => handleChange(setCboShip, 'CODE', event)}
+											onChange={(event) => handleChange(setSelectedCboShip, 'CODE', event)}
 											size={"small"}
 										>
 											{cboShip.map((option) => (
@@ -271,10 +270,11 @@ const columns = [
 									<FormControl fullWidth sx={{ marginTop: 2 }}>
 										<InputLabel id="demo-simple-select-label" sx={{ marginTop: -1 }}>주문유형</InputLabel>
 										<Select
+										value={selectedCboOrder.CODE || ''}
 											labelId="demo-simple-select-label"
 											id="demo-simple-select"
 											label="Age"
-											onChange={(event) => handleChange(setCboOrder, 'CODE', event)}
+											onChange={(event) => handleChange(setSelectedCboOrder, 'CODE', event)}
 											size={"small"}
 										>
 											{cboOrder.map((option) => (
