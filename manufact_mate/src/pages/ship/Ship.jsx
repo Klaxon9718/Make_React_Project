@@ -31,20 +31,20 @@ export default function Ship() {
 
 	//그리드 설정
 	const columns = [
-		{ field: 'SHIP_NO', headerName: '수주번호', width: 120, editable: true },
-		{ field: 'SHIP_FLAG', headerName: '수주구분', editable: true, valueGetter: (params) => findNameByCode(params, cboShip) },
-		{ field: 'ORDER_FLAG', headerName: '주문유형', editable: true, valueGetter: (params) => findNameByCode(params, cboOrder) },
-		{ field: 'CUST_CODE', headerName: '거래처 코드', width: 120, editable: true },
-		{ field: 'CUST_NAME', headerName: '거래처 명', width: 150, editable: true },
-		{ field: 'CUST_ADD', headerName: '거래처 주소', width: 150, editable: true },
-		{ field: 'ITEM_CODE', headerName: '품목 코드', width: 120, editable: true },
-		{ field: 'ITEM_NAME', headerName: '품목 명', width: 150, editable: true },
-		{ field: 'QTY', type: 'number', headerName: '수주수량', width: 120, editable: true },
-		{ field: 'UNIT', headerName: '단위', editable: true },
-		{ field: 'SHIP_DATE', headerName: '수주일자', width: 120, editable: true },
-		{ field: 'DELI_DATE', headerName: '납품일자', width: 120, editable: true },
-		{ field: 'INS_EMP', headerName: '등록자', width: 100, editable: true },
-		{ field: 'RE_CONTENT', headerName: '특이사항', width: 150, editable: true },
+		{ field: 'SHIP_NO', headerName: '수주번호', width: 120, editable: false },
+		{ field: 'SHIP_FLAG', headerName: '수주구분', editable: false, valueGetter: (params) => findNameByCode(params, cboShip) },
+		{ field: 'ORDER_FLAG', headerName: '주문유형', editable: false, valueGetter: (params) => findNameByCode(params, cboOrder) },
+		{ field: 'CUST_CODE', headerName: '거래처 코드', width: 120, editable: false },
+		{ field: 'CUST_NAME', headerName: '거래처 명', width: 150, editable: false },
+		{ field: 'CUST_ADD', headerName: '거래처 주소', width: 150, editable: false },
+		{ field: 'ITEM_CODE', headerName: '품목 코드', width: 120, editable: false },
+		{ field: 'ITEM_NAME', headerName: '품목 명', width: 150, editable: false },
+		{ field: 'QTY', type: 'number', headerName: '수주수량', width: 120, editable: false },
+		{ field: 'UNIT', headerName: '단위', editable: false },
+		{ field: 'SHIP_DATE', headerName: '수주일자', width: 120, editable: false },
+		{ field: 'DELI_DATE', headerName: '납품일자', width: 120, editable: false },
+		{ field: 'INS_EMP', headerName: '등록자', width: 100, editable: false },
+		{ field: 'RE_CONTENT', headerName: '특이사항', width: 150, editable: false },
 	];
 
 	//그리드 CODE에 따른 NAME값 출력
@@ -70,6 +70,8 @@ export default function Ship() {
 
 	const [cboShip, setCboShip] = React.useState([]);	//cbo리스트를 받아와 배열로 저장
 	const [cboOrder, setCboOrder] = React.useState([]); //cbo리스트를 받아와 배열로 저장
+
+	const [selectedRowData, setSelectedRowData] = useState(null); //그리드 행 선택
 
 	const [isDrawerOpen, setIsDrawerOpen] = useState(false); //하단 Drawer 생성
 
@@ -104,6 +106,11 @@ export default function Ship() {
 		setSelectedItem(Item); // 선택된 품목 정보 저장
 		handleSelect();
 	};
+
+
+	const handleRowClick  = (params) => {
+		console.log(params.row); // 콘솔에 선택된 행의 데이터를 표시합니다.
+	  };
 
 
 
@@ -181,11 +188,9 @@ export default function Ship() {
 				>
 					<Box sx={{ flexGrow: 1, }}>
 						<Grid container spacing={2}>
-
 							<Grid item xs={4} >
 								<LocalizationProvider dateAdapter={AdapterDayjs}>
-									<DemoContainer components={['DatePicker', 'DatePicker']}
-									>
+									<DemoContainer components={['DatePicker', 'DatePicker']}>
 										{/*수주일자 */}
 										<DatePicker
 											id="shipFrom"
@@ -323,6 +328,7 @@ export default function Ship() {
 									slots={{
 										toolbar: GridToolbar,
 									}}
+									onRowClick={handleRowClick}
 								/>
 							</Grid>
 						</Grid>
@@ -340,4 +346,16 @@ export default function Ship() {
 	  invisible: true
 	}
   }}
-  drawer 사용시 뒤 활성화 */
+  drawer 사용시 뒤 활성화
+  
+ 	const handleRowSelection = (selectionModel) => {
+		if (selectionModel.length > 0) {
+		  const selectedID = selectionModel[0]; // 여기서는 단일 선택을 가정합니다.
+		  const selectedRow = rows.find(row => row.SHIP_NO === selectedID);
+		  setSelectedRowData(selectedRow);
+		  console.log(selectedRow); // 선택된 행의 데이터를 확인할 수 있습니다.
+		}
+	  };
+ 
+ 
+  */
