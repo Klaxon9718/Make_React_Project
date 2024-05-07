@@ -20,6 +20,8 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import Button from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
 
+import Popup from 'src/pages/ship/components/Popup';
+
 
 const Item = styled(Paper)(({ theme }) => ({
 	backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -36,8 +38,14 @@ export default function BottomDrawer(props) {
 	const [selectedCboShip, setSelectedCboShip] = React.useState({ CODE: '', NAME: '' }); //cbo 선택시 값 저장
 	const [selectedCboOrder, setSelectedCboOrder] = React.useState({ CODE: '', NAME: '' }); //cbo 선택시 값 저장
 
+	const [cust, setCust] = React.useState({ CODE: '', NAME: '' });
+	const [item, setItem] = React.useState({ CODE: '', NAME: '' });
+
 	const [dteShip, setDteShip] = React.useState(dayjs()); //날짜
 	const [dteDeli, setDteDeli] = React.useState(dayjs()); //날짜
+
+	const[isCustPopupOpen, setIsCustPopupOpen] = React.useState(false);
+	const[isItemPopupOpen, setIsItemPopupOpen] = React.useState(false);
 
 	const defaultTheme = createTheme(); // 테마 적용
 
@@ -47,6 +55,17 @@ export default function BottomDrawer(props) {
 			...prevState, //이전 상태 저장
 			[key]: event.target.value //해당 키에 대한 값을 변경
 		}));
+	};
+
+	// CustPopup 값 적용
+	const handleSelectCustomer = (customer) => {
+		setCust(customer);
+	};
+
+	// ItemPopup 값 적용
+	const handleSelectItem = (Item) => {
+		setItem(Item);
+
 	};
 
 	// 수주 콤보박스 리스트 가져옴
@@ -69,6 +88,17 @@ export default function BottomDrawer(props) {
 		}
 	};
 
+	
+	// 팝업을 열기 위한 범용 함수
+	const handleOpenPopup = (setPopupState) => {
+		setPopupState(true);
+	};
+
+	// 팝업을 닫기 위한 범용 함수
+	const handleClosePopup = (setPopupState) => {
+		setPopupState(false);
+	};
+
 	useEffect(() => {
 		fetchShipOptions();
 		fetchOrderOptions();
@@ -89,6 +119,7 @@ export default function BottomDrawer(props) {
 								label="수주번호"
 								variant="outlined"
 								size="small"
+								InputLabelProps={{ shrink: true }}
 								InputProps={{ readOnly: true, }}
 							/>
 
@@ -130,16 +161,18 @@ export default function BottomDrawer(props) {
 
 
 						<Box sx={{ display: 'flex', width: '100%', mt: 2, ml: 1 }}>
-							<TextField id="ship_no" label="거래처코드" variant="outlined" size="small" InputProps={{ readOnly: true, }} sx={{ ml: 1, height: 40, width: 140 }} />
-							<TextField id="ship_no" label="거래처명" variant="outlined" size="small" InputProps={{ readOnly: true, }} sx={{ ml: 1, height: 40 }} />
-							<TextField id="ship_no" label="품목 코드" variant="outlined" size="small" InputProps={{ readOnly: true, }} sx={{ ml: 1, height: 40, width: 140 }} />
-							<TextField id="ship_no" label="품목 명" variant="outlined" size="small" InputProps={{ readOnly: true, }} sx={{ ml: 1, height: 40 }} />
-
+							<TextField onClick={() => handleOpenPopup(setIsCustPopupOpen)} value ={cust.CODE} id="ship_no" label="거래처코드" variant="outlined" size="small" InputProps={{ readOnly: true, }}  InputLabelProps={{ shrink: true }} sx={{ ml: 1, height: 40, width: 160 }} />
+							<TextField onClick={() => handleOpenPopup(setIsCustPopupOpen)} value ={cust.NAME} id="ship_no" label="거래처명" variant="outlined" size="small" InputProps={{ readOnly: true, }} InputLabelProps={{ shrink: true }} sx={{ ml: 1, height: 40 }} />
+							{isCustPopupOpen && <Popup isopen={isCustPopupOpen} onClose={() => handleClosePopup(setIsCustPopupOpen)} labelCode={'거래처 코드'} labelName={'거래처 명'} tname={'Customer_Master'} calcode={'customer_code'} calname={'customer_name'} onSelect={handleSelectCustomer} />}
+							
+							<TextField  onClick={() => handleOpenPopup(setIsItemPopupOpen)} value ={item.CODE} id="ship_no" label="품목 코드" variant="outlined" size="small" InputProps={{ readOnly: true, }} InputLabelProps={{ shrink: true }} sx={{ ml: 1, height: 40, width: 160 }} />
+							<TextField  onClick={() => handleOpenPopup(setIsItemPopupOpen)} value ={item.NAME} id="ship_no" label="품목 명" variant="outlined" size="small" InputProps={{ readOnly: true, }} InputLabelProps={{ shrink: true }}  sx={{ ml: 1, height: 40 }} />
+							{isItemPopupOpen && <Popup isopen={isItemPopupOpen} onClose={() => handleClosePopup(setIsItemPopupOpen)} labelCode={'품목 코드'} labelName={'품목 명'} tname={'Item_Master'} calcode={'Item_code'} calname={'Item_name'} onSelect={handleSelectItem} />}
 						</Box>
 
 						<Box sx={{ display: 'flex', width: '100%', mt: 2, ml: 1 }}>
-							<TextField id="ship_no" label="수주수량" variant="outlined" size="small" InputProps={{ readOnly: true, }} sx={{ ml: 1, height: 40, width: 140 }} />
-							<TextField id="ship_no" label="단위" variant="outlined" size="small" InputProps={{ readOnly: true, }} sx={{ ml: 1, height: 40, width: 100 }} />
+							<TextField id="ship_no" label="수주수량" variant="outlined" size="small" InputLabelProps={{ shrink: true }} InputProps={{ readOnly: true, }} sx={{ ml: 1, height: 40, width: 140 }} />
+							<TextField id="ship_no" label="단위" variant="outlined" size="small" InputLabelProps={{ shrink: true }} InputProps={{ readOnly: true, }} sx={{ ml: 1, height: 40, width: 100 }} />
 							<LocalizationProvider dateAdapter={AdapterDayjs}>
 								<Box sx={{
 									display: 'flex',
