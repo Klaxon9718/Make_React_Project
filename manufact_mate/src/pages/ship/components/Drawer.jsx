@@ -78,116 +78,112 @@ export default function BottomDrawer(props) {
 	return (
 		<ThemeProvider theme={defaultTheme}>
 			<Drawer anchor={'bottom'} open={props.isopen} onClose={props.onClose}>
-				<Box sx={{ flexGrow: 1, display: 'flex', width: '100%', height: { xs: 100, sm: 150, md: 250, lg: 300 } }} role="presentation">
-					<Paper sx={{ display: 'flex', width: '100%', }} square={false} elevation={3}>
 
-						<Grid container align="center" spacing={1} xs={12}  > {/*전체*/}
+				<Paper sx={{ display: 'flex', width: '100%', }} square={false} elevation={3}>
+					<Box>
+						<Box sx={{ width: '100%', mt: 2, ml: 1, display: 'flex', alignItems: 'center' }} >
 
-							<Grid sx={{ mt: 2, ml: 1 , display: 'flex'}} xs={10} container align="center" direction="row"  > {/*왼쪽*/}
-							
-								<Grid container direction="row" xs={8} sx={{ mt: 2,ml: 2 }}>
-									<Grid item xs={2}>
-										<TextField id="ship_no" label="수주번호" variant="outlined" size="small" InputProps={{ readOnly: true, }} />
-									</Grid>
+							<TextField
+								sx={{ width: 200, ml: 1 }}
+								id="ship_no"
+								label="수주번호"
+								variant="outlined"
+								size="small"
+								InputProps={{ readOnly: true, }}
+							/>
 
-									<Grid item xs={2}>
-										<FormControl fullWidth >
-											<InputLabel id="demo-simple-select-label" sx={{ mt: -1, }} >수주구분</InputLabel>
-											<Select
-												value={selectedCboShip.CODE || ''}
-												label="수주구분"
-												onChange={(event) => handleChange(setSelectedCboShip, 'CODE', event)}
-												size={"small"}
-												sx={{ width: 140, ml: 1 }}
-											>
-												{cboShip.map((option) => (
-													<MenuItem key={option.CODE} value={option.CODE}>
-														{option.NAME}
-													</MenuItem>
-												))}
-											</Select>
-										</FormControl>
-									</Grid>
+							<FormControl sx={{ ml: 1 }} >
+								<InputLabel id="demo-simple-select-label" sx={{ mt: -1 }}>수주구분</InputLabel>
+								<Select
+									value={selectedCboShip.CODE || ''}
+									label="수주구분"
+									onChange={(event) => handleChange(setSelectedCboShip, 'CODE', event)}
+									size="small"
+									sx={{ width: 120 }}
+								>
+									{cboShip.map((option) => (
+										<MenuItem key={option.CODE} value={option.CODE}>
+											{option.NAME}
+										</MenuItem>
+									))}
+								</Select>
+							</FormControl>
 
-									<Grid item xs={2} >
-										<FormControl fullWidth >
-											<InputLabel id="demo-simple-select-label" sx={{ mt: -1, }}>주문유형</InputLabel>
-											<Select
-												value={selectedCboOrder.CODE || ''}
-												labelId="demo-simple-select-label"
-												id="demo-simple-select"
-												onChange={(event) => handleChange(setSelectedCboOrder, 'CODE', event)}
-												size={"small"}
-												sx={{ width: 120 }}
-											>
-												{cboOrder.map((option) => (
-													<MenuItem key={option.CODE} value={option.CODE}>
-														{option.NAME}
-													</MenuItem>
-												))}
-											</Select>
-										</FormControl>
-									</Grid>
-								</Grid>
+							<FormControl sx={{ ml: 1 }} >
+								<InputLabel id="demo-simple-select-label" sx={{ mt: -1 }}>주문유형</InputLabel>
+								<Select
+									value={selectedCboOrder.CODE || ''}
+									labelId="demo-simple-select-label"
+									id="demo-simple-select"
+									onChange={(event) => handleChange(setSelectedCboOrder, 'CODE', event)}
+									size="small"
+									sx={{ height: 40, width: 120 }}
+								>
+									{cboOrder.map((option) => (
+										<MenuItem key={option.CODE} value={option.CODE}>
+											{option.NAME}
+										</MenuItem>
+									))}
+								</Select>
+							</FormControl>
+						</Box>
 
 
-								<Grid sx={{ ml: 1, mt: 1 }} xs={8} container direction="row">
-									<TextField id="ship_no" label="거래처코드" variant="outlined" size="small" sx={{ ml: 1 }} />
-									<TextField id="ship_no" label="거래처명" variant="outlined" size="small" InputProps={{ readOnly: true, }} sx={{ ml: 1, }} />
-									<TextField id="ship_no" label="품목 코드" variant="outlined" size="small" InputProps={{ readOnly: true, }} sx={{ ml: 1,}} />
-									<TextField id="ship_no" label="품목 명" variant="outlined" size="small" InputProps={{ readOnly: true, }} sx={{ ml: 1, }} />
-								</Grid>
+						<Box sx={{ display: 'flex', width: '100%', mt: 2, ml: 1 }}>
+							<TextField id="ship_no" label="거래처코드" variant="outlined" size="small" InputProps={{ readOnly: true, }} sx={{ ml: 1, height: 40, width: 140 }} />
+							<TextField id="ship_no" label="거래처명" variant="outlined" size="small" InputProps={{ readOnly: true, }} sx={{ ml: 1, height: 40 }} />
+							<TextField id="ship_no" label="품목 코드" variant="outlined" size="small" InputProps={{ readOnly: true, }} sx={{ ml: 1, height: 40, width: 140 }} />
+							<TextField id="ship_no" label="품목 명" variant="outlined" size="small" InputProps={{ readOnly: true, }} sx={{ ml: 1, height: 40 }} />
+
+						</Box>
+
+						<Box sx={{ display: 'flex', width: '100%', mt: 2, ml: 1 }}>
+							<TextField id="ship_no" label="수주수량" variant="outlined" size="small" InputProps={{ readOnly: true, }} sx={{ ml: 1, height: 40, width: 140 }} />
+							<TextField id="ship_no" label="단위" variant="outlined" size="small" InputProps={{ readOnly: true, }} sx={{ ml: 1, height: 40, width: 100 }} />
+							<LocalizationProvider dateAdapter={AdapterDayjs}>
+								<Box sx={{
+									display: 'flex',
+									ml: 1,
+									width: 'auto',
+								}}
+								>
+									<DatePicker
+										label="수주일자"
+										views={['year', 'month', 'day']}
+										format="YYYY-MM-DD"
+										value={dteShip}
+										sx={{ ml: 1, height: 40, width: 160 }}
+										onChange={(newValue) => setDteShip(newValue)}
+										slotProps={{ textField: { size: 'small' } }} />
+
+									<DatePicker
+										label="납품일자"
+										views={['year', 'month', 'day']}
+										format="YYYY-MM-DD"
+										value={dteDeli}
+										sx={{ ml: 1, height: 40, width: 160 }}
+										onChange={(newValue) => setDteShip(newValue)}
+										slotProps={{ textField: { size: 'small' } }} />
+								</Box>
+							</LocalizationProvider>
+						</Box>
 
 
+						<Box sx={{ display: 'flex', width: '100%', mt: 1, ml: 1 }}>
+							<Button sx={{ ml: 1, }} variant="outlined">저장</Button>
+							<Button sx={{ ml: 1, }} variant="outlined">삭제</Button>
+						</Box>
+					</Box>
 
-								<Grid sx={{ ml: 1, mt: 1 , display: 'flex'}} xs={8} container direction="row">
-									<TextField id="ship_no" label="수주수량" variant="outlined" size="small" sx={{ ml: 1, width: 140 }} />
-									<TextField id="ship_no" label="단위" variant="outlined" size="small" InputProps={{ readOnly: true, }} sx={{ ml: 1, width: 100 }} />
-									<Grid item xs={8} sx={{ ml: 1 ,mt: -1 ,  display: 'flex'}}>
-									<LocalizationProvider dateAdapter={AdapterDayjs} >
-										<DemoContainer  components={['DatePicker', 'DatePicker']}
-											sx={{
-												display: 'flex',
-												flexDirection: 'column',
-												width: { xs: '100%', sm: '100%', md: '100%', lg: '100%' },
-											}}>
-											<DatePicker label="수주일자"
-												views={['year', 'month', 'day']}
-												format="YYYY-MM-DD"
-												value={dteShip}
-												sx={{ ml: 1, width: 140 }}
-												onChange={(newValue) => setDteShip(newValue)}
-												slotProps={{ textField: { size: 'small' } }} />
-											<DatePicker
-												label="납품일자"
-												views={['year', 'month', 'day']}
-												format="YYYY-MM-DD"
-												value={dteDeli}
-												sx={{ ml: 1, width: 140 }}
-												onChange={(newValue) => setDteDeli(newValue)}
-												slotProps={{ textField: { size: 'small' } }} />
-										</DemoContainer>
-									</LocalizationProvider>
-									</Grid>
-								</Grid>
+					<Box>
+						<TextField id="ship_no" label="특이사항" variant="outlined" size="small" 
+						multiline
+						rows={8}
+						sx={{ mt: 2, mb:1,  ml: 10, width: 800, }} 
+						InputProps={{style: {height: 'flex',},}} />
+					</Box>
+				</Paper>
 
-								<Grid sx={{ ml: 1, mt: 1 }} xs={8} container direction="row">
-								<TextField id="ship_no" label="특이사항" variant="outlined" size="small" sx={{ ml: 1, width: 920 }} />
-								</Grid>
-
-								<Grid sx={{ ml: 1, mt: 1 }} xs={8} container direction="row">
-									<Button sx={{ ml: 1, }} variant="outlined">저장</Button>
-									<Button sx={{ ml: 1, }} variant="outlined">삭제</Button>
-
-								</Grid>
-
-							</Grid>
-
-						</Grid>
-						
-
-					</Paper>
-				</Box>
 			</Drawer>
 		</ThemeProvider >
 	);
