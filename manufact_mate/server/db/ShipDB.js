@@ -1,5 +1,6 @@
 const { PoolOutlined } = require("@mui/icons-material")
 
+//수주 그리드 조회
 function SelectShip(mssql, pool, req, res) {
 
 	const dte_shipfrom = req.body.dte_shipfrom
@@ -38,6 +39,7 @@ function SelectShip(mssql, pool, req, res) {
 }
 
 
+//테스트용
 function SelectShipa(pool, req, res) {
 	console.log("/test/data실행");
 	pool.request()
@@ -48,6 +50,8 @@ function SelectShipa(pool, req, res) {
 		});
 }
 
+
+//조회용 : 수주 콤보박스 불러오는 용도 ('전체' 포함)
 function CboShipList(pool, req, res){
 	console.log("/test/CboShipList실행");
 	pool.request()
@@ -59,6 +63,7 @@ function CboShipList(pool, req, res){
 	})
 }
 
+//조회용 : 주문 유형 콤보박스 불러오는 용도 ('전체' 포함)
 function CboOrderList(pool, req, res){
 	console.log("/test/CboOrderList실행");
 	pool.request()
@@ -71,9 +76,33 @@ function CboOrderList(pool, req, res){
 }
 
 
+//삽입용 : 수주 콤보박스 불러오는 용도 ('전체' 미포함)
+function AddCboShipList(pool, req, res){
+	console.log("AddCboShipList 실행");
+	pool.request()
+	.query(	"SELECT UserDefine_Mi_Code CODE, UserDefine_Mi_Name NAME " + 
+			"FROM UserDefine_Mi_Master WHERE UserDefine_Ma_Code = 'SAL_TYPE'")
+	.then(result => {
+		return res.json(result.recordset);
+	})
+}
+
+//삽입용 : 주문유형 콤보박스 불러오는 용도 ('전체' 미포함)
+function AddCboOrderList(pool, req, res){
+	console.log("AddCboOrderList 실행");
+	pool.request()
+	.query(	"SELECT UserDefine_Mi_Code CODE, UserDefine_Mi_Name NAME " + 
+			"FROM UserDefine_Mi_Master WHERE UserDefine_Ma_Code = 'SOTYPE'")
+	.then(result => {
+		return res.json(result.recordset);
+	})
+}
+
 module.exports = {
 	SelectShip,
 	SelectShipa,
 	CboShipList,
 	CboOrderList,
+	AddCboShipList,
+	AddCboOrderList,
 }

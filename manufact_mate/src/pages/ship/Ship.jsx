@@ -264,7 +264,7 @@ export default function Ship() {
 											value={selectedCboOrder.CODE || ''}
 											labelId="demo-simple-select-label"
 											id="demo-simple-select"
-											label="Age"
+											label='주문 유형'
 											onChange={(event) => handleChange(setSelectedCboOrder, 'CODE', event)}
 											size={"small"}
 										>

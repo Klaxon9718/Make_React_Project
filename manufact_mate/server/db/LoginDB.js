@@ -23,12 +23,23 @@ connectToDatabase().then(pool => {
 	app.post('/test/cboShipList', (req, res) => ShipDB.CboShipList(pool, req, res));
 
 	//주문유형 콤보박스 처리
-	app.post('/test/cboOrderList', (req, res) => ShipDB.CboOrderList(pool, req, res))
+	app.post('/test/cboOrderList', (req, res) => ShipDB.CboOrderList(pool, req, res));
+
+	//Drawer.jsx
+	//데이터 삽입 주문 유형 cbo
+	app.post('/test/addCboOrderList', (req, res) => ShipDB.AddCboShipList(pool, req, res));
+
+	//데이터 삽입 수주 유형 cbo
+	app.post('/test/addCboShipList', (req, res) => ShipDB.AddCboOrderList(pool, req, res));
+
 
 
 
 	//CompoDB.js : 컴포넌트 쿼리 실행
 	app.post('/test/popupSelect', (req, res) => CompoDB.PopupSelect(mssql, pool, req, res));
+
+	
+
 
 
 	app.get('/api/workorder', function (req, res) {
