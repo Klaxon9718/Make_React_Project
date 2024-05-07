@@ -107,9 +107,10 @@ export default function Ship() {
 		handleSelect();
 	};
 
-
+	//행 클릭 시
 	const handleRowClick  = (params) => {
-		console.log(params.row); // 콘솔에 선택된 행의 데이터를 표시합니다.
+		console.log(params.row); 
+		<Drawer></Drawer>
 	  };
 
 
@@ -328,7 +329,7 @@ export default function Ship() {
 									slots={{
 										toolbar: GridToolbar,
 									}}
-									onRowClick={handleRowClick}
+									onRowClick={() => handleOpenPopup(setIsDrawerOpen)}
 								/>
 							</Grid>
 						</Grid>
