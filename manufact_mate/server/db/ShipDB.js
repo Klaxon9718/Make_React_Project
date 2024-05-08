@@ -115,6 +115,27 @@ pool.request()
 })
 }
 
+function 
+ShipSave(mssql, pool, req, res){
+	console.log("ShipSave 실행");
+	console.log("shipsave body : " + req.body.ORDER_FLAG)
+
+	pool.request()
+	.input('SHIP_NO', mssql.VarChar,req.body.SHIP_NO)
+	.input('SHIP_FLAG', mssql.VarChar,req.body.SHIP_FLAG)
+	.input('ORDER_FLAG', mssql.VarChar,req.body.ORDER_FLAG)
+	.input('CUST_CODE', mssql.VarChar,req.body.CUST_CODE)
+	.input('ITEM_CODE', mssql.VarChar,req.body.ITEM_CODE)
+	.input('QTY', mssql.VarChar,req.body.QTY)
+	.input('SHIP_DATE', mssql.VarChar,req.body.SHIP_DATE)
+	.input('DELI_DATE', mssql.VarChar,req.body.DELI_DATE)
+	.input('REMARK', mssql.VarChar,req.body.REMARK)
+	.input('SHIPINS_EMP', mssql.VarChar,req.body.SHIPINS_EMP)
+	.input('INS_EMP', mssql.VarChar,req.body.INS_EMP)
+	.input('UP_EMP', mssql.VarChar,req.body.UP_EMP)
+	.execute('USP_LSH_MID_001_01')
+	}
+
 module.exports = {
 	SelectShip,
 	SelectShipa,
@@ -123,4 +144,5 @@ module.exports = {
 	AddCboShipList,
 	AddCboOrderList,
 	GetUnit,
+	ShipSave,
 }

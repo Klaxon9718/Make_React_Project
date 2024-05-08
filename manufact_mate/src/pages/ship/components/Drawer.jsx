@@ -22,15 +22,6 @@ import { styled } from '@mui/material/styles';
 
 import Popup from 'src/pages/ship/components/Popup';
 
-
-const Item = styled(Paper)(({ theme }) => ({
-	backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
-	...theme.typography.body2,
-	padding: theme.spacing(1),
-	textAlign: 'center',
-	color: theme.palette.text.secondary,
-}));
-
 export default function BottomDrawer(props) {
 
 	const { selectedData } = props;
@@ -44,6 +35,8 @@ export default function BottomDrawer(props) {
 	const [cust, setCust] = React.useState({ CODE: '', NAME: '' });	//거래처
 	const [item, setItem] = React.useState({ CODE: '', NAME: '' }); //품목
 	const [unit, setUnit] = React.useState('');	// 단위
+	const [remark, setRemark] = React.useState(''); // 특이사항
+	const [qty, setQty] = React.useState('');
 
 	const [dteShip, setDteShip] = React.useState(dayjs()); //날짜
 	const [dteDeli, setDteDeli] = React.useState(dayjs()); //날짜
@@ -95,12 +88,14 @@ export default function BottomDrawer(props) {
 	//단위 설정
 	const fetchUnit = async () => {
 		try {
+			console.log("CODE 값 async: " + item.CODE);
 			await axios.post('/test/getUnit', {
-				'code':item.CODE, 
+				'code':item.CODE,
 			})
 			.then(function(response){
 				console.log("UNIT 조회");
 				console.log(response.data);
+				console.log("CODE 값 : " + item.CODE);
 				setUnit(response.data);
 			})
 			.catch(function (error){
@@ -111,6 +106,33 @@ export default function BottomDrawer(props) {
 		}
 	};
 	//#endregion
+
+	//주문유형 콤보박스 리스트 가져옴
+	const handleSave = async() => {
+		console.log("OREDER_FLAG':selectedCboOrder.CODE, 값 async: " + selectedCboOrder.CODE);
+		console.log("Drawer REMARK 출력 " + remark);
+		try{
+			await axios.post('/test/shipSave', {
+				'SHIP_NO' : '',
+				'SHIP_FLAG' : selectedCboShip.CODE,
+				'OREDER_FLAG':selectedCboOrder.CODE,
+				'CUST_CODE': cust.CODE,
+				'ITEM_CODE': item.NAME,
+				'QTY': qty,
+				'SHIP_DATE': dteShip,
+				'DELI_DATE': dteDeli,
+				'REMARK' : remark,
+				'SHIPINS_EMP': sessionStorage.getItem('session_id') ,
+				'INS_EMP':sessionStorage.getItem('session_id') ,
+				'UP_EMP':sessionStorage.getItem('session_id') ,
+			})
+			.then(function(response){
+				console.log("저장 성공");
+			} )
+		} catch (error) {
+			console.error('Error occurred during save processing:', error.message);
+		}
+	};
 
 	
 	// 팝업을 열기 위한 범용 함수
@@ -123,6 +145,7 @@ export default function BottomDrawer(props) {
 		setPopupState(false);
 	};
 
+
 	useEffect(() => {
 
 		if (selectedData) {
@@ -132,7 +155,6 @@ export default function BottomDrawer(props) {
                 console.log(`${key}: ${value}`);
             });
         }
-
 		fetchShipOptions();
 		fetchOrderOptions();
 		if(item.CODE !== ''){	//아이템 코드가 있을 경우만 실행
@@ -198,7 +220,7 @@ export default function BottomDrawer(props) {
 
 
 						<Box sx={{ display: 'flex', width: '100%', mt: 2, ml: 1 }}>
-							<TextField onClick={() => handleOpenPopup(setIsCustPopupOpen)} value ={cust.CODE} id="ship_no" label="거래처코드" variant="outlined" size="small" InputProps={{ readOnly: true, }}  InputLabelProps={{ shrink: true }} sx={{ ml: 1, height: 40, width: 160 }} />
+							<TextField onClick={() => handleOpenPopup(setIsCustPopupOpen)} value ={cust.CODE} onChange={(e) => setCust({'CODE': e.target.value})} id="ship_no" label="거래처코드" variant="outlined" size="small" InputProps={{ readOnly: true, }}  InputLabelProps={{ shrink: true }} sx={{ ml: 1, height: 40, width: 160 }} />
 							<TextField onClick={() => handleOpenPopup(setIsCustPopupOpen)} value ={cust.NAME} id="ship_no" label="거래처명" variant="outlined" size="small" InputProps={{ readOnly: true, }} InputLabelProps={{ shrink: true }} sx={{ ml: 1, height: 40 }} />
 							{isCustPopupOpen && <Popup isopen={isCustPopupOpen} onClose={() => handleClosePopup(setIsCustPopupOpen)} labelCode={'거래처 코드'} labelName={'거래처 명'} tname={'Customer_Master'} calcode={'customer_code'} calname={'customer_name'} onSelect={handleSelectCustomer} />}
 							
@@ -208,7 +230,8 @@ export default function BottomDrawer(props) {
 						</Box>
 
 						<Box sx={{ display: 'flex', width: '100%', mt: 2, ml: 1 }}>
-							<TextField id="ship_no" label="수주수량" variant="outlined" size="small" InputLabelProps={{ shrink: true }} InputProps={{ readOnly: true, }} sx={{ ml: 1, height: 40, width: 140 }} />
+							
+							<TextField id="ship_no" label="수주수량" variant="outlined" size="small" onChange={(e) => setQty(e.target.value)} InputLabelProps={{ shrink: true }} sx={{ ml: 1, height: 40, width: 140 }} inputProps={{  type: 'number'  }}></TextField>
 							<TextField id="ship_no" value={unit} label="단위" variant="outlined" size="small" InputLabelProps={{ shrink: true }} InputProps={{ readOnly: true, }} sx={{ ml: 1, height: 40, width: 100 }} />
 							<LocalizationProvider dateAdapter={AdapterDayjs}>
 								<Box sx={{
@@ -232,7 +255,7 @@ export default function BottomDrawer(props) {
 										format="YYYY-MM-DD"
 										value={dteDeli}
 										sx={{ ml: 1, height: 40, width: 160 }}
-										onChange={(newValue) => setDteShip(newValue)}
+										onChange={(newValue) => setDteDeli(newValue)}
 										slotProps={{ textField: { size: 'small' } }} />
 								</Box>
 							</LocalizationProvider>
@@ -240,7 +263,7 @@ export default function BottomDrawer(props) {
 
 
 						<Box sx={{ display: 'flex', width: '100%', mt: 1, ml: 1 }}>
-							<Button sx={{ ml: 1, }} variant="outlined">저장</Button>
+							<Button sx={{ ml: 1, }} variant="outlined" onClick={handleSave}>저장</Button>
 							<Button sx={{ ml: 1, }} variant="outlined">삭제</Button>
 						</Box>
 					</Box>
@@ -249,6 +272,7 @@ export default function BottomDrawer(props) {
 						<TextField id="ship_no" label="특이사항" variant="outlined" size="small" 
 						multiline
 						rows={8}
+						onChange={(e) => setRemark(e.target.value)}
 						sx={{ mt: 2, mb:1,  ml: 10, width: 800, }} 
 						InputProps={{style: {height: 'flex',},}} />
 					</Box>

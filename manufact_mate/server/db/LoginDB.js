@@ -35,7 +35,10 @@ connectToDatabase().then(pool => {
 	app.post('/test/addCboShipList', (req, res) => ShipDB.AddCboOrderList(pool, req, res));
 
 	//단위
-	app.post('/test/getUnit', (req, res) => ShipDB.GetUnit(pool, req, res))
+	app.post('/test/getUnit', (req, res) => ShipDB.GetUnit(pool, req, res));
+
+	//데이터 삽입
+	app.post('/test/shipSave', (req, res) => ShipDB.ShipSave(mssql, pool, req, res));
 
 
 
