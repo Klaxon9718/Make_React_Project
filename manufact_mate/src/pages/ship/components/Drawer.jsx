@@ -33,11 +33,14 @@ const Item = styled(Paper)(({ theme }) => ({
 
 export default function BottomDrawer(props) {
 
+	const { selectedData } = props;
+
 	const [cboShip, setCboShip] = React.useState([]);	//cbo리스트를 받아와 배열로 저장
 	const [cboOrder, setCboOrder] = React.useState([]); //cbo리스트를 받아와 배열로 저장
 	const [selectedCboShip, setSelectedCboShip] = React.useState({ CODE: '', NAME: '' }); //cbo 선택시 값 저장
 	const [selectedCboOrder, setSelectedCboOrder] = React.useState({ CODE: '', NAME: '' }); //cbo 선택시 값 저장
 
+	const [shipNo, setShipNo] = React.useState('');
 	const [cust, setCust] = React.useState({ CODE: '', NAME: '' });	//거래처
 	const [item, setItem] = React.useState({ CODE: '', NAME: '' }); //품목
 	const [unit, setUnit] = React.useState('');	// 단위
@@ -121,10 +124,22 @@ export default function BottomDrawer(props) {
 	};
 
 	useEffect(() => {
+
+		if (selectedData) {
+            console.log("전달받은 행 값:");
+            // 객체의 모든 키(칼럼명)와 값을 순회하여 출력
+            Object.entries(selectedData).forEach(([key, value]) => {
+                console.log(`${key}: ${value}`);
+            });
+        }
+
 		fetchShipOptions();
 		fetchOrderOptions();
-		fetchUnit();
-	}, [item]);
+		if(item.CODE !== ''){	//아이템 코드가 있을 경우만 실행
+			fetchUnit();
+		}
+		
+	}, [item, selectedData]);
 
 
 	return (
