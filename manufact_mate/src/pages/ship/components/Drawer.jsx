@@ -38,8 +38,9 @@ export default function BottomDrawer(props) {
 	const [selectedCboShip, setSelectedCboShip] = React.useState({ CODE: '', NAME: '' }); //cbo 선택시 값 저장
 	const [selectedCboOrder, setSelectedCboOrder] = React.useState({ CODE: '', NAME: '' }); //cbo 선택시 값 저장
 
-	const [cust, setCust] = React.useState({ CODE: '', NAME: '' });
-	const [item, setItem] = React.useState({ CODE: '', NAME: '' });
+	const [cust, setCust] = React.useState({ CODE: '', NAME: '' });	//거래처
+	const [item, setItem] = React.useState({ CODE: '', NAME: '' }); //품목
+	const [unit, setUnit] = React.useState('');	// 단위
 
 	const [dteShip, setDteShip] = React.useState(dayjs()); //날짜
 	const [dteDeli, setDteDeli] = React.useState(dayjs()); //날짜
@@ -65,9 +66,9 @@ export default function BottomDrawer(props) {
 	// ItemPopup 값 적용
 	const handleSelectItem = (Item) => {
 		setItem(Item);
-
 	};
 
+	//#region 요청
 	// 수주 콤보박스 리스트 가져옴
 	const fetchShipOptions = async () => {
 		try {
@@ -88,6 +89,26 @@ export default function BottomDrawer(props) {
 		}
 	};
 
+	//단위 설정
+	const fetchUnit = async () => {
+		try {
+			await axios.post('/test/getUnit', {
+				'code':item.CODE, 
+			})
+			.then(function(response){
+				console.log("UNIT 조회");
+				console.log(response);
+				setUnit(response.data[0].NAME);
+			})
+			.catch(function (error){
+				console.error('Error occurred during UNIT processing:', error.message);
+			})
+		} catch (error) {
+			console.error('Error fetching UNIT options:', error);
+		}
+	};
+	//#endregion
+
 	
 	// 팝업을 열기 위한 범용 함수
 	const handleOpenPopup = (setPopupState) => {
@@ -102,7 +123,8 @@ export default function BottomDrawer(props) {
 	useEffect(() => {
 		fetchShipOptions();
 		fetchOrderOptions();
-	}, []);
+		fetchUnit();
+	}, [item]);
 
 
 	return (
@@ -172,7 +194,7 @@ export default function BottomDrawer(props) {
 
 						<Box sx={{ display: 'flex', width: '100%', mt: 2, ml: 1 }}>
 							<TextField id="ship_no" label="수주수량" variant="outlined" size="small" InputLabelProps={{ shrink: true }} InputProps={{ readOnly: true, }} sx={{ ml: 1, height: 40, width: 140 }} />
-							<TextField id="ship_no" label="단위" variant="outlined" size="small" InputLabelProps={{ shrink: true }} InputProps={{ readOnly: true, }} sx={{ ml: 1, height: 40, width: 100 }} />
+							<TextField id="ship_no" value={unit} label="단위" variant="outlined" size="small" InputLabelProps={{ shrink: true }} InputProps={{ readOnly: true, }} sx={{ ml: 1, height: 40, width: 100 }} />
 							<LocalizationProvider dateAdapter={AdapterDayjs}>
 								<Box sx={{
 									display: 'flex',

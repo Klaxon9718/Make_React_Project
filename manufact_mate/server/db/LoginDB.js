@@ -25,6 +25,8 @@ connectToDatabase().then(pool => {
 	//주문유형 콤보박스 처리
 	app.post('/test/cboOrderList', (req, res) => ShipDB.CboOrderList(pool, req, res));
 
+
+
 	//Drawer.jsx
 	//데이터 삽입 주문 유형 cbo
 	app.post('/test/addCboOrderList', (req, res) => ShipDB.AddCboShipList(pool, req, res));
@@ -32,29 +34,15 @@ connectToDatabase().then(pool => {
 	//데이터 삽입 수주 유형 cbo
 	app.post('/test/addCboShipList', (req, res) => ShipDB.AddCboOrderList(pool, req, res));
 
+	//단위
+	app.post('/test/getUnit', (req, res) => ShipDB.GetUnit(pool, req, res))
+
 
 
 
 	//CompoDB.js : 컴포넌트 쿼리 실행
 	app.post('/test/popupSelect', (req, res) => CompoDB.PopupSelect(mssql, pool, req, res));
 
-	
-
-
-
-	app.get('/api/workorder', function (req, res) {
-		pool.request()
-			// .input('DTE_WORK_FROM', mssql.VarChar)
-			// .input('DTE_WORK_TO', mssql.VarChar)
-			// .input('ITEM_CODE', mssql.VarChar)
-			// .input('ITEM_NAME', mssql.VarChar)
-			// .input('WORK_ORDER_NO', mssql.VarChar)
-			// .input('WO_STATUS', mssql.VarChar)
-			// .input('EMP', mssql.VarChar)
-			.execute('dbo.SSP_SCG_MID_004_01')
-			.then((result) => {
-				res.json(result.recordset);
-			});
 	});
 
 	// app.use((req, res, next) => {
@@ -102,7 +90,6 @@ connectToDatabase().then(pool => {
 		}
 	});
 
-});
 
 
 

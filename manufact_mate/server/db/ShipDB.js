@@ -98,6 +98,23 @@ function AddCboOrderList(pool, req, res){
 	})
 }
 
+function GetUnit(pool, req, res){
+console.log("GetUnit 실행");
+console.log(req.body.code +  "코드 값");
+
+query = "SELECT UM.UserDefine_Mi_Name NAME FROM Item_Master IM LEFT OUTER JOIN UserDefine_Mi_Master UM ON IM.Item_Manage_Unit = UM.UserDefine_Mi_Code AND UM.UserDefine_Ma_Code = 'ITEMUNIT' WHERE Item_code = '" + 
+	req.body.code + "'";
+
+pool.request()
+.query(query)
+.then(result => {
+	//console.log(result); => 객체 덩어리가 나옴
+	//console.log("GetUnit 결과 : " + result.recordset[0])
+	//console.log("GetUnit 결과 : " + result.recordsets)
+	return   res.json( result.recordset.NAME)	
+})
+}
+
 module.exports = {
 	SelectShip,
 	SelectShipa,
@@ -105,4 +122,5 @@ module.exports = {
 	CboOrderList,
 	AddCboShipList,
 	AddCboOrderList,
+	GetUnit,
 }
