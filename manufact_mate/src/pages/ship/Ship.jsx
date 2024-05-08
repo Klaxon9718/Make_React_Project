@@ -356,7 +356,9 @@ export default function Ship() {
 										row: selectedRowData
 									  }}
 									  onRowClick={(params) => handleRowClick(params)} //행 클릭 시
-									  onSelectionModelChange={(newSelection) => { handleCheckRows(newSelection); console.log("체크된 행들의 정보:", newSelection);}} //삭제 처리
+									  onRowSelectionModelChange={(newRowSelectionModel) => {
+										handleCheckRows(newRowSelectionModel);
+									  }} //삭제 처리
 								/>
 								{isDrawerOpen && <Drawer route={'Grid'} selectedData={selectedRowData} isopen={isDrawerOpen} onClose={() => handleClosePopup(setIsDrawerOpen)} />}
 							</Grid>

@@ -62,7 +62,7 @@ connectToDatabase().then(pool => {
 			const result = await pool.request()
 				.input('User_ID', mssql.VarChar, user_id)
 				.input('User_Pw', mssql.VarChar, user_pw)
-				.query('SELECT User_ID AS LoginStatus FROM User_Master WHERE User_ID = @User_ID AND User_PW = @User_Pw')
+				.query('SELECT Emp_Code AS LoginStatus FROM User_Master WHERE User_ID = @User_ID AND User_PW = @User_Pw')
 			//#region 로그
 			// console.log("사용자 로그인 정보 SELECT : " + result.recordset[0] );
 			// console.log(result.recordset[0]);
@@ -71,9 +71,9 @@ connectToDatabase().then(pool => {
 			//#endregion
 
 			// 조회 결과 검증
-			if (result.recordset.length && result.recordset[0].LoginStatus === user_id) {
+			if (result.recordset.length /*&& result.recordset[0].LoginStatus === user_id*/) {
 				// 사용자 인증 성공
-				return res.status(200).send({ session_id: user_id });
+				return res.status(200).send({ session_id: result.recordset[0].LoginStatus });
 			}
 			
 			// 사용자 인증 실패

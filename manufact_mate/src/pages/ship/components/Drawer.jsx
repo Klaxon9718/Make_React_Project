@@ -45,6 +45,7 @@ export default function BottomDrawer(props) {
 	const[isCustPopupOpen, setIsCustPopupOpen] = React.useState(false);
 	const[isItemPopupOpen, setIsItemPopupOpen] = React.useState(false);
 	const[isAlert, setIsAlert] = React.useState(false);
+	const[isError, setIsError] = React.useState(false);
 
 	const defaultTheme = createTheme(); // 테마 적용
 
@@ -113,6 +114,7 @@ export default function BottomDrawer(props) {
 	const handleSave = async() => {
 		console.log("OREDER_FLAG':selectedCboShip.CODE, 값 async: " + selectedCboShip.CODE);
 		console.log("Drawer REMARK 출력 " + remark);
+		console.log("세션 " + sessionStorage.getItem('session_id'));
 		try{
 			//selectedCboOrder, selectedCboShip 바뀌어서 설정함
 			await axios.post('/test/shipSave', {
@@ -135,6 +137,7 @@ export default function BottomDrawer(props) {
 				)
 		} catch (error) {
 			console.error('Error occurred during save processing:', error.message);
+			setIsError(true)
 		}
 	};
 
@@ -161,6 +164,7 @@ export default function BottomDrawer(props) {
         }
 		fetchShipOptions();
 		fetchOrderOptions();
+		
 		if(item.CODE !== ''){	//아이템 코드가 있을 경우만 실행
 			fetchUnit();
 		}
@@ -277,8 +281,10 @@ export default function BottomDrawer(props) {
 						sx={{ mt: 2, mb:1,  ml: 10, width: 800, }} 
 						InputProps={{style: {height: 'flex',},}} />
 					</Box>
-					{isAlert && <Alert severity="success">This is a success Alert.</Alert>}
 				</Paper>
+				
+				{isAlert && <Alert severity="success">저장되었습니다.</Alert>}
+				{isError && <Alert severity="error">저장 실패</Alert>}
 			</Drawer>
 		</ThemeProvider >
 	);
