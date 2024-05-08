@@ -77,7 +77,7 @@ function CboOrderList(pool, req, res){
 
 
 //삽입용 : 수주 콤보박스 불러오는 용도 ('전체' 미포함)
-function AddCboShipList(pool, req, res){
+function AddCboOrderList(pool, req, res){
 	console.log("AddCboShipList 실행");
 	pool.request()
 	.query(	"SELECT UserDefine_Mi_Code CODE, UserDefine_Mi_Name NAME " + 
@@ -88,7 +88,7 @@ function AddCboShipList(pool, req, res){
 }
 
 //삽입용 : 주문유형 콤보박스 불러오는 용도 ('전체' 미포함)
-function AddCboOrderList(pool, req, res){
+function AddCboShipList(pool, req, res){
 	console.log("AddCboOrderList 실행");
 	pool.request()
 	.query(	"SELECT UserDefine_Mi_Code CODE, UserDefine_Mi_Name NAME " + 

@@ -29,10 +29,10 @@ connectToDatabase().then(pool => {
 
 	//Drawer.jsx
 	//데이터 삽입 주문 유형 cbo
-	app.post('/test/addCboOrderList', (req, res) => ShipDB.AddCboShipList(pool, req, res));
+	app.post('/test/addCboOrderList', (req, res) => ShipDB.AddCboOrderList(pool, req, res));
 
 	//데이터 삽입 수주 유형 cbo
-	app.post('/test/addCboShipList', (req, res) => ShipDB.AddCboOrderList(pool, req, res));
+	app.post('/test/addCboShipList', (req, res) => ShipDB.AddCboShipList(pool, req, res));
 
 	//단위
 	app.post('/test/getUnit', (req, res) => ShipDB.GetUnit(pool, req, res));

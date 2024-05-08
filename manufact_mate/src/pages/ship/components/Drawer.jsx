@@ -109,15 +109,16 @@ export default function BottomDrawer(props) {
 
 	//주문유형 콤보박스 리스트 가져옴
 	const handleSave = async() => {
-		console.log("OREDER_FLAG':selectedCboOrder.CODE, 값 async: " + selectedCboOrder.CODE);
+		console.log("OREDER_FLAG':selectedCboShip.CODE, 값 async: " + selectedCboShip.CODE);
 		console.log("Drawer REMARK 출력 " + remark);
 		try{
+			//selectedCboOrder, selectedCboShip 바뀌어서 설정함
 			await axios.post('/test/shipSave', {
 				'SHIP_NO' : '',
-				'SHIP_FLAG' : selectedCboShip.CODE,
-				'OREDER_FLAG':selectedCboOrder.CODE,
+				'SHIP_FLAG' : selectedCboOrder.CODE,
+				'ORDER_FLAG':selectedCboShip.CODE,
 				'CUST_CODE': cust.CODE,
-				'ITEM_CODE': item.NAME,
+				'ITEM_CODE': item.CODE,
 				'QTY': qty,
 				'SHIP_DATE': dteShip,
 				'DELI_DATE': dteDeli,
@@ -186,7 +187,6 @@ export default function BottomDrawer(props) {
 								<InputLabel id="demo-simple-select-label" sx={{ mt: -1 }}>수주구분</InputLabel>
 								<Select
 									value={selectedCboShip.CODE || ''}
-									label="수주구분"
 									onChange={(event) => handleChange(setSelectedCboShip, 'CODE', event)}
 									size="small"
 									sx={{ width: 120 }}
@@ -203,8 +203,6 @@ export default function BottomDrawer(props) {
 								<InputLabel id="demo-simple-select-label" sx={{ mt: -1 }}>주문유형</InputLabel>
 								<Select
 									value={selectedCboOrder.CODE || ''}
-									labelId="demo-simple-select-label"
-									id="demo-simple-select"
 									onChange={(event) => handleChange(setSelectedCboOrder, 'CODE', event)}
 									size="small"
 									sx={{ height: 40, width: 120 }}

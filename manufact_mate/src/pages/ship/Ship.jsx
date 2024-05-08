@@ -36,6 +36,7 @@ export default function Ship() {
 		{ field: 'ORDER_FLAG', headerName: '주문유형', editable: false, valueGetter: (params) => findNameByCode(params, cboOrder) },
 		{ field: 'CUST_CODE', headerName: '거래처 코드', width: 120, editable: false },
 		{ field: 'CUST_NAME', headerName: '거래처 명', width: 150, editable: false },
+		{ field: 'CUST_ADDR', headerName: '거래처 주소', width: 150, editable: false },
 		{ field: 'ITEM_CODE', headerName: '품목 코드', width: 120, editable: false },
 		{ field: 'ITEM_NAME', headerName: '품목 명', width: 150, editable: false },
 		{ field: 'QTY', type: 'number', headerName: '수주수량', width: 120, editable: false },
