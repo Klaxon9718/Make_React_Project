@@ -97,8 +97,8 @@ export default function BottomDrawer(props) {
 			})
 			.then(function(response){
 				console.log("UNIT 조회");
-				console.log(response);
-				setUnit(response.data[0].NAME);
+				console.log(response.data);
+				setUnit(response.data);
 			})
 			.catch(function (error){
 				console.error('Error occurred during UNIT processing:', error.message);

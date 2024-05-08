@@ -43,13 +43,6 @@ connectToDatabase().then(pool => {
 	//CompoDB.js : 컴포넌트 쿼리 실행
 	app.post('/test/popupSelect', (req, res) => CompoDB.PopupSelect(mssql, pool, req, res));
 
-	});
-
-	// app.use((req, res, next) => {
-	// 	console.log(`Received ${req.method} request for ${req.url}`);
-	// 	next();
-	//   });
-
 	//사용자 로그인
 	app.post('/test/login', async function (req, res) {
 		console.log("Login실행");
@@ -90,6 +83,15 @@ connectToDatabase().then(pool => {
 		}
 	});
 
+
+	});
+
+	// app.use((req, res, next) => {
+	// 	console.log(`Received ${req.method} request for ${req.url}`);
+	// 	next();
+	//   });
+
+	
 
 
 

@@ -108,10 +108,10 @@ query = "SELECT UM.UserDefine_Mi_Name NAME FROM Item_Master IM LEFT OUTER JOIN U
 pool.request()
 .query(query)
 .then(result => {
-	//console.log(result); => 객체 덩어리가 나옴
+	console.log(result);// => 객체 덩어리가 나옴
 	//console.log("GetUnit 결과 : " + result.recordset[0])
 	//console.log("GetUnit 결과 : " + result.recordsets)
-	return   res.json( result.recordset.NAME)	
+	return   res.json( result.recordset[0].NAME)	
 })
 }
 
