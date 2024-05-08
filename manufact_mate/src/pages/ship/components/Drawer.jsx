@@ -19,6 +19,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import Button from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
+import Alert from '@mui/material/Alert';
 
 import Popup from 'src/pages/ship/components/Popup';
 
@@ -43,6 +44,7 @@ export default function BottomDrawer(props) {
 
 	const[isCustPopupOpen, setIsCustPopupOpen] = React.useState(false);
 	const[isItemPopupOpen, setIsItemPopupOpen] = React.useState(false);
+	const[isAlert, setIsAlert] = React.useState(false);
 
 	const defaultTheme = createTheme(); // 테마 적용
 
@@ -127,9 +129,10 @@ export default function BottomDrawer(props) {
 				'INS_EMP':sessionStorage.getItem('session_id') ,
 				'UP_EMP':sessionStorage.getItem('session_id') ,
 			})
-			.then(function(response){
-				console.log("저장 성공");
-			} )
+			.then(
+				 console.log("저장 성공"),
+				 setIsAlert(true)
+				)
 		} catch (error) {
 			console.error('Error occurred during save processing:', error.message);
 		}
@@ -274,8 +277,8 @@ export default function BottomDrawer(props) {
 						sx={{ mt: 2, mb:1,  ml: 10, width: 800, }} 
 						InputProps={{style: {height: 'flex',},}} />
 					</Box>
+					{isAlert && <Alert severity="success">This is a success Alert.</Alert>}
 				</Paper>
-
 			</Drawer>
 		</ThemeProvider >
 	);

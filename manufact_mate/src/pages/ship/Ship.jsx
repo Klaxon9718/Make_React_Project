@@ -6,7 +6,7 @@ import Popup from 'src/pages/ship/components/Popup';
 import Drawer from 'src/pages/ship/components/Drawer';
 import { useNavigate } from "react-router-dom";
 
-//#region MUI 속성
+//#region MUI속성
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -71,7 +71,8 @@ export default function Ship() {
 	const [cboShip, setCboShip] = React.useState([]);	//cbo리스트를 받아와 배열로 저장
 	const [cboOrder, setCboOrder] = React.useState([]); //cbo리스트를 받아와 배열로 저장
 
-	const [selectedRowData, setSelectedRowData] = useState(null); //그리드 행 선택
+	const [selectedRowData, setSelectedRowData] = useState(null); //그리드 행 선택, 단일 행 선택
+	const [isCheckedRows, setIsCheckedRows] = useState([]); //체크박스 그리드 선택, 다중 행 선택
 
 	const [isDrawerOpen, setIsDrawerOpen] = useState(false); //하단 Drawer 생성
 
@@ -115,6 +116,26 @@ export default function Ship() {
   		setIsDrawerOpen(true);
 	  };
 
+	// 체크된 행 업데이트 함수
+  const handleCheckRows = (selectionModel) => {
+    setIsCheckedRows(selectionModel);
+	console.log("체크된 행의 IDs:", selectionModel);
+	const selectedRowsData = rows.filter(row => selectionModel.includes(row.SHIP_NO));
+  console.log("체크된 행의 데이터:", selectedRowsData);
+  };
+
+  // "삭제" 버튼을 눌렀을 때 실행되는 함수
+  const handleDeleteButtonClick = () => {
+	console.log("선택된 행의 ID들:", isCheckedRows); // 선택된 행의 ID들을 콘솔에 로깅
+  console.log("rows 배열:", rows); // rows 배열의 현재 상태를 콘솔에 로깅
+  const selectedRowsData = rows.filter(row => isCheckedRows.includes(row.SHIP_NO));
+  console.log("필터링된 선택된 행들의 데이터:", selectedRowsData); // 필터링된 선택된 행들의 데이터를 콘솔에 로깅
+	if (selectedRowsData.length > 0) {
+		console.log("선택된 행들의 데이터:", selectedRowsData);
+	  } else {
+		console.log("선택된 행이 없습니다.");
+	  }
+  };
 
 
 	//텍스트필드 값 변경
@@ -314,7 +335,7 @@ export default function Ship() {
 								}}>
 									<Button variant="outlined" sx={{ mr: 2 }} onClick={() => handleOpenPopup(setIsDrawerOpen)}>추가</Button>
 									{isDrawerOpen && <Drawer route={'Button'} isopen={isDrawerOpen} onClose={() => handleClosePopup(setIsDrawerOpen)} />}
-									<Button variant="outlined" sx={{ mr: 2 }}>삭제</Button>
+									<Button variant="outlined" sx={{ mr: 2 }}  onClick={handleDeleteButtonClick}>삭제</Button>
 								</Container>
 							</Grid>
 
@@ -334,7 +355,8 @@ export default function Ship() {
 									slotProps={{
 										row: selectedRowData
 									  }}
-									  onRowClick={(params) => handleRowClick(params)}
+									  onRowClick={(params) => handleRowClick(params)} //행 클릭 시
+									  onSelectionModelChange={(newSelection) => { handleCheckRows(newSelection); console.log("체크된 행들의 정보:", newSelection);}} //삭제 처리
 								/>
 								{isDrawerOpen && <Drawer route={'Grid'} selectedData={selectedRowData} isopen={isDrawerOpen} onClose={() => handleClosePopup(setIsDrawerOpen)} />}
 							</Grid>
