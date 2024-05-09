@@ -228,19 +228,19 @@ export default function BottomDrawer(props) {
 
 
 						<Box sx={{ display: 'flex', width: '100%', mt: 2, ml: 1 }}>
-							<TextField onClick={() => handleOpenPopup(setIsCustPopupOpen)} value ={cust.CODE} onChange={(e) => setCust({'CODE': e.target.value})} id="ship_no" label="거래처코드" variant="outlined" size="small" InputProps={{ readOnly: true, }}  InputLabelProps={{ shrink: true }} sx={{ ml: 1, height: 40, width: 160 }} />
-							<TextField onClick={() => handleOpenPopup(setIsCustPopupOpen)} value ={cust.NAME} id="ship_no" label="거래처명" variant="outlined" size="small" InputProps={{ readOnly: true, }} InputLabelProps={{ shrink: true }} sx={{ ml: 1, height: 40 }} />
+							<TextField onClick={() => { if (!selectedData) {handleOpenPopup(setIsCustPopupOpen)}}} value={selectedData ? selectedData.CUST_CODE : cust.CODE || ''} onChange={(e) => setCust({'CODE': e.target.value})} id="ship_no" label="거래처코드" variant="outlined" size="small" InputProps={{ readOnly: true, }}  InputLabelProps={{ shrink: true }} sx={{ ml: 1, height: 40, width: 160 }} />
+							<TextField onClick={() => { if (!selectedData) {handleOpenPopup(setIsCustPopupOpen)}}} value={selectedData ? selectedData.CUST_NAME : cust.NAME || ''} id="ship_no" label="거래처명" variant="outlined" size="small" InputProps={{ readOnly: true, }} InputLabelProps={{ shrink: true }} sx={{ ml: 1, height: 40 }} />
 							{isCustPopupOpen && <Popup isopen={isCustPopupOpen} onClose={() => handleClosePopup(setIsCustPopupOpen)} labelCode={'거래처 코드'} labelName={'거래처 명'} tname={'Customer_Master'} calcode={'customer_code'} calname={'customer_name'} onSelect={handleSelectCustomer} />}
 							
-							<TextField  onClick={() => handleOpenPopup(setIsItemPopupOpen)} value ={item.CODE} id="ship_no" label="품목 코드" variant="outlined" size="small" InputProps={{ readOnly: true, }} InputLabelProps={{ shrink: true }} sx={{ ml: 1, height: 40, width: 160 }} />
-							<TextField  onClick={() => handleOpenPopup(setIsItemPopupOpen)} value ={item.NAME} id="ship_no" label="품목 명" variant="outlined" size="small" InputProps={{ readOnly: true, }} InputLabelProps={{ shrink: true }}  sx={{ ml: 1, height: 40 }} />
+							<TextField  onClick={() => { if (!selectedData) {handleOpenPopup(setIsItemPopupOpen)}}} value={selectedData ? selectedData.ITEM_CODE : item.CODE || ''} id="ship_no" label="품목 코드" variant="outlined" size="small" InputProps={{ readOnly: true, }} InputLabelProps={{ shrink: true }} sx={{ ml: 1, height: 40, width: 160 }} />
+							<TextField  onClick={() => { if (!selectedData) {handleOpenPopup(setIsItemPopupOpen)}}} value={selectedData ? selectedData.ITEM_NAME : item.NAME || ''} id="ship_no" label="품목 명" variant="outlined" size="small" InputProps={{ readOnly: true, }} InputLabelProps={{ shrink: true }}  sx={{ ml: 1, height: 40 }} />
 							{isItemPopupOpen && <Popup isopen={isItemPopupOpen} onClose={() => handleClosePopup(setIsItemPopupOpen)} labelCode={'품목 코드'} labelName={'품목 명'} tname={'Item_Master'} calcode={'Item_code'} calname={'Item_name'} onSelect={handleSelectItem} />}
 						</Box>
 
 						<Box sx={{ display: 'flex', width: '100%', mt: 2, ml: 1 }}>
 							
-							<TextField id="ship_no" label="수주수량" variant="outlined" size="small" onChange={(e) => setQty(e.target.value)} InputLabelProps={{ shrink: true }} sx={{ ml: 1, height: 40, width: 140 }} inputProps={{  type: 'number'  }}></TextField>
-							<TextField id="ship_no" value={unit} label="단위" variant="outlined" size="small" InputLabelProps={{ shrink: true }} InputProps={{ readOnly: true, }} sx={{ ml: 1, height: 40, width: 100 }} />
+							<TextField id="ship_no" label="수주수량" value={selectedData ? selectedData.QTY : qty || ''} variant="outlined" size="small" onChange={(e) => setQty(e.target.value)} InputLabelProps={{ shrink: true }} sx={{ ml: 1, height: 40, width: 140 }} inputProps={{  type: 'number'  }}></TextField>
+							<TextField id="ship_no" value={selectedData ? selectedData.UNIT : unit} label="단위" variant="outlined" size="small" InputLabelProps={{ shrink: true }} InputProps={{ readOnly: true, }} sx={{ ml: 1, height: 40, width: 100 }} />
 							<LocalizationProvider dateAdapter={AdapterDayjs}>
 								<Box sx={{
 									display: 'flex',
@@ -252,7 +252,7 @@ export default function BottomDrawer(props) {
 										label="수주일자"
 										views={['year', 'month', 'day']}
 										format="YYYY-MM-DD"
-										value={dteShip}
+										value={selectedData ? dayjs(selectedData.SHIP_DATE) : dteShip}
 										sx={{ ml: 1, height: 40, width: 160 }}
 										onChange={(newValue) => setDteShip(newValue)}
 										slotProps={{ textField: { size: 'small' } }} />
@@ -261,7 +261,7 @@ export default function BottomDrawer(props) {
 										label="납품일자"
 										views={['year', 'month', 'day']}
 										format="YYYY-MM-DD"
-										value={dteDeli}
+										value={selectedData ? dayjs(selectedData.DELI_DATE) : dteDeli}
 										sx={{ ml: 1, height: 40, width: 160 }}
 										onChange={(newValue) => setDteDeli(newValue)}
 										slotProps={{ textField: { size: 'small' } }} />
@@ -280,6 +280,7 @@ export default function BottomDrawer(props) {
 						<TextField id="ship_no" label="특이사항" variant="outlined" size="small" 
 						multiline
 						rows={8}
+						value={selectedData ? selectedData.RE_CONTENT : remark || ''}
 						onChange={(e) => setRemark(e.target.value)}
 						sx={{ mt: 2, mb:1,  ml: 10, width: 800, }} 
 						InputProps={{style: {height: 'flex',},}} />
