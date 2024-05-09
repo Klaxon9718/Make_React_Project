@@ -45,6 +45,9 @@ connectToDatabase().then(pool => {
 	//데이터 삽입
 	app.post('/test/shipSave', (req, res) => ShipDB.ShipSave(mssql, pool, req, res));
 
+	//수정, 삭제를 위한 planOrder 확인
+	app.post('/test/DrawerChkPlanOrder', (req, res) => ShipDB.DrawerChkPlanOrder(pool, req, res));
+
 
 
 

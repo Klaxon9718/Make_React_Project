@@ -159,6 +159,17 @@ function ShipDelete (pool, req, res) {
 	})
 }
 
+//단일 행 PlanOrder 있는지 확인
+function DrawerChkPlanOrder(pool, req, res){
+	console.log("DrawerChkPlanOrder 실행");
+	query = "SELECT 1 as isValied FROM PLANORDER_ED WHERE SHIP_NO = '" + req.body.SHIP_NO + "'"
+	pool.request()
+	.query(query)
+	.then(result => {
+		return res.json(result.recordset);
+})
+}
+
 module.exports = {
 	SelectShip,
 	SelectShipa,
@@ -170,4 +181,5 @@ module.exports = {
 	ShipSave,
 	ChkPlanList,
 	ShipDelete,
+	DrawerChkPlanOrder,
 }

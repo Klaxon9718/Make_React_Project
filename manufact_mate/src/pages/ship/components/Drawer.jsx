@@ -42,10 +42,12 @@ export default function BottomDrawer(props) {
 	const [dteShip, setDteShip] = React.useState(dayjs()); //날짜
 	const [dteDeli, setDteDeli] = React.useState(dayjs()); //날짜
 
-	const[isCustPopupOpen, setIsCustPopupOpen] = React.useState(false);
-	const[isItemPopupOpen, setIsItemPopupOpen] = React.useState(false);
-	const[isAlert, setIsAlert] = React.useState(false);
-	const[isError, setIsError] = React.useState(false);
+	const [isCustPopupOpen, setIsCustPopupOpen] = React.useState(false);
+	const [isItemPopupOpen, setIsItemPopupOpen] = React.useState(false);
+	const [isAlert, setIsAlert] = React.useState(false);
+	const [isError, setIsError] = React.useState(false);
+
+	const [chkPlanOrder, setChkPlanOrder] = React.useState(false);
 
 	const defaultTheme = createTheme(); // 테마 적용
 
@@ -93,17 +95,17 @@ export default function BottomDrawer(props) {
 		try {
 			console.log("CODE 값 async: " + item.CODE);
 			await axios.post('/test/getUnit', {
-				'code':item.CODE,
+				'code': item.CODE,
 			})
-			.then(function(response){
-				console.log("UNIT 조회");
-				console.log(response.data);
-				console.log("CODE 값 : " + item.CODE);
-				setUnit(response.data);
-			})
-			.catch(function (error){
-				console.error('Error occurred during UNIT processing:', error.message);
-			})
+				.then(function (response) {
+					console.log("UNIT 조회");
+					console.log(response.data);
+					console.log("CODE 값 : " + item.CODE);
+					setUnit(response.data);
+				})
+				.catch(function (error) {
+					console.error('Error occurred during UNIT processing:', error.message);
+				})
 		} catch (error) {
 			console.error('Error fetching UNIT options:', error);
 		}
@@ -111,28 +113,28 @@ export default function BottomDrawer(props) {
 	//#endregion
 
 	//주문유형 콤보박스 리스트 가져옴
-	const handleSave = async() => {
+	const handleSave = async () => {
 		console.log("OREDER_FLAG':selectedCboShip.CODE, 값 async: " + selectedCboShip.CODE);
 		console.log("Drawer REMARK 출력 " + remark);
 		console.log("세션 " + sessionStorage.getItem('session_id'));
-		try{
+		try {
 			await axios.post('/test/shipSave', {
-				'SHIP_NO' : '',
-				'SHIP_FLAG' : selectedCboShip.CODE,
+				'SHIP_NO': '',
+				'SHIP_FLAG': selectedCboShip.CODE,
 				'ORDER_FLAG': selectedCboOrder.CODE,
 				'CUST_CODE': cust.CODE,
 				'ITEM_CODE': item.CODE,
 				'QTY': qty,
 				'SHIP_DATE': dteShip,
 				'DELI_DATE': dteDeli,
-				'REMARK' : remark,
-				'SHIPINS_EMP': sessionStorage.getItem('session_id') ,
-				'INS_EMP':sessionStorage.getItem('session_id') ,
-				'UP_EMP':sessionStorage.getItem('session_id') ,
+				'REMARK': remark,
+				'SHIPINS_EMP': sessionStorage.getItem('session_id'),
+				'INS_EMP': sessionStorage.getItem('session_id'),
+				'UP_EMP': sessionStorage.getItem('session_id'),
 			})
-			.then(
-				 console.log("저장 성공"),
-				 setIsAlert(true)
+				.then(
+					console.log("저장 성공"),
+					setIsAlert(true)
 				)
 		} catch (error) {
 			console.error('Error occurred during save processing:', error.message);
@@ -140,7 +142,7 @@ export default function BottomDrawer(props) {
 		}
 	};
 
-	
+
 	// 팝업을 열기 위한 범용 함수
 	const handleOpenPopup = (setPopupState) => {
 		setPopupState(true);
@@ -151,24 +153,46 @@ export default function BottomDrawer(props) {
 		setPopupState(false);
 	};
 
+	//생산정보등록이 있는지 판별 후 상태 변경
+	const DrawerChkPlanOrder = async () => {
+		try {
+			await axios.post('/test/DrawerChkPlanOrder', {
+				'SHIP_NO': selectedData.SHIP_NO,
+			})
+				.then(function (response) {
+					console.log("생산정보 응답확인 : ", response.data);
+					if (response.data['isValied'] === 1) {
+						console.log("생산계획 존재");
+						setChkPlanOrder(true);
+						console.log("chkPlanOrder 상태 안: ", chkPlanOrder);
+					}
+					console.log("chkPlanOrder 상태 밖: ", chkPlanOrder);
+				})
+		} catch (error) {
+			console.error('Error occurred during ChkPlanOrder processing:', error.message);
+		}
+
+	};
+
 
 	useEffect(() => {
 
 		if (selectedData) {
-            console.log("전달받은 행 값:");
-            // 객체의 모든 키(칼럼명)와 값을 순회하여 출력
-            Object.entries(selectedData).forEach(([key, value]) => {
-                console.log(`${key}: ${value}`);
-            });
-        }
-		
+			// console.log("전달받은 행 값:");
+			// // 객체의 모든 키(칼럼명)와 값을 순회하여 출력
+			// Object.entries(selectedData).forEach(([key, value]) => {
+			//     console.log(`${key}: ${value}`);
+			// });
+			DrawerChkPlanOrder()
+		}
+
 		fetchShipOptions();
 		fetchOrderOptions();
-		
-		if(item.CODE !== ''){	//아이템 코드가 있을 경우만 실행
+
+		if (item.CODE !== '') {	//아이템 코드가 있을 경우만 실행
 			fetchUnit();
 		}
-		
+
 	}, [item, selectedData]);
 
 
@@ -196,6 +220,7 @@ export default function BottomDrawer(props) {
 								<Select
 									value={selectedData ? selectedData.SHIP_FLAG : selectedCboShip.CODE || ''}
 									onChange={(event) => handleChange(setSelectedCboShip, 'CODE', event)}
+									readOnly={Boolean(selectedData)}
 									size="small"
 									sx={{ width: 120 }}
 								>
@@ -212,6 +237,7 @@ export default function BottomDrawer(props) {
 								<Select
 									value={selectedData ? selectedData.ORDER_FLAG : selectedCboOrder.CODE || ''}
 									onChange={(event) => handleChange(setSelectedCboOrder, 'CODE', event)}
+									readOnly={Boolean(selectedData)}
 									size="small"
 									sx={{ height: 40, width: 120 }}
 								>
@@ -228,18 +254,18 @@ export default function BottomDrawer(props) {
 
 
 						<Box sx={{ display: 'flex', width: '100%', mt: 2, ml: 1 }}>
-							<TextField onClick={() => { if (!selectedData) {handleOpenPopup(setIsCustPopupOpen)}}} value={selectedData ? selectedData.CUST_CODE : cust.CODE || ''} onChange={(e) => setCust({'CODE': e.target.value})} id="ship_no" label="거래처코드" variant="outlined" size="small" InputProps={{ readOnly: true, }}  InputLabelProps={{ shrink: true }} sx={{ ml: 1, height: 40, width: 160 }} />
-							<TextField onClick={() => { if (!selectedData) {handleOpenPopup(setIsCustPopupOpen)}}} value={selectedData ? selectedData.CUST_NAME : cust.NAME || ''} id="ship_no" label="거래처명" variant="outlined" size="small" InputProps={{ readOnly: true, }} InputLabelProps={{ shrink: true }} sx={{ ml: 1, height: 40 }} />
+							<TextField onClick={() => { if (!selectedData) { handleOpenPopup(setIsCustPopupOpen) } }} value={selectedData ? selectedData.CUST_CODE : cust.CODE || ''} onChange={(e) => setCust({ 'CODE': e.target.value })} id="ship_no" label="거래처코드" variant="outlined" size="small" InputProps={{ readOnly: true, }} InputLabelProps={{ shrink: true }} sx={{ ml: 1, height: 40, width: 160 }} />
+							<TextField onClick={() => { if (!selectedData) { handleOpenPopup(setIsCustPopupOpen) } }} value={selectedData ? selectedData.CUST_NAME : cust.NAME || ''} id="ship_no" label="거래처명" variant="outlined" size="small" InputProps={{ readOnly: true, }} InputLabelProps={{ shrink: true }} sx={{ ml: 1, height: 40 }} />
 							{isCustPopupOpen && <Popup isopen={isCustPopupOpen} onClose={() => handleClosePopup(setIsCustPopupOpen)} labelCode={'거래처 코드'} labelName={'거래처 명'} tname={'Customer_Master'} calcode={'customer_code'} calname={'customer_name'} onSelect={handleSelectCustomer} />}
-							
-							<TextField  onClick={() => { if (!selectedData) {handleOpenPopup(setIsItemPopupOpen)}}} value={selectedData ? selectedData.ITEM_CODE : item.CODE || ''} id="ship_no" label="품목 코드" variant="outlined" size="small" InputProps={{ readOnly: true, }} InputLabelProps={{ shrink: true }} sx={{ ml: 1, height: 40, width: 160 }} />
-							<TextField  onClick={() => { if (!selectedData) {handleOpenPopup(setIsItemPopupOpen)}}} value={selectedData ? selectedData.ITEM_NAME : item.NAME || ''} id="ship_no" label="품목 명" variant="outlined" size="small" InputProps={{ readOnly: true, }} InputLabelProps={{ shrink: true }}  sx={{ ml: 1, height: 40 }} />
+
+							<TextField onClick={() => { if (!selectedData) { handleOpenPopup(setIsItemPopupOpen) } }} value={selectedData ? selectedData.ITEM_CODE : item.CODE || ''} id="ship_no" label="품목 코드" variant="outlined" size="small" InputProps={{ readOnly: true, }} InputLabelProps={{ shrink: true }} sx={{ ml: 1, height: 40, width: 160 }} />
+							<TextField onClick={() => { if (!selectedData) { handleOpenPopup(setIsItemPopupOpen) } }} value={selectedData ? selectedData.ITEM_NAME : item.NAME || ''} id="ship_no" label="품목 명" variant="outlined" size="small" InputProps={{ readOnly: true, }} InputLabelProps={{ shrink: true }} sx={{ ml: 1, height: 40 }} />
 							{isItemPopupOpen && <Popup isopen={isItemPopupOpen} onClose={() => handleClosePopup(setIsItemPopupOpen)} labelCode={'품목 코드'} labelName={'품목 명'} tname={'Item_Master'} calcode={'Item_code'} calname={'Item_name'} onSelect={handleSelectItem} />}
 						</Box>
 
 						<Box sx={{ display: 'flex', width: '100%', mt: 2, ml: 1 }}>
-							
-							<TextField id="ship_no" label="수주수량" value={selectedData ? selectedData.QTY : qty || ''} variant="outlined" size="small" onChange={(e) => setQty(e.target.value)} InputLabelProps={{ shrink: true }} sx={{ ml: 1, height: 40, width: 140 }} inputProps={{  type: 'number'  }}></TextField>
+
+							<TextField id="ship_no" label="수주수량" value={selectedData ? selectedData.QTY : qty || ''} variant="outlined" size="small" readOnly={chkPlanOrder} onChange={(e) => setQty(e.target.value)} InputLabelProps={{ shrink: true }} sx={{ ml: 1, height: 40, width: 140 }} inputProps={{ type: 'number' }}></TextField>
 							<TextField id="ship_no" value={selectedData ? selectedData.UNIT : unit} label="단위" variant="outlined" size="small" InputLabelProps={{ shrink: true }} InputProps={{ readOnly: true, }} sx={{ ml: 1, height: 40, width: 100 }} />
 							<LocalizationProvider dateAdapter={AdapterDayjs}>
 								<Box sx={{
@@ -253,6 +279,7 @@ export default function BottomDrawer(props) {
 										views={['year', 'month', 'day']}
 										format="YYYY-MM-DD"
 										value={selectedData ? dayjs(selectedData.SHIP_DATE) : dteShip}
+										readOnly={Boolean(selectedData)}
 										sx={{ ml: 1, height: 40, width: 160 }}
 										onChange={(newValue) => setDteShip(newValue)}
 										slotProps={{ textField: { size: 'small' } }} />
@@ -262,6 +289,7 @@ export default function BottomDrawer(props) {
 										views={['year', 'month', 'day']}
 										format="YYYY-MM-DD"
 										value={selectedData ? dayjs(selectedData.DELI_DATE) : dteDeli}
+										readOnly={Boolean(selectedData)}
 										sx={{ ml: 1, height: 40, width: 160 }}
 										onChange={(newValue) => setDteDeli(newValue)}
 										slotProps={{ textField: { size: 'small' } }} />
@@ -277,16 +305,16 @@ export default function BottomDrawer(props) {
 					</Box>
 
 					<Box>
-						<TextField id="ship_no" label="특이사항" variant="outlined" size="small" 
-						multiline
-						rows={8}
-						value={selectedData ? selectedData.RE_CONTENT : remark || ''}
-						onChange={(e) => setRemark(e.target.value)}
-						sx={{ mt: 2, mb:1,  ml: 10, width: 800, }} 
-						InputProps={{style: {height: 'flex',},}} />
+						<TextField id="ship_no" label="특이사항" variant="outlined" size="small"
+							multiline
+							rows={8}
+							value={selectedData ? selectedData.RE_CONTENT : remark || ''}
+							onChange={(e) => setRemark(e.target.value)}
+							sx={{ mt: 2, mb: 1, ml: 10, width: 800, }}
+							InputProps={{ style: { height: 'flex', }, }} />
 					</Box>
 				</Paper>
-				
+
 				{isAlert && <Alert severity="success">저장되었습니다.</Alert>}
 				{isError && <Alert severity="error">저장 실패</Alert>}
 			</Drawer>
