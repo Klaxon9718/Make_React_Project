@@ -4,6 +4,7 @@ import dayjs from 'dayjs';
 import axios from 'axios';
 import Popup from 'src/pages/ship/components/Popup';
 import Drawer from 'src/pages/ship/components/Drawer';
+import Dialog from 'src/pages/ship/components/Dialog';
 import { useNavigate } from "react-router-dom";
 
 //#region MUI속성
@@ -76,6 +77,7 @@ export default function Ship() {
 	const [isCheckedRows, setIsCheckedRows] = useState([]); //체크박스 그리드 선택, 다중 행 선택
 
 	const [isDrawerOpen, setIsDrawerOpen] = useState(false); //하단 Drawer 생성
+	const [isDialogOpen, setIsDialogOpen] = useState(false); //알림창 생성
 
 	const navigate = useNavigate(); //#region 사용자 세션처리
 
@@ -149,15 +151,11 @@ export default function Ship() {
 
 	// "삭제" 버튼을 눌렀을 때 실행되는 함수
 	const handleDeleteButtonClick = () => {
-		// 	console.log("선택된 행의 ID들:", isCheckedRows); // 선택된 행의 ID들을 콘솔에 로깅
-		//   console.log("rows 배열:", rows); // rows 배열의 현재 상태를 콘솔에 로깅
-		//   const selectedRowsData = rows.filter(row => isCheckedRows.includes(row.SHIP_NO));
-		//   console.log("필터링된 선택된 행들의 데이터:", selectedRowsData); // 필터링된 선택된 행들의 데이터를 콘솔에 로깅
-		// 	if (selectedRowsData.length > 0) {
-		// 		console.log("선택된 행들의 데이터:", selectedRowsData);
-		// 	  } else {
-		// 		console.log("선택된 행이 없습니다.");
-		// 	  }
+		if(isCheckedRows.length === 0) return;
+		console.log("삭제 항목 수 확인 : ", isCheckedRows.length)
+		console.log("삭제 항목 수 확인 : ", isCheckedRows)
+		setIsDialogOpen(true)
+
 	};
 
 
@@ -219,7 +217,7 @@ export default function Ship() {
 		fetchShipOptions();
 		fetchOrderOptions();
 		chkPlanList();
-	}, [selectedCustomer, selectedItem, selectedCboOrder, selectedCboShip, shipFrom, shipTo, deliFrom, deliTo]);
+	}, [selectedCustomer, selectedItem, selectedCboOrder, selectedCboShip, shipFrom, shipTo, deliFrom, deliTo, rows]);
 
 	return (
 		<ThemeProvider theme={defaultTheme}>
@@ -357,8 +355,9 @@ export default function Ship() {
 									marginLeft: -10
 								}}>
 									<Button variant="outlined" sx={{ mr: 2 }} onClick={() => handleOpenPopup(setIsDrawerOpen)}>추가</Button>
-									{isDrawerOpen && <Drawer route={'Button'} isopen={isDrawerOpen} onClose={() => handleClosePopup(setIsDrawerOpen)} />}
+									{isDrawerOpen && <Drawer isopen={isDrawerOpen} onClose={() => handleClosePopup(setIsDrawerOpen)} route={'Button'} />}
 									<Button variant="outlined" sx={{ mr: 2 }} onClick={handleDeleteButtonClick}>삭제</Button>
+									{isDialogOpen && <Dialog isopen={isDialogOpen} onClose={() => handleClosePopup(setIsDialogOpen)} deleteList={isCheckedRows}/>}
 								</Container>
 							</Grid>
 

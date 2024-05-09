@@ -137,6 +137,7 @@ function ShipSave(mssql, pool, req, res){
 	.execute('USP_LSH_MID_001_01')
 	}
 
+//PLANORDER_ED SHIP_NO조회
 function ChkPlanList (pool, req, res){
 	console.log("ChkPlanList 실행");
 	query = "SELECT DISTINCT SHIP_NO FROM PLANORDER_ED"
@@ -144,6 +145,17 @@ function ChkPlanList (pool, req, res){
 	.query(query)
 	.then(result => {
 		return res.json(result.recordset);
+	})
+}
+
+//삭제
+function ShipDelete (pool, req, res) {
+	console.log("ShipDelete 실행");
+	query = "DELETE FROM SHIP_PLAN_ED WHERE SHIP_NO = '" + req.body.SHIP_NO +"'"
+	pool.request()
+	.query(query)
+	.then(result => {
+		res.status(500).send({ message: "삭제 완료" });
 	})
 }
 
@@ -157,4 +169,5 @@ module.exports = {
 	GetUnit,
 	ShipSave,
 	ChkPlanList,
+	ShipDelete,
 }

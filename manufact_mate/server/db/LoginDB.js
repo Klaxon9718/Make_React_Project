@@ -28,6 +28,9 @@ connectToDatabase().then(pool => {
 	//체크박스 비활성화를 위한 planOrder목록 확인
 	app.post('/test/chkPlanList', (req, res) => ShipDB.ChkPlanList(pool, req, res));
 
+	//삭제처리
+	app.post('/test/shipDelete', (req, res) => ShipDB.ShipDelete(pool, req, res));
+
 
 	//Drawer.jsx
 	//데이터 삽입 주문 유형 cbo
