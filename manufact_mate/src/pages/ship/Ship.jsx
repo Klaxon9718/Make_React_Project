@@ -56,6 +56,7 @@ export default function Ship() {
 	const defaultTheme = createTheme(); // 테마 적용
 
 	const [rows, setRows] = React.useState([]);
+	const [shipNoList, setShipNoList] = React.useState([]);
 	const [shipFrom, setShipFrom] = React.useState(dayjs().subtract(1, 'month')); //날짜
 	const [shipTo, setShipTo] = React.useState(dayjs()); //날짜
 	const [deliFrom, setDeliFrom] = React.useState(dayjs().subtract(1, 'month')); //날짜
@@ -134,6 +135,17 @@ export default function Ship() {
 		// console.log('Selected Rows: 데이터 출력 is', isCheckedRows);
 	};
 
+	//PlanOrder있는 지 확인
+	const chkPlanList = async() =>{
+		try {
+		const response = await axios.post('/test/chkPlanList');
+		console.log("PLANORDER 데이터 : ", response.data.map(item => item.SHIP_NO));
+		setShipNoList(response.data.map(item => item.SHIP_NO));
+	} catch (error) {
+		console.error('Error occurred during chkPlanList processing:', error.message);
+		return [];
+	  }
+	} 
 
 	// "삭제" 버튼을 눌렀을 때 실행되는 함수
 	const handleDeleteButtonClick = () => {
@@ -174,7 +186,6 @@ export default function Ship() {
 		})
 			.then(function (response) {
 				console.log("그리드 조회 성공 " + response.status);
-				console.log("그리드 조회 성공 " + response.data);
 				setRows(response.data);
 			})
 			.catch(function (error) {
@@ -207,6 +218,7 @@ export default function Ship() {
 		handleSelect();
 		fetchShipOptions();
 		fetchOrderOptions();
+		chkPlanList();
 	}, [selectedCustomer, selectedItem, selectedCboOrder, selectedCboShip, shipFrom, shipTo, deliFrom, deliTo]);
 
 	return (
@@ -353,7 +365,8 @@ export default function Ship() {
 							{/*onRowCountChange: 행 개수가 변경되면 콜백이 시작됩니다. */}
 							<Grid item xs={12} sx={{ maxHeight: 640, maxWidth: '100%', mt: -3 }}>
 								전체 행 수 : {rows.length}
-								<DataGrid rows={rows} columns={columns} getRowId={(row) => row.SHIP_NO}
+								<DataGrid 
+									rows={rows} columns={columns} getRowId={(row) => row.SHIP_NO}
 									rowHeight={25}
 									hideFooter
 									checkboxSelection
@@ -368,6 +381,7 @@ export default function Ship() {
 									}}
 									onRowClick={(params) => handleRowClick(params)} //행 클릭 시
 									onRowSelectionModelChange={handleCheckRows}//삭제 처리
+									isRowSelectable={(params) => !shipNoList.includes(params.row.SHIP_NO)}
 									isCheckedRows={isCheckedRows}
 								/>
 								{isDrawerOpen && <Drawer route={'Grid'} selectedData={selectedRowData} isopen={isDrawerOpen} onClose={() => handleClosePopup(setIsDrawerOpen)} />}

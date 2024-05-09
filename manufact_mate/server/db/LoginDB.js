@@ -25,6 +25,8 @@ connectToDatabase().then(pool => {
 	//주문유형 콤보박스 처리
 	app.post('/test/cboOrderList', (req, res) => ShipDB.CboOrderList(pool, req, res));
 
+	//체크박스 비활성화를 위한 planOrder목록 확인
+	app.post('/test/chkPlanList', (req, res) => ShipDB.ChkPlanList(pool, req, res));
 
 
 	//Drawer.jsx

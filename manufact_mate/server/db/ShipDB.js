@@ -98,6 +98,7 @@ function AddCboShipList(pool, req, res){
 	})
 }
 
+// 단위 호출
 function GetUnit(pool, req, res){
 console.log("GetUnit 실행");
 console.log(req.body.code +  "코드 값");
@@ -115,8 +116,8 @@ pool.request()
 })
 }
 
-function 
-ShipSave(mssql, pool, req, res){
+// 저장
+function ShipSave(mssql, pool, req, res){
 	console.log("ShipSave 실행");
 	console.log("shipsave body : " + req.body.ORDER_FLAG)
 
@@ -136,6 +137,16 @@ ShipSave(mssql, pool, req, res){
 	.execute('USP_LSH_MID_001_01')
 	}
 
+function ChkPlanList (pool, req, res){
+	console.log("ChkPlanList 실행");
+	query = "SELECT DISTINCT SHIP_NO FROM PLANORDER_ED"
+	pool.request()
+	.query(query)
+	.then(result => {
+		return res.json(result.recordset);
+	})
+}
+
 module.exports = {
 	SelectShip,
 	SelectShipa,
@@ -145,4 +156,5 @@ module.exports = {
 	AddCboOrderList,
 	GetUnit,
 	ShipSave,
+	ChkPlanList,
 }
