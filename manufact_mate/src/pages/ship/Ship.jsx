@@ -109,33 +109,44 @@ export default function Ship() {
 	};
 
 	//행 클릭 시
-	const handleRowClick  = (params) => {
+	const handleRowClick = (params) => {
 		console.log("선택 행 : " + JSON.stringify(params.row)); // 클릭한 행의 데이터
-  		// 행 데이터를 Drawer 컴포넌트에 전달
-  		setSelectedRowData(params.row);
-  		setIsDrawerOpen(true);
-	  };
+		// 행 데이터를 Drawer 컴포넌트에 전달
+		setSelectedRowData(params.row);
+		setIsDrawerOpen(true);
+	};
 
 	// 체크된 행 업데이트 함수
-  const handleCheckRows = (selectionModel) => {
-    setIsCheckedRows(selectionModel);
-	console.log("체크된 행의 IDs:", selectionModel);
-	const selectedRowsData = rows.filter(row => selectionModel.includes(row.SHIP_NO));
-  console.log("체크된 행의 데이터:", selectedRowsData);
-  };
+	const handleCheckRows = (newRowSelectionModel) => {
+		setIsCheckedRows(newRowSelectionModel);
+		console.log('Selected Row Count: 뉴 로우 행수', newRowSelectionModel.length);
+		console.log('Selected Rows: 데이터 출력 is', newRowSelectionModel);
 
-  // "삭제" 버튼을 눌렀을 때 실행되는 함수
-  const handleDeleteButtonClick = () => {
-	console.log("선택된 행의 ID들:", isCheckedRows); // 선택된 행의 ID들을 콘솔에 로깅
-  console.log("rows 배열:", rows); // rows 배열의 현재 상태를 콘솔에 로깅
-  const selectedRowsData = rows.filter(row => isCheckedRows.includes(row.SHIP_NO));
-  console.log("필터링된 선택된 행들의 데이터:", selectedRowsData); // 필터링된 선택된 행들의 데이터를 콘솔에 로깅
-	if (selectedRowsData.length > 0) {
-		console.log("선택된 행들의 데이터:", selectedRowsData);
-	  } else {
-		console.log("선택된 행이 없습니다.");
-	  }
-  };
+		// 선택된 행의 'desk' 속성값 출력하기
+		newRowSelectionModel.forEach((row) => {
+			console.log('Desk Value:', row.SHIP_NO);
+		});
+
+		// 선택된 행의 데이터 가져오기
+		// const selectedRows = rows.filter((row) => newRowSelectionModel.includes(row.id)); => 안됨
+
+		// console.log('Selected Row Count:isCheckedRows 행수', isCheckedRows.length); => 실행이 한박자 느림
+		// console.log('Selected Rows: 데이터 출력 is', isCheckedRows);
+	};
+
+
+	// "삭제" 버튼을 눌렀을 때 실행되는 함수
+	const handleDeleteButtonClick = () => {
+		// 	console.log("선택된 행의 ID들:", isCheckedRows); // 선택된 행의 ID들을 콘솔에 로깅
+		//   console.log("rows 배열:", rows); // rows 배열의 현재 상태를 콘솔에 로깅
+		//   const selectedRowsData = rows.filter(row => isCheckedRows.includes(row.SHIP_NO));
+		//   console.log("필터링된 선택된 행들의 데이터:", selectedRowsData); // 필터링된 선택된 행들의 데이터를 콘솔에 로깅
+		// 	if (selectedRowsData.length > 0) {
+		// 		console.log("선택된 행들의 데이터:", selectedRowsData);
+		// 	  } else {
+		// 		console.log("선택된 행이 없습니다.");
+		// 	  }
+	};
 
 
 	//텍스트필드 값 변경
@@ -335,7 +346,7 @@ export default function Ship() {
 								}}>
 									<Button variant="outlined" sx={{ mr: 2 }} onClick={() => handleOpenPopup(setIsDrawerOpen)}>추가</Button>
 									{isDrawerOpen && <Drawer route={'Button'} isopen={isDrawerOpen} onClose={() => handleClosePopup(setIsDrawerOpen)} />}
-									<Button variant="outlined" sx={{ mr: 2 }}  onClick={handleDeleteButtonClick}>삭제</Button>
+									<Button variant="outlined" sx={{ mr: 2 }} onClick={handleDeleteButtonClick}>삭제</Button>
 								</Container>
 							</Grid>
 
@@ -354,11 +365,10 @@ export default function Ship() {
 									}}
 									slotProps={{
 										row: selectedRowData
-									  }}
-									  onRowClick={(params) => handleRowClick(params)} //행 클릭 시
-									  onRowSelectionModelChange={(newRowSelectionModel) => {
-										handleCheckRows(newRowSelectionModel);
-									  }} //삭제 처리
+									}}
+									onRowClick={(params) => handleRowClick(params)} //행 클릭 시
+									onRowSelectionModelChange={handleCheckRows}//삭제 처리
+									isCheckedRows={isCheckedRows}
 								/>
 								{isDrawerOpen && <Drawer route={'Grid'} selectedData={selectedRowData} isopen={isDrawerOpen} onClose={() => handleClosePopup(setIsDrawerOpen)} />}
 							</Grid>
@@ -379,7 +389,7 @@ export default function Ship() {
   }}
   drawer 사용시 뒤 활성화
   
- 	const handleRowSelection = (selectionModel) => {
+	  const handleRowSelection = (selectionModel) => {
 		if (selectionModel.length > 0) {
 		  const selectedID = selectionModel[0]; // 여기서는 단일 선택을 가정합니다.
 		  const selectedRow = rows.find(row => row.SHIP_NO === selectedID);

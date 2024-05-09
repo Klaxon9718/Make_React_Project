@@ -162,6 +162,7 @@ export default function BottomDrawer(props) {
                 console.log(`${key}: ${value}`);
             });
         }
+		
 		fetchShipOptions();
 		fetchOrderOptions();
 		
