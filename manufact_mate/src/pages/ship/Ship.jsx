@@ -74,9 +74,11 @@ export default function Ship() {
 	const [cboOrder, setCboOrder] = React.useState([]); //cbo리스트를 받아와 배열로 저장
 
 	const [selectedRowData, setSelectedRowData] = useState(null); //그리드 행 선택, 단일 행 선택
+	const [addRowData, setAddRowData] = useState(null); //그리드 행 선택, 단일 행 선택
 	const [isCheckedRows, setIsCheckedRows] = useState([]); //체크박스 그리드 선택, 다중 행 선택
 
 	const [isDrawerOpen, setIsDrawerOpen] = useState(false); //하단 Drawer 생성
+	const [isAddDrawerOpen, setIsAddDrawerOpen] = useState(false); // 추가 하단 Drawer 생성
 	const [isDialogOpen, setIsDialogOpen] = useState(false); //알림창 생성
 
 	const navigate = useNavigate(); //#region 사용자 세션처리
@@ -141,7 +143,7 @@ export default function Ship() {
 	const chkPlanList = async() =>{
 		try {
 		const response = await axios.post('/test/chkPlanList');
-		console.log("PLANORDER 데이터 : ", response.data.map(item => item.SHIP_NO));
+		//console.log("PLANORDER 데이터 : ", response.data.map(item => item.SHIP_NO));
 		setShipNoList(response.data.map(item => item.SHIP_NO));
 	} catch (error) {
 		console.error('Error occurred during chkPlanList processing:', error.message);
@@ -183,7 +185,7 @@ export default function Ship() {
 			'item_name': selectedItem.NAME,
 		})
 			.then(function (response) {
-				console.log("그리드 조회 성공 " + response.status);
+				//console.log("그리드 조회 성공 " + response.status);
 				setRows(response.data);
 			})
 			.catch(function (error) {
@@ -217,7 +219,7 @@ export default function Ship() {
 		fetchShipOptions();
 		fetchOrderOptions();
 		chkPlanList();
-	}, [selectedCustomer, selectedItem, selectedCboOrder, selectedCboShip, shipFrom, shipTo, deliFrom, deliTo, rows]);
+	}, [selectedCustomer, selectedItem, selectedCboOrder, selectedCboShip, shipFrom, shipTo, deliFrom, deliTo]); //추후 rows 추가할 것
 
 	return (
 		<ThemeProvider theme={defaultTheme}>
@@ -354,8 +356,8 @@ export default function Ship() {
 									paddingTop: 8,
 									marginLeft: -10
 								}}>
-									<Button variant="outlined" sx={{ mr: 2 }} onClick={() => handleOpenPopup(setIsDrawerOpen)}>추가</Button>
-									{isDrawerOpen && <Drawer isopen={isDrawerOpen} onClose={() => handleClosePopup(setIsDrawerOpen)} route={'Button'} />}
+									<Button variant="outlined" sx={{ mr: 2 }} onClick={() => handleOpenPopup(setIsAddDrawerOpen)}>추가</Button>
+									{isAddDrawerOpen && <Drawer isopen={isAddDrawerOpen} onClose={() => handleClosePopup(setIsAddDrawerOpen)} route={'Button'} selectedData={addRowData}/>}
 									<Button variant="outlined" sx={{ mr: 2 }} onClick={handleDeleteButtonClick}>삭제</Button>
 									{isDialogOpen && <Dialog isopen={isDialogOpen} onClose={() => handleClosePopup(setIsDialogOpen)} deleteList={isCheckedRows}/>}
 								</Container>

@@ -67,21 +67,8 @@ function CboShipList(pool, req, res){
 function CboOrderList(pool, req, res){
 	console.log("/test/CboOrderList실행");
 	pool.request()
-	.query("SELECT '' CODE, '전체' NAME " + 
-	"UNION ALL SELECT UserDefine_Mi_Code CODE, UserDefine_Mi_Name NAME " + 
-	"FROM UserDefine_Mi_Master WHERE UserDefine_Ma_Code = 'SOTYPE'")
-	.then(result => {
-		return res.json(result.recordset);
-	})
-}
-
-
-//삽입용 : 수주 콤보박스 불러오는 용도 ('전체' 미포함)
-function AddCboOrderList(pool, req, res){
-	console.log("AddCboShipList 실행");
-	pool.request()
 	.query(	"SELECT UserDefine_Mi_Code CODE, UserDefine_Mi_Name NAME " + 
-			"FROM UserDefine_Mi_Master WHERE UserDefine_Ma_Code = 'SAL_TYPE'")
+			"FROM UserDefine_Mi_Master WHERE UserDefine_Ma_Code = 'SOTYPE'")
 	.then(result => {
 		return res.json(result.recordset);
 	})
@@ -92,11 +79,24 @@ function AddCboShipList(pool, req, res){
 	console.log("AddCboOrderList 실행");
 	pool.request()
 	.query(	"SELECT UserDefine_Mi_Code CODE, UserDefine_Mi_Name NAME " + 
-			"FROM UserDefine_Mi_Master WHERE UserDefine_Ma_Code = 'SOTYPE'")
+			"FROM UserDefine_Mi_Master WHERE UserDefine_Ma_Code = 'SAL_TYPE'")
 	.then(result => {
 		return res.json(result.recordset);
 	})
 }
+
+//삽입용 : 수주 콤보박스 불러오는 용도 ('전체' 미포함)
+function AddCboOrderList(pool, req, res){
+	console.log("AddCboShipList 실행");
+	pool.request()
+	.query(	"SELECT UserDefine_Mi_Code CODE, UserDefine_Mi_Name NAME " + 
+	"FROM UserDefine_Mi_Master WHERE UserDefine_Ma_Code = 'SOTYPE'")
+	.then(result => {
+		return res.json(result.recordset);
+	})
+}
+
+
 
 // 단위 호출
 function GetUnit(pool, req, res){

@@ -116,11 +116,10 @@ export default function BottomDrawer(props) {
 		console.log("Drawer REMARK 출력 " + remark);
 		console.log("세션 " + sessionStorage.getItem('session_id'));
 		try{
-			//selectedCboOrder, selectedCboShip 바뀌어서 설정함
 			await axios.post('/test/shipSave', {
 				'SHIP_NO' : '',
-				'SHIP_FLAG' : selectedCboOrder.CODE,
-				'ORDER_FLAG':selectedCboShip.CODE,
+				'SHIP_FLAG' : selectedCboShip.CODE,
+				'ORDER_FLAG': selectedCboOrder.CODE,
 				'CUST_CODE': cust.CODE,
 				'ITEM_CODE': item.CODE,
 				'QTY': qty,
@@ -187,6 +186,7 @@ export default function BottomDrawer(props) {
 								label="수주번호"
 								variant="outlined"
 								size="small"
+								value={selectedData ? selectedData.SHIP_NO : ''}
 								InputLabelProps={{ shrink: true }}
 								InputProps={{ readOnly: true, }}
 							/>
@@ -194,7 +194,7 @@ export default function BottomDrawer(props) {
 							<FormControl sx={{ ml: 1 }} >
 								<InputLabel id="demo-simple-select-label" sx={{ mt: -1 }}>수주구분</InputLabel>
 								<Select
-									value={selectedCboShip.CODE || ''}
+									value={selectedData ? selectedData.SHIP_FLAG : selectedCboShip.CODE || ''}
 									onChange={(event) => handleChange(setSelectedCboShip, 'CODE', event)}
 									size="small"
 									sx={{ width: 120 }}
@@ -210,11 +210,13 @@ export default function BottomDrawer(props) {
 							<FormControl sx={{ ml: 1 }} >
 								<InputLabel id="demo-simple-select-label" sx={{ mt: -1 }}>주문유형</InputLabel>
 								<Select
-									value={selectedCboOrder.CODE || ''}
+									value={selectedData ? selectedData.ORDER_FLAG : selectedCboOrder.CODE || ''}
 									onChange={(event) => handleChange(setSelectedCboOrder, 'CODE', event)}
 									size="small"
 									sx={{ height: 40, width: 120 }}
 								>
+									{/* {console.log("으으으",selectedData.ORDER_FLAG )}
+									 {console.log("으으으",selectedData.SHIP_FLAG )} */}
 									{cboOrder.map((option) => (
 										<MenuItem key={option.CODE} value={option.CODE}>
 											{option.NAME}
