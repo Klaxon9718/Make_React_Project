@@ -211,7 +211,7 @@ export default function BottomDrawer(props) {
 			handleSave();
 			setClickSave(false);
 		}
-		
+
 		DrawerChkPlanOrder()
 		fetchShipOptions();
 		fetchOrderOptions();
@@ -222,7 +222,7 @@ export default function BottomDrawer(props) {
 			fetchUnit();
 		}
 
-	}, [cust, item, selectedData, selectedCboShip, selectedCboOrder, chkPlanOrder,qty, remark, shipNo, clickSave, dteShip,dteDeli, isAlert, isError ]);
+	}, [cust, item, selectedData, selectedCboShip, selectedCboOrder, chkPlanOrder,qty, remark, clickSave, ]);
 
 
 	return (

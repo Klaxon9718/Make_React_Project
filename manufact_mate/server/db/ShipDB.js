@@ -166,7 +166,7 @@ function ShipDelete (pool, req, res) {
 	pool.request()
 	.query(query)
 	.then(result => {
-		res.status(500).send({ message: "삭제 완료" });
+		res.status(200).send({ message: "삭제 완료" });
 	})
 }
 
@@ -179,11 +179,15 @@ function DrawerChkPlanOrder(pool, req, res){
 	.then(result => {
 		console.log("ㅡㅡㅡDrawerChkPlanOrder 진입");
 		console.log("ㅡㅡㅡDrawerChkPlanOrder 진입", result);
-		if(result.rowsAffected > 0){ 
+		if(result.recordset.length > 0){ 
 			console.log("ㅡㅡㅡDrawerChkPlanOrder 진입 숫자", result.recordset[0].isValied);
-			return res.json(result.recordset[0].isValied);
+			res.json(result.recordset[0].isValied);
 		}
-		return res.status(200);
+		else{
+			console.log("ㅡㅡㅡDrawerChkPlanOrder else 숫자", result.recordset[0]);
+			res.json(result.recordset[0]);
+		}
+
 })
 }
 
