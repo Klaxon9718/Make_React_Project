@@ -121,6 +121,8 @@ pool.request()
 function ShipSave(mssql, pool, req, res){
 	console.log("ShipSave 실행");
 	console.log("shipsave body : " + req.body.ORDER_FLAG)
+	console.log("ShipSave 실행" , req.body);
+
 
 	pool.request()
 	.input('SHIP_NO', mssql.VarChar,req.body.SHIP_NO)
@@ -136,6 +138,14 @@ function ShipSave(mssql, pool, req, res){
 	.input('INS_EMP', mssql.VarChar,req.body.INS_EMP)
 	.input('UP_EMP', mssql.VarChar,req.body.UP_EMP)
 	.execute('USP_LSH_MID_001_01')
+	.then(result => {
+		res.status(200).json({ message: "성공적으로 저장되었습니다." });
+})
+.catch(error => {
+    // 에러 처리
+    console.error("데이터베이스 작업 중 에러 발생:", error);
+    res.status(500).json({ error: "서버 내부 에러." });
+});
 	}
 
 //PLANORDER_ED SHIP_NO조회

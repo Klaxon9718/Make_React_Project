@@ -47,6 +47,7 @@ export default function BottomDrawer(props) {
 	const [isItemPopupOpen, setIsItemPopupOpen] = React.useState(false);
 	const [isAlert, setIsAlert] = React.useState(false);
 	const [isError, setIsError] = React.useState(false);
+	const [clickSave, setClickSave] = React.useState(false);
 
 	const [chkPlanOrder, setChkPlanOrder] = React.useState(false);
 
@@ -117,6 +118,8 @@ export default function BottomDrawer(props) {
 	const handleSave = async () => {
 		// console.log("OREDER_FLAG':selectedCboShip.CODE, 값 async: " + selectedCboShip.CODE);
 		console.log("Drawer REMARK 출력 " + remark);
+		console.log("Drawer REMARK 출력 " + shipNo);
+		console.log("Drawer REMARK 출력 " + selectedCboShip.CODE);
 		console.log("세션 " + sessionStorage.getItem('session_id'));
 
 		if ((!selectedData) && (!selectedCboShip.CODE || !selectedCboOrder.CODE || !cust.CODE || !item.CODE || !qty || !dteShip || !dteDeli)) {
@@ -141,11 +144,12 @@ export default function BottomDrawer(props) {
 				'INS_EMP': sessionStorage.getItem('session_id'),
 				'UP_EMP': sessionStorage.getItem('session_id'),
 			})
-				.then(
-					console.log("저장 성공"),
-					setIsError(false),
-					setIsAlert(true)
-				)
+				.then(function (response) {
+				console.log("저장 성공");
+				setIsError(false);
+				setIsAlert(true);
+	
+			})
 		} catch (error) {
 			console.error('Error occurred during save processing:', error.message);
 			setIsError(true)
@@ -196,18 +200,29 @@ export default function BottomDrawer(props) {
 			// Object.entries(selectedData).forEach(([key, value]) => {
 			//     console.log(`${key}: ${value}`);
 			// });
-			console.log("전달받은 행 값 유즈 이펙트 실행 :", remark);
-			DrawerChkPlanOrder()
+			console.log("이전 데이터 SHIP_NO ", selectedData.SHIP_NO);
+			setShipNo(selectedData.SHIP_NO)
+		
 		}
 
+		// 저장 버튼 클릭 시
+		if (clickSave){
+			console.log("저장 진입");
+			handleSave();
+			setClickSave(false);
+		}
+		
+		DrawerChkPlanOrder()
 		fetchShipOptions();
 		fetchOrderOptions();
+		console.log("리마크 ", remark);
+		setRemark(remark);
 
 		if (item.CODE !== '') {	//아이템 코드가 있을 경우만 실행
 			fetchUnit();
 		}
 
-	}, [item, selectedData, chkPlanOrder,qty, remark]);
+	}, [cust, item, selectedData, selectedCboShip, selectedCboOrder, chkPlanOrder,qty, remark, shipNo, clickSave, dteShip,dteDeli, isAlert, isError ]);
 
 
 	return (
@@ -334,7 +349,7 @@ export default function BottomDrawer(props) {
 
 
 						<Box sx={{ display: 'flex', width: '100%', mt: 1, ml: 1 }}>
-							<Button sx={{ ml: 1, }} variant="outlined" onClick={handleSave}>저장</Button>
+							<Button sx={{ ml: 1, }} variant="outlined" onClick={()=>setClickSave(true)}>저장</Button>
 							{selectedData && !chkPlanOrder && (
 								<Button sx={{ ml: 1 }} variant="outlined">삭제</Button>
 							)}
