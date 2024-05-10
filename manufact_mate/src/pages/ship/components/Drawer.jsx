@@ -202,7 +202,11 @@ export default function BottomDrawer(props) {
 			// });
 			console.log("이전 데이터 SHIP_NO ", selectedData.SHIP_NO);
 			setShipNo(selectedData.SHIP_NO)
-		
+		}
+
+		if (chkPlanOrder && selectedData) {
+			setQty(selectedData.QTY); // selectedData.QTY로 qty 상태 업데이트
+			console.log("QTY 출력 : ", qty);
 		}
 
 		// 저장 버튼 클릭 시
@@ -216,7 +220,10 @@ export default function BottomDrawer(props) {
 		fetchShipOptions();
 		fetchOrderOptions();
 		console.log("리마크 ", remark);
+		console.log("리마크 ", qty);
 		setRemark(remark);
+		setQty(qty);
+
 
 		if (item.CODE !== '') {	//아이템 코드가 있을 경우만 실행
 			fetchUnit();
@@ -301,10 +308,16 @@ export default function BottomDrawer(props) {
 								size="small"
 								value={selectedData ? selectedData.QTY : qty || ''}
 								onChange={(e) => {
-									if (selectedData) { // selectedData가 있고, chkPlanOrder가 false인 경우에만 변경 허용
+									if (selectedData) { 
+										if(!chkPlanOrder){
 										console.log("수량 : ", e.target.value)
 										selectedData.QTY = e.target.value; // selectedData 업데이트
 										setQty(e.target.value); // 상태 업데이트
+										console.log("입력 값 QTY : ", qty);
+										}else{
+											// const updatedSelectedData = { ...selectedData,selectedData };
+											setQty(selectedData.QTY);
+										}
 									} else {
 										// selectedData가 없는 경우, state에만 저장
 										setQty(e.target.value);
