@@ -67,7 +67,8 @@ function CboShipList(pool, req, res){
 function CboOrderList(pool, req, res){
 	console.log("/test/CboOrderList실행");
 	pool.request()
-	.query(	"SELECT UserDefine_Mi_Code CODE, UserDefine_Mi_Name NAME " + 
+	.query("SELECT '' CODE, '전체' NAME " + 	
+			"UNION ALL SELECT UserDefine_Mi_Code CODE, UserDefine_Mi_Name NAME " + 
 			"FROM UserDefine_Mi_Master WHERE UserDefine_Ma_Code = 'SOTYPE'")
 	.then(result => {
 		return res.json(result.recordset);
@@ -166,7 +167,13 @@ function DrawerChkPlanOrder(pool, req, res){
 	pool.request()
 	.query(query)
 	.then(result => {
-		return res.json(result.recordset);
+		console.log("ㅡㅡㅡDrawerChkPlanOrder 진입");
+		console.log("ㅡㅡㅡDrawerChkPlanOrder 진입", result);
+		if(result.rowsAffected > 0){ 
+			console.log("ㅡㅡㅡDrawerChkPlanOrder 진입 숫자", result.recordset[0].isValied);
+			return res.json(result.recordset[0].isValied);
+		}
+		return res.status(200);
 })
 }
 

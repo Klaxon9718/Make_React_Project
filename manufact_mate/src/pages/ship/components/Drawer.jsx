@@ -156,17 +156,20 @@ export default function BottomDrawer(props) {
 	//생산정보등록이 있는지 판별 후 상태 변경
 	const DrawerChkPlanOrder = async () => {
 		try {
+			console.log("DrawerChkPlanOrder 실행");
 			await axios.post('/test/DrawerChkPlanOrder', {
 				'SHIP_NO': selectedData.SHIP_NO,
 			})
 				.then(function (response) {
 					console.log("생산정보 응답확인 : ", response.data);
-					if (response.data['isValied'] === 1) {
+					if (response.data) {
 						console.log("생산계획 존재");
 						setChkPlanOrder(true);
-						console.log("chkPlanOrder 상태 안: ", chkPlanOrder);
+						console.log("데이터 확인", chkPlanOrder);
+					} else {
+						console.log("조건 밖");
+						setChkPlanOrder(false);
 					}
-					console.log("chkPlanOrder 상태 밖: ", chkPlanOrder);
 				})
 		} catch (error) {
 			console.error('Error occurred during ChkPlanOrder processing:', error.message);
@@ -178,7 +181,7 @@ export default function BottomDrawer(props) {
 	useEffect(() => {
 
 		if (selectedData) {
-			// console.log("전달받은 행 값:");
+			console.log("전달받은 행 값:");
 			// // 객체의 모든 키(칼럼명)와 값을 순회하여 출력
 			// Object.entries(selectedData).forEach(([key, value]) => {
 			//     console.log(`${key}: ${value}`);
@@ -193,7 +196,7 @@ export default function BottomDrawer(props) {
 			fetchUnit();
 		}
 
-	}, [item, selectedData]);
+	}, [item, selectedData, chkPlanOrder]);
 
 
 	return (
@@ -265,7 +268,27 @@ export default function BottomDrawer(props) {
 
 						<Box sx={{ display: 'flex', width: '100%', mt: 2, ml: 1 }}>
 
-							<TextField id="ship_no" label="수주수량" value={selectedData ? selectedData.QTY : qty || ''} variant="outlined" size="small" readOnly={chkPlanOrder} onChange={(e) => setQty(e.target.value)} InputLabelProps={{ shrink: true }} sx={{ ml: 1, height: 40, width: 140 }} inputProps={{ type: 'number' }}></TextField>
+							<TextField
+								id="ship_no"
+								label="수주수량"
+								variant="outlined"
+								size="small"
+								value={selectedData ? selectedData.QTY : qty || ''}
+								onChange={(e) => {
+									if (selectedData) { // selectedData가 있고, chkPlanOrder가 false인 경우에만 변경 허용
+										selectedData.QTY = e.target.value; // selectedData 업데이트
+										setQty(e.target.value); // 상태 업데이트
+									} else {
+										// selectedData가 없는 경우, state에만 저장
+										setQty(e.target.value);
+									}
+								}}
+								InputLabelProps={{ shrink: true }}
+								sx={{ ml: 1, height: 40, width: 140 }}
+								inputProps={{ type: 'number' }}
+								disabled={chkPlanOrder} // chkPlanOrder가 true일 때 비활성화
+							/>
+
 							<TextField id="ship_no" value={selectedData ? selectedData.UNIT : unit} label="단위" variant="outlined" size="small" InputLabelProps={{ shrink: true }} InputProps={{ readOnly: true, }} sx={{ ml: 1, height: 40, width: 100 }} />
 							<LocalizationProvider dateAdapter={AdapterDayjs}>
 								<Box sx={{
@@ -300,7 +323,9 @@ export default function BottomDrawer(props) {
 
 						<Box sx={{ display: 'flex', width: '100%', mt: 1, ml: 1 }}>
 							<Button sx={{ ml: 1, }} variant="outlined" onClick={handleSave}>저장</Button>
-							<Button sx={{ ml: 1, }} variant="outlined">삭제</Button>
+							{selectedData && !chkPlanOrder && (
+								<Button sx={{ ml: 1 }} variant="outlined">삭제</Button>
+							)}
 						</Box>
 					</Box>
 
@@ -309,7 +334,16 @@ export default function BottomDrawer(props) {
 							multiline
 							rows={8}
 							value={selectedData ? selectedData.RE_CONTENT : remark || ''}
-							onChange={(e) => setRemark(e.target.value)}
+							onChange={(e) => {
+								if (selectedData) {
+									// selectedData가 있는 경우, 수정 가능하도록 selectedData에도 반영
+									selectedData.RE_CONTENT = e.target.value;
+									setRemark(e.target.value);
+								} else {
+									// selectedData가 없는 경우, state에만 저장
+									setRemark(e.target.value);
+								}
+							}}
 							sx={{ mt: 2, mb: 1, ml: 10, width: 800, }}
 							InputProps={{ style: { height: 'flex', }, }} />
 					</Box>
