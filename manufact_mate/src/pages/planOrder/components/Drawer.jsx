@@ -197,16 +197,19 @@ const handleOpenPopup = () => {
 			console.log("이전 데이터 SHIP_NO ", selectedData);
 			DrawerChkWorkOrder();
 			// 수주 번호와 변경값 설정
-			setShipNo(selectedData.SHIP_NO)
-			setQty(selectedData.QTY);
+			setShipNo(selectedData.SHIP_NO);
+			setQty(selectedData.PLAN_QTY);
 			setRemark(selectedData.RE_CONTENT);
 			setPlanOrderNo(selectedData.PLANORDER_NO);
 		}
 
-
 		// 저장 버튼 클릭 시
 		if (clickSave) {
 			console.log("저장 진입");
+			console.log("DTEPLAN 출력 ", dtePlan)
+		setDtePlan(dtePlan);
+		setDteDeli(dteDeli);
+setQty(qty)
 			handleSave();
 			setClickSave(false);
 		}
@@ -291,17 +294,18 @@ const handleOpenPopup = () => {
 								label="계획수량"
 								variant="outlined"
 								size="small"
-								value={selectedData ? selectedData.QTY : qty || ''}
+								value={selectedData ? selectedData.PLAN_QTY : qty || ''}
+								disabled={Boolean(selectedData)}
 								onChange={(e) => {
 									if (selectedData) {  //이전 값이 있는 경우, 
 										if (!chkWorkOrder) {
 											console.log("수량 : ", e.target.value)
-											selectedData.QTY = e.target.value; // selectedData 업데이트
+											selectedData.PLAN_QTY = e.target.value; // selectedData 업데이트
 											setQty(e.target.value); // 상태 업데이트
 											console.log("입력 값 QTY : ", qty);
 										} else {
 											// const updatedSelectedData = { ...selectedData,selectedData };
-											setQty(selectedData.QTY);
+											setQty(selectedData.PLAN_QTY);
 										}
 									} else {
 										// selectedData가 없는 경우, state에만 저장
@@ -311,7 +315,7 @@ const handleOpenPopup = () => {
 								InputLabelProps={{ shrink: true }}
 								sx={{ ml: 1, height: 40, width: 140 }}
 								inputProps={{ type: 'number' }}
-								disabled={chkWorkOrder} // chkPlanOrder가 true일 때 비활성화
+								// disabled={chkWorkOrder} // chkPlanOrder가 true일 때 비활성화
 							/>
 
 							<TextField id="ship_no" value={selectedData ? selectedData.UNIT : unit} label="단위" variant="outlined" size="small" InputLabelProps={{ shrink: true }} InputProps={{ readOnly: true, }} sx={{ ml: 1, height: 40, width: 100 }} />
@@ -328,8 +332,8 @@ const handleOpenPopup = () => {
 										format="YYYY-MM-DD"
 										value={selectedData ? dayjs(selectedData.PLAN_DATE) : dayjs(dtePlan)}
 										readOnly={Boolean(selectedData)}
+										onChange={(newValue) => setDtePlan(dayjs(newValue).format('YYYY-MM-DD'))}
 										sx={{ ml: 1, height: 40, width: 160 }}
-										onChange={(newValue) => setDtePlan(newValue)}
 										slotProps={{ textField: { size: 'small' } }} />
 
 									<DatePicker
@@ -339,7 +343,7 @@ const handleOpenPopup = () => {
 										value={selectedData ? dayjs(selectedData.DELI_DATE) : dayjs(dteDeli)}
 										readOnly={Boolean(selectedData)}
 										sx={{ ml: 1, height: 40, width: 160 }}
-										onChange={(newValue) => setDteDeli(newValue)}
+										onChange={(newValue) => setDteDeli(dayjs(newValue).format('YYYY-MM-DD'))}
 										slotProps={{ textField: { size: 'small' } }} />
 								</Box>
 							</LocalizationProvider>
