@@ -22,7 +22,7 @@ import { styled } from '@mui/material/styles';
 import Alert from '@mui/material/Alert';
 
 import Popup from 'src/pages/ship/components/Popup';
-import { ConstructionOutlined } from '@mui/icons-material';
+import Dialog from 'src/pages/ship/components/Dialog';
 
 export default function BottomDrawer(props) {
 
@@ -47,6 +47,7 @@ export default function BottomDrawer(props) {
 	const [isItemPopupOpen, setIsItemPopupOpen] = React.useState(false);
 	const [isAlert, setIsAlert] = React.useState(false);
 	const [isError, setIsError] = React.useState(false);
+	const [isDialogOpen, setIsDialogOpen] = useState(false); //알림창 생성
 	const [clickSave, setClickSave] = React.useState(false);
 
 	const [chkPlanOrder, setChkPlanOrder] = React.useState(false);
@@ -128,7 +129,7 @@ export default function BottomDrawer(props) {
 			return; // 함수 실행을 여기서 중단
 		}
 
-		if(selectedData) { console.log("출력 1차 selectedData.SHIP_NO: ",selectedData.SHIP_NO); setShipNo(selectedData.SHIP_NO); console.log("출력 2차 shipNo : ",shipNo)}
+		if (selectedData) { console.log("출력 1차 selectedData.SHIP_NO: ", selectedData.SHIP_NO); setShipNo(selectedData.SHIP_NO); console.log("출력 2차 shipNo : ", shipNo) }
 
 		try {
 			await axios.post('/test/shipSave', {
@@ -146,16 +147,21 @@ export default function BottomDrawer(props) {
 				'UP_EMP': sessionStorage.getItem('session_id'),
 			})
 				.then(function (response) {
-				console.log("저장 성공");
-				setIsError(false);
-				setIsAlert(true);
-	
-			})
+					console.log("저장 성공");
+					setIsError(false);
+					setIsAlert(true);
+
+				})
 		} catch (error) {
 			console.error('Error occurred during save processing:', error.message);
 			// setIsError(true)
 		}
 	};
+
+	//삭제
+	function deleteData () {
+		setIsDialogOpen(true)
+}
 
 
 	// 팝업을 열기 위한 범용 함수
@@ -193,7 +199,7 @@ export default function BottomDrawer(props) {
 	};
 
 	useEffect(() => {
-		
+
 
 		if (selectedData) {
 			console.log("전달받은 행 값:");
@@ -204,7 +210,7 @@ export default function BottomDrawer(props) {
 			setQty(selectedData.QTY);
 			setRemark(selectedData.RE_CONTENT)
 
-				// // 객체의 모든 키(칼럼명)와 값을 순회하여 출력
+			// // 객체의 모든 키(칼럼명)와 값을 순회하여 출력
 			// Object.entries(selectedData).forEach(([key, value]) => {
 			//     console.log(`${key}: ${value}`);
 			// });
@@ -212,7 +218,7 @@ export default function BottomDrawer(props) {
 
 
 		// 저장 버튼 클릭 시
-		if (clickSave){
+		if (clickSave) {
 			console.log("저장 진입");
 			handleSave();
 			setClickSave(false);
@@ -231,7 +237,7 @@ export default function BottomDrawer(props) {
 			fetchUnit();
 		}
 
-	}, [cust, item, selectedData, selectedCboShip, selectedCboOrder, chkPlanOrder,qty, remark, clickSave, ]);
+	}, [cust, item, selectedData, selectedCboShip, selectedCboOrder, chkPlanOrder, qty, remark, clickSave,]);
 
 
 	return (
@@ -311,12 +317,12 @@ export default function BottomDrawer(props) {
 								value={selectedData ? selectedData.QTY : qty || ''}
 								onChange={(e) => {
 									if (selectedData) {  //이전 값이 있는 경우, 
-										if(!chkPlanOrder){
-										console.log("수량 : ", e.target.value)
-										selectedData.QTY = e.target.value; // selectedData 업데이트
-										setQty(e.target.value); // 상태 업데이트
-										console.log("입력 값 QTY : ", qty);
-										}else{
+										if (!chkPlanOrder) {
+											console.log("수량 : ", e.target.value)
+											selectedData.QTY = e.target.value; // selectedData 업데이트
+											setQty(e.target.value); // 상태 업데이트
+											console.log("입력 값 QTY : ", qty);
+										} else {
 											// const updatedSelectedData = { ...selectedData,selectedData };
 											setQty(selectedData.QTY);
 										}
@@ -364,10 +370,11 @@ export default function BottomDrawer(props) {
 
 
 						<Box sx={{ display: 'flex', width: '100%', mt: 1, ml: 1 }}>
-							<Button sx={{ ml: 1, }} variant="outlined" onClick={()=>setClickSave(true)}>저장</Button>
-							{selectedData && !chkPlanOrder && (
-								<Button sx={{ ml: 1 }} variant="outlined">삭제</Button>
+							<Button sx={{ ml: 1, }} variant="outlined" onClick={() => setClickSave(true)}>저장</Button>
+							{selectedData && !chkPlanOrder && ( // 생산계획정보가 존재하는 경우, 새로 추가하는 경우 삭제 버튼 안생김
+								<Button sx={{ ml: 1 }} variant="outlined" onClick={deleteData}>삭제</Button>
 							)}
+							{isDialogOpen && <Dialog isopen={isDialogOpen} onClose={() => handleClosePopup(setIsDialogOpen)} deleteList={[selectedData.SHIP_NO]}/>}
 						</Box>
 					</Box>
 

@@ -161,7 +161,7 @@ function ChkPlanList (pool, req, res){
 
 //삭제
 function ShipDelete (pool, req, res) {
-	console.log("ShipDelete 실행");
+	console.log("ShipDelete 실행", req.body.SHIP_NO);
 	query = "DELETE FROM SHIP_PLAN_ED WHERE SHIP_NO = '" + req.body.SHIP_NO +"'"
 	pool.request()
 	.query(query)
