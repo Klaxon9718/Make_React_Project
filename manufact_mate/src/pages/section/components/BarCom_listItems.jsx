@@ -49,7 +49,7 @@ export function MainListItems () {
       <ListItemText primary="수주관리" />
     </ListItemButton>
 
-    <ListItemButton id="product">
+    <ListItemButton id="planOrder" onClick={handleMovePageClick}>
       <ListItemIcon>
         <ShoppingCartIcon />
       </ListItemIcon>

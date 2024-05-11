@@ -6,6 +6,7 @@ import Home from 'src/pages/Home/Home';
 import Ship from 'src/pages/ship/Ship';
 import Login from 'src/pages/Login/Login';
 import NotFound from 'src/pages/NotFound';
+import PlanOrder from 'src/pages/planOrder/PlanOrder';
 
 
 
@@ -17,6 +18,7 @@ const Router = () => {
                 <Route path="/" element={<Home />} />
                 <Route path="/Home" element={<Home />} />
                 <Route path="/ship" element={<Ship />} />
+				<Route path="/planOrder" element={<PlanOrder />} />
                 <Route path="/Login" element={<Login />} />
                 <Route path="/*" element={<NotFound />} />
             </Routes>

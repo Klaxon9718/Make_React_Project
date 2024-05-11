@@ -1,7 +1,7 @@
-const { PoolOutlined } = require("@mui/icons-material")
 
 //수주 그리드 조회
 function SelectShip(mssql, pool, req, res) {
+	console.log("SelectShip 실행", req.body)
 
 	const dte_shipfrom = req.body.dte_shipfrom
 	const dte_shipto= req.body.dte_shipto
@@ -33,7 +33,7 @@ function SelectShip(mssql, pool, req, res) {
 		res.json(result.recordset); //받아온 데이터를 json형식으로 가져옴
 	});
 } catch (error) {
-	console.error('로그인 처리 중 오류 발생:' + error);
+	console.error('SelectShip 처리 중 오류 발생:' + error);
 	res.status(500).send({ message: "서버 오류" });
 }
 }

@@ -1,5 +1,6 @@
 const ShipDB = require('./ShipDB');
-const CompoDB = require('./CompoDB')
+const CompoDB = require('./CompoDB');
+const PlanOrderDB = require('./PlanOrderDB');
 
 const { dbImport, express, cors, app, connectToDatabase, bodyPaser } = require("../dbImport");
 dbImport(); //함수 호출
@@ -11,6 +12,7 @@ app.use(bodyPaser.urlencoded({ extended: false }))
 connectToDatabase().then(pool => {
 
 
+//#region ShipDB.js 
 	//ShipDB.js : 수주
 	//모든 사용자 데이터 가져오기
 	//테스트용
@@ -49,11 +51,22 @@ connectToDatabase().then(pool => {
 	app.post('/test/DrawerChkPlanOrder', (req, res) => ShipDB.DrawerChkPlanOrder(pool, req, res));
 
 
-
-
 	//CompoDB.js : 컴포넌트 쿼리 실행
 	app.post('/test/popupSelect', (req, res) => CompoDB.PopupSelect(mssql, pool, req, res));
+//#endregion
 
+//#region PlanOrderDB.js 
+	//PlanOrder.jsx
+	//생산정보 가져오기
+	app.post('/test/selectPlanOrder', (req, res) => PlanOrderDB.SelectPlanOrder(mssql, pool, req, res));
+
+
+	//OnePopup.jsx
+	//등록안된 수주정보 가져오기
+	app.post('/test/OnePopupSelect', (req, res) => PlanOrderDB.OnePopupSelect(mssql, pool,req, res));
+//#endregion
+
+//#region login.jsx
 	//사용자 로그인
 	app.post('/test/login', async function (req, res) {
 		console.log("Login실행");
@@ -93,6 +106,7 @@ connectToDatabase().then(pool => {
 			res.status(500).send({ message: "서버 오류" });
 		}
 	});
+	//#endregion
 
 
 	});

@@ -2,9 +2,9 @@ import * as React from 'react';
 import { useState, useEffect } from 'react';
 import dayjs from 'dayjs';
 import axios from 'axios';
-import Popup from 'src/pages/ship/components/Popup';
-import Drawer from 'src/pages/ship/components/Drawer';
-import Dialog from 'src/pages/ship/components/Dialog';
+import Popup from 'src/pages/planOrder/components/Popup';
+import Drawer from 'src/pages/planOrder/components/Drawer';
+import Dialog from 'src/pages/planOrder/components/Dialog';
 import { useNavigate } from "react-router-dom";
 
 //#region MUI속성
@@ -32,20 +32,19 @@ export default function Ship() {
 
 	//그리드 설정
 	const columns = [
-		{ field: 'SHIP_NO', headerName: '수주번호', width: 120, editable: false },
 		{ field: 'SHIP_FLAG', headerName: '수주구분', width: 80, editable: false, valueGetter: (params) => findNameByCode(params, cboShip) },
-		{ field: 'ORDER_FLAG', headerName: '주문유형', editable: false, valueGetter: (params) => findNameByCode(params, cboOrder) },
-		{ field: 'CUST_CODE', headerName: '거래처 코드', width: 120, editable: false },
-		{ field: 'CUST_NAME', headerName: '거래처 명', width: 150, editable: false },
-		{ field: 'CUST_ADDR', headerName: '거래처 주소', width: 150, editable: false },
+		{ field: 'SHIP_NO', headerName: '수주번호', width: 120, editable: false },
+		{ field: 'PLANORDER_NO', headerName: '생산계획번호', width: 120, editable: false },
 		{ field: 'ITEM_CODE', headerName: '품목 코드', width: 120, editable: false },
 		{ field: 'ITEM_NAME', headerName: '품목 명', width: 150, editable: false },
-		{ field: 'QTY', type: 'number', headerName: '수주수량', width: 120, editable: false },
+		{ field: 'CUST_CODE', headerName: '거래처 코드', width: 120, editable: false },
+		{ field: 'CUST_NAME', headerName: '거래처 명', width: 150, editable: false },
+		{ field: 'PLAN_DATE', headerName: '계획일자', width: 120, editable: false },
+		{ field: 'DELI_DATE', headerName: '납기예정일', width: 120, editable: false },
+		{ field: 'PLAN_QTY', type: 'number', headerName: '계획수량', width: 120, editable: false },
 		{ field: 'UNIT', headerName: '단위', width: 60, editable: false },
-		{ field: 'SHIP_DATE', headerName: '수주일자', width: 120, editable: false },
-		{ field: 'DELI_DATE', headerName: '납품일자', width: 120, editable: false },
 		{ field: 'INS_EMP', headerName: '등록자', width: 80, editable: false },
-		{ field: 'RE_CONTENT', headerName: '특이사항', width: 150, editable: false },
+		{ field: 'RE_CONTENT', headerName: '비고', width: 170, editable: false },
 	];
 
 	//그리드 CODE에 따른 NAME값 출력
@@ -58,10 +57,12 @@ export default function Ship() {
 
 	const [rows, setRows] = React.useState([]);
 	const [shipNoList, setShipNoList] = React.useState([]);
-	const [shipFrom, setShipFrom] = React.useState(dayjs().subtract(1, 'month')); //날짜
-	const [shipTo, setShipTo] = React.useState(dayjs()); //날짜
-	const [deliFrom, setDeliFrom] = React.useState(dayjs().subtract(1, 'month')); //날짜
-	const [deliTo, setDeliTo] = React.useState(dayjs()); //날짜
+
+	//조회조건
+	const [planFrom, setPlanFrom] = React.useState(dayjs().subtract(1, 'month')); //날짜
+	const [planTo, setPlanTo] = React.useState(dayjs()); //날짜
+	const [planOrderNo, setPlanOrderNo] = React.useState(''); //생산계획번호
+	const [shipNo, setShipNo] = React.useState(''); //수주번호
 
 	const [isCustPopupOpen, setIsCustPopupOpen] = useState(false);  // 팝업을 띄울지 말지 결정하는 상태 및 그 상태를 바꾸는 함수
 	const [selectedCustomer, setSelectedCustomer] = React.useState({ CODE: '', NAME: '' }); //팝업으로부터 값을 가져옴 + 사용자 입력 값 저장
@@ -98,13 +99,6 @@ export default function Ship() {
 	// 팝업을 닫기 위한 범용 함수
 	const handleClosePopup = (setPopupState) => {
 		setPopupState(false);
-		handleSelect();
-	};
-
-
-	// CustPopup 값 적용
-	const handleSelectCustomer = (customer) => {
-		setSelectedCustomer(customer); // 선택된 거래처 정보 저장
 		handleSelect();
 	};
 
@@ -174,25 +168,23 @@ export default function Ship() {
 	const handleSelect = async (event) => {
 		event?.preventDefault(); // event가 존재하면 preventDefault() 호출
 
-		await axios.post('/test/shipSelect', {
-			'dte_shipfrom': shipFrom,
-			'dte_shipto': shipTo,
-			'dte_delidate': deliFrom,
-			'dte_delito': deliTo,
-			'shipflag': selectedCboShip.CODE,
-			'orderflag': selectedCboOrder.CODE,
-			'cust_code': selectedCustomer.CODE,
-			'cust_name': selectedCustomer.NAME,
-			'item_code': selectedItem.CODE,
-			'item_name': selectedItem.NAME,
+		console.log("아이템 코드 출력 : ",selectedItem.CODE);
+
+		await axios.post('/test/selectPlanOrder', {
+			'ship_no': shipNo,	//수주번호
+			'plan_order': planOrderNo, //생산계획 번호
+			'dte_planfrom': planFrom,	//계획일자 시작
+			'dte_planto': planTo,		//계획일자 끝
+			'item_code': selectedItem.CODE, //품목 코드
+			'item_name': selectedItem.NAME, //품목 명
 		})
-			.then(function (response) {
-				//console.log("그리드 조회 성공 " + response.status);
-				setRows(response.data);
-			})
-			.catch(function (error) {
-				console.error('Error occurred during login processing:', error.message);
-			})
+		.then(function (response) {
+			//console.log("그리드 조회 성공 " + response.status);
+			setRows(response.data);
+		})
+		.catch(function (error) {
+			console.error('Error occurred during login processing:', error.message);
+		})
 	}
 
 	// 수주 콤보박스 리스트 가져옴
@@ -220,8 +212,8 @@ export default function Ship() {
 		handleSelect();
 		fetchShipOptions();
 		fetchOrderOptions();
-		chkPlanList();
-	}, [selectedCustomer, selectedItem, selectedCboOrder, selectedCboShip, shipFrom, shipTo, deliFrom, deliTo]); //추후 rows 추가할 것
+		//chkPlanList();
+	}, [selectedCustomer, selectedItem, selectedCboOrder, selectedCboShip, planOrderNo, shipNo, planFrom, planTo]); 
 
 	return (
 		<ThemeProvider theme={defaultTheme}>
@@ -240,115 +232,42 @@ export default function Ship() {
 							<Grid item xs={4} >
 								<LocalizationProvider dateAdapter={AdapterDayjs}>
 									<DemoContainer components={['DatePicker', 'DatePicker']}>
-										{/*수주일자 */}
+										{/*계획일자 */}
 										<DatePicker
-											id="shipFrom"
-											label="수주일자 From"
+											label="계획일자 From"
 											views={['year', 'month', 'day']}
 											format="YYYY-MM-DD"
-											value={shipFrom}
-											onChange={(newValue) => setShipFrom(newValue)}
-											slotProps={{ textField: { size: 'small' } }} />
+											value={planFrom}
+											onChange={(newValue) => setPlanFrom(newValue)}
+											slotProps={{ textField: { size: 'small' } }}
+											sx ={{ width : 225}} />
 										<DatePicker
-											id="shipTo"
-											label="수주일자 To"
+											label="계획일자 To"
 											views={['year', 'month', 'day']}
 											format="YYYY-MM-DD"
-											value={shipTo}
-											onChange={(newValue) => setShipTo(newValue)}
-											slotProps={{ textField: { size: 'small' } }} />
+											value={planTo}
+											onChange={(newValue) => setPlanTo(newValue)}
+											slotProps={{ textField: { size: 'small' } }}
+											sx ={{ width : 225}}/>
 									</DemoContainer>
 								</LocalizationProvider>
-								{/* 납품일자 */}
-								<LocalizationProvider dateAdapter={AdapterDayjs} >
-									<DemoContainer components={['DatePicker', 'DatePicker']}
-										sx={{
-											display: 'flex',
-											flexDirection: 'column',
-											width: { xs: '100%', sm: '100%', md: '100%', lg: '100%' },
-											marginTop: 1
-										}}>
-										<DatePicker label="납품일자 From"
-											views={['year', 'month', 'day']}
-											format="YYYY-MM-DD"
-											value={deliFrom}
-											onChange={(newValue) => setDeliFrom(newValue)}
-											slotProps={{ textField: { size: 'small' } }} />
-										<DatePicker
-											label="납품일자 To"
-											views={['year', 'month', 'day']}
-											format="YYYY-MM-DD"
-											value={deliTo}
-											onChange={(newValue) => setDeliTo(newValue)}
-											slotProps={{ textField: { size: 'small' } }} />
-									</DemoContainer>
-								</LocalizationProvider>
-							</Grid>
-
-
-							<Grid item xs={1} sx={{ marginTop: 1 }}>
-								<Box sx={{
-									maxWidth: 130,
-									display: 'flex',
-									flexDirection: 'column',
-									width: { xs: '100%', sm: '100%', md: '100%', lg: '100%' },
-
-								}}>
-									{/*수주구분 */}
-									<FormControl fullWidth>
-										<InputLabel id="demo-simple-select-label" sx={{ marginTop: -1 }}>수주구분</InputLabel>
-										<Select
-											value={selectedCboShip.CODE || ''}
-											label="수주구분"
-											onChange={(event) => handleChange(setSelectedCboShip, 'CODE', event)}
-											size={"small"}
-										>
-											{cboShip.map((option) => (
-												<MenuItem key={option.CODE} value={option.CODE}>
-													{option.NAME}
-												</MenuItem>
-											))}
-										</Select>
-									</FormControl>
-
-									{/*주문 유형*/}
-									<FormControl fullWidth sx={{ marginTop: 2 }}>
-										<InputLabel id="demo-simple-select-label" sx={{ marginTop: -1 }}>주문유형</InputLabel>
-										<Select
-											value={selectedCboOrder.CODE || ''}
-											labelId="demo-simple-select-label"
-											id="demo-simple-select"
-											label='주문 유형'
-											onChange={(event) => handleChange(setSelectedCboOrder, 'CODE', event)}
-											size={"small"}
-										>
-											{cboOrder.map((option) => (
-												<MenuItem key={option.CODE} value={option.CODE}>
-													{option.NAME}
-												</MenuItem>
-											))}
-										</Select>
-									</FormControl>
-
-								</Box>
-							</Grid>
-
-							{/*거래처 코드, 거래처 명*/}
-							<Grid item xs={5}>
-								<Container maxWidth="sm">
-									<TextField id="standard-basic" label="거래처 코드" variant="standard" size={"small"} sx={{ p: 1, mt: -1 }} value={selectedCustomer.CODE} onChange={(event) => handleChange(setSelectedCustomer, 'CODE', event)} />
-									<TextField id="standard-basic" label="거래처 명" variant="standard" size={"small"} sx={{ p: 1, mt: -1, editable: true }} value={selectedCustomer.NAME} onChange={(event) => handleChange(setSelectedCustomer, 'NAME', event)} />
-									<Button onClick={() => handleOpenPopup(setIsCustPopupOpen)} ><SearchIcon /></Button>
-									{isCustPopupOpen && <Popup isopen={isCustPopupOpen} onClose={() => handleClosePopup(setIsCustPopupOpen)} labelCode={'거래처 코드'} labelName={'거래처 명'} tname={'Customer_Master'} calcode={'customer_code'} calname={'customer_name'} onSelect={handleSelectCustomer} />}
-								</Container>
 
 								{/*품목코드, 품목 명*/}
+								<Box sx ={{ ml : -3, mt : 0.5}}>
 								<Container maxWidth="sm">
-									<TextField id="standard-basic" label="픔목 코드" variant="standard" size={"small"} sx={{ p: 1, editable: true }} value={selectedItem.CODE} onChange={(event) => handleChange(setSelectedItem, 'CODE', event)} />
+									<TextField id="standard-basic" label="품목 코드" variant="standard" size={"small"} sx={{ p: 1, editable: true }} value={selectedItem.CODE} onChange={(event) => handleChange(setSelectedItem, 'CODE', event)} />
 									<TextField id="standard-basic" label="품목 명" variant="standard" size={"small"} sx={{ p: 1, editable: true }} value={selectedItem.NAME} onChange={(event) => handleChange(setSelectedItem, 'NAME', event)} />
 									<Button onClick={() => handleOpenPopup(setIsItemPopupOpen)} sx={{ p: 2, }}><SearchIcon /></Button>
 									{isItemPopupOpen && <Popup isopen={isItemPopupOpen} onClose={() => handleClosePopup(setIsItemPopupOpen)} labelCode={'품목 코드'} labelName={'품목 명'} tname={'Item_Master'} calcode={'Item_code'} calname={'Item_name'} onSelect={handleSelectItem} />}
 								</Container>
+								</Box>
+
+							</Grid>
+
+
+							<Grid item xs={2} sx={{ ml : -5 }}>
+									<TextField id="standard-basic" label="생산계획번호" variant="standard" size={"small"} sx={{ p: 1, mt: -1, editable: true }} value={planOrderNo} onChange={(event) => setPlanOrderNo(event.target.value)} />
+									<TextField id="standard-basic" label="수주번호" variant="standard" size={"small"} sx={{ p: 1, editable: true }} value={shipNo} onChange={(event) => setShipNo(event.target.value)} />
 							</Grid>
 
 
@@ -356,7 +275,6 @@ export default function Ship() {
 								<Container sx={{
 									display: 'flex',
 									paddingTop: 8,
-									marginLeft: -10
 								}}>
 									<Button variant="outlined" sx={{ mr: 2 }} onClick={() => handleOpenPopup(setIsAddDrawerOpen)}>추가</Button>
 									{isAddDrawerOpen && <Drawer isopen={isAddDrawerOpen} onClose={() => handleClosePopup(setIsAddDrawerOpen)} route={'Button'} selectedData={addRowData}/>}
@@ -366,7 +284,7 @@ export default function Ship() {
 							</Grid>
 
 							{/*onRowCountChange: 행 개수가 변경되면 콜백이 시작됩니다. */}
-							<Grid item xs={12} sx={{ minHeight:640,  maxHeight: 640, maxWidth: '100%', mt: -3 }}>
+							<Grid item xs={12} sx={{ minHeight:640, maxHeight: 640, maxWidth: '100%', mt: -3 }}>
 								전체 행 수 : {rows.length}
 								<DataGrid 
 									rows={rows} columns={columns} getRowId={(row) => row.SHIP_NO}
@@ -384,7 +302,7 @@ export default function Ship() {
 									}}
 									onRowClick={(params) => handleRowClick(params)} //행 클릭 시
 									onRowSelectionModelChange={handleCheckRows}//삭제 처리
-									isRowSelectable={(params) => !shipNoList.includes(params.row.SHIP_NO)}
+									//isRowSelectable={(params) => !shipNoList.includes(params.row.SHIP_NO)}
 									isCheckedRows={isCheckedRows}
 								/>
 								{isDrawerOpen && <Drawer route={'Grid'} selectedData={selectedRowData} isopen={isDrawerOpen} onClose={() => handleClosePopup(setIsDrawerOpen)} />}
@@ -397,23 +315,3 @@ export default function Ship() {
 
 	);
 }
-
-
-/* ModalProps={{
-	BackdropProps: {
-	  invisible: true
-	}
-  }}
-  drawer 사용시 뒤 활성화
-  
-	  const handleRowSelection = (selectionModel) => {
-		if (selectionModel.length > 0) {
-		  const selectedID = selectionModel[0]; // 여기서는 단일 선택을 가정합니다.
-		  const selectedRow = rows.find(row => row.SHIP_NO === selectedID);
-		  setSelectedRowData(selectedRow);
-		  console.log(selectedRow); // 선택된 행의 데이터를 확인할 수 있습니다.
-		}
-	  };
- 
- 
-  */
