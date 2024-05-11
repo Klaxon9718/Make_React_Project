@@ -293,7 +293,7 @@ const handleOpenPopup = () => {
 								label="수주번호"
 								variant="outlined"
 								size="small"
-								value={selectedData ? selectedData.SHIP_NO : selectedCboShip.SHIP_NO || ''}
+								value={selectedData ? selectedData.SHIP_NO : shipNo || ''}
 								onClick={clickShipNo}
 								InputLabelProps={{ shrink: true }}
 								InputProps={{ readOnly: true, }}
