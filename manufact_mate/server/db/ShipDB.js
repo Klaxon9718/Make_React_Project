@@ -130,7 +130,7 @@ function ShipSave(mssql, pool, req, res){
 	.input('ORDER_FLAG', mssql.VarChar,req.body.ORDER_FLAG)
 	.input('CUST_CODE', mssql.VarChar,req.body.CUST_CODE)
 	.input('ITEM_CODE', mssql.VarChar,req.body.ITEM_CODE)
-	.input('QTY', mssql.VarChar,req.body.QTY)
+	.input('QTY', mssql.Float,req.body.QTY)
 	.input('SHIP_DATE', mssql.VarChar,req.body.SHIP_DATE)
 	.input('DELI_DATE', mssql.VarChar,req.body.DELI_DATE)
 	.input('REMARK', mssql.VarChar,req.body.REMARK)

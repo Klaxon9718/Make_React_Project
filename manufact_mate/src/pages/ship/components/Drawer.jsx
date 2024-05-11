@@ -123,6 +123,7 @@ export default function BottomDrawer(props) {
 		console.log("세션 " + sessionStorage.getItem('session_id'));
 
 		if ((!selectedData) && (!selectedCboShip.CODE || !selectedCboOrder.CODE || !cust.CODE || !item.CODE || !qty || !dteShip || !dteDeli)) {
+			console.log("저장 조건문에서 찍는 selectedData : ", selectedData);
 			setIsError(true)
 			return; // 함수 실행을 여기서 중단
 		}
@@ -152,7 +153,7 @@ export default function BottomDrawer(props) {
 			})
 		} catch (error) {
 			console.error('Error occurred during save processing:', error.message);
-			setIsError(true)
+			// setIsError(true)
 		}
 	};
 
@@ -191,23 +192,24 @@ export default function BottomDrawer(props) {
 
 	};
 
-
 	useEffect(() => {
+		
 
 		if (selectedData) {
 			console.log("전달받은 행 값:");
-			// // 객체의 모든 키(칼럼명)와 값을 순회하여 출력
+			console.log("이전 데이터 SHIP_NO ", selectedData);
+
+			// 수주 번호와 변경값 설정
+			setShipNo(selectedData.SHIP_NO)
+			setQty(selectedData.QTY);
+			setRemark(selectedData.RE_CONTENT)
+
+				// // 객체의 모든 키(칼럼명)와 값을 순회하여 출력
 			// Object.entries(selectedData).forEach(([key, value]) => {
 			//     console.log(`${key}: ${value}`);
 			// });
-			console.log("이전 데이터 SHIP_NO ", selectedData.SHIP_NO);
-			setShipNo(selectedData.SHIP_NO)
 		}
 
-		if (chkPlanOrder && selectedData) {
-			setQty(selectedData.QTY); // selectedData.QTY로 qty 상태 업데이트
-			console.log("QTY 출력 : ", qty);
-		}
 
 		// 저장 버튼 클릭 시
 		if (clickSave){
@@ -221,8 +223,8 @@ export default function BottomDrawer(props) {
 		fetchOrderOptions();
 		console.log("리마크 ", remark);
 		console.log("리마크 ", qty);
-		setRemark(remark);
-		setQty(qty);
+		// setRemark(remark);
+
 
 
 		if (item.CODE !== '') {	//아이템 코드가 있을 경우만 실행
@@ -308,7 +310,7 @@ export default function BottomDrawer(props) {
 								size="small"
 								value={selectedData ? selectedData.QTY : qty || ''}
 								onChange={(e) => {
-									if (selectedData) { 
+									if (selectedData) {  //이전 값이 있는 경우, 
 										if(!chkPlanOrder){
 										console.log("수량 : ", e.target.value)
 										selectedData.QTY = e.target.value; // selectedData 업데이트
