@@ -5,6 +5,7 @@ const PlanOrderDB = require('./PlanOrderDB');
 const { dbImport, express, cors, app, connectToDatabase, bodyPaser } = require("../dbImport");
 dbImport(); //함수 호출
 const mssql = require("mssql");
+const { application } = require('express');
 app.use(express.json({ extended: true }));
 app.use(cors());
 app.use(bodyPaser.urlencoded({ extended: false }))
@@ -60,11 +61,22 @@ connectToDatabase().then(pool => {
 	//생산정보 가져오기
 	app.post('/test/selectPlanOrder', (req, res) => PlanOrderDB.SelectPlanOrder(mssql, pool, req, res));
 
+	//작업지시 여부 확인
+	app.post('/test/DrawerChkWorkOrder', (req, res) => PlanOrderDB.DrawerChkWorkOrder(pool, req, res));
+
+	//Drawer.jsx
+	//저장 수정
+	app.post('/test/planOrderSave', (req, res) => PlanOrderDB.PlanOrderSave(mssql, pool, req, res))
 
 	//OnePopup.jsx
 	//등록안된 수주정보 가져오기
 	app.post('/test/OnePopupSelect', (req, res) => PlanOrderDB.OnePopupSelect(mssql, pool,req, res));
-//#endregion
+
+	//Dialog.jsx
+	//삭제
+	app.post('/test/planOrderDelete', (req, res) => PlanOrderDB.PlanOrderDelete(pool, req, res));
+
+	//#endregion
 
 //#region login.jsx
 	//사용자 로그인

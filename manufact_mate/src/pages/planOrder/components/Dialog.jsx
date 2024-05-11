@@ -21,11 +21,11 @@ export default function AlertDialog(props) {
 	};
 
 	const procedure = async () => {
-		for (const ship_no of props.deleteList) {
+		for (const planOrder_no of props.deleteList) {
 			try {
-				console.log("삭제 전 SHIP_NO : " + ship_no);
-				await axios.post('/test/shipDelete', {
-					'SHIP_NO': ship_no,
+				console.log("삭제 전 SHIP_NO : " + planOrder_no);
+				await axios.post('/test/planOrderDelete', {
+					'planOrder_no': planOrder_no,
 				})
 					.then(function (response) {
 						console.log("데이터 삭제 완료 " + response.status)

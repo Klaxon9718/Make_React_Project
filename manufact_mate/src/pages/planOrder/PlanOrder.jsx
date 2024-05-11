@@ -28,7 +28,7 @@ import Grid from '@mui/material/Grid';
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 //#endregion
 
-export default function Ship() {
+export default function PlanOrder() {
 
 	//그리드 설정
 	const columns = [

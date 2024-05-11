@@ -17,12 +17,29 @@ function OnePopup(props) {
 	
 	const [Code, SetCode] = React.useState(''); // 코드 검색
 	const [rows, setRows] = React.useState([]);
+	const [cboShip, setCboShip] = React.useState([]);
 
 	const defaultTheme = createTheme();
 
+		//그리드 CODE에 따른 NAME값 출력
+		const findNameByCode = (code, array) => {
+			const item = array.find((item) => item.CODE === code);
+			return item ? item.NAME : 'Not Found';
+		};
+
+			// 수주 콤보박스 리스트 가져옴
+	const fetchShipOptions = async () => {
+		try {
+			const response = await axios.post('/test/cboShipList');
+			setCboShip(response.data); // 콤보박스 상태 업데이트
+		} catch (error) {
+			console.error('Error fetching ship options:', error);
+		}
+	};
+
 	const columns = [
 		{ field: 'SHIP_NO', headerName: '수주번호', width: 120, editable: false },
-		{ field: 'SHIP_FLAG', headerName: '수주구분', width: 80, editable: false },
+		{ field: 'SHIP_FLAG', headerName: '수주구분', width: 80, editable: false, valueGetter: (params) => findNameByCode(params, cboShip) },
 		{ field: 'ITEM_CODE', headerName: '품목코드', width: 120, editable: false },
 		{ field: 'ITEM_NAME', headerName: '품목명', width: 120, editable: false },
 		{ field: 'CUST_CODE', headerName: '거래처코드', width: 120, editable: false },
@@ -64,21 +81,9 @@ function OnePopup(props) {
 				console.error('Error occurred during login processing:', error.message);
 			})
 		}
-
-		// 검색어 입력 핸들러 수정 : 이런 식으로 이용하면 값을 setFucntion하나로 다 바꿀 수 있다.
-	//onChange={(e) => handleInputChange(e, SetName)}	
-	//const handleInputChange = (event, setFunction) => {
-	//	setFunction(event.target.value);
-	//};
-
-	// const handleKeyDown = (event) => {
-	// 	if (event.key === 'Enter') {
-	// 		console.log("엔터 : " + Code);
-	// 		selectData();
-	// 	}
-	// };
 	
 		useEffect(() => {
+			fetchShipOptions();
 			selectData();
 		}, [Code]);
 
@@ -99,6 +104,7 @@ function OnePopup(props) {
 					</Box>
 					<TextField id="idCode" label={'수주번호'} variant="standard" size="small" sx={{ p: 1, mt: -1 }} onChange={(event) => SetCode(event.target.value)}/>
 					<div style={{ height: 400, width: '100%' }}>
+					전체 행 수 : {rows.length}
 					<DataGrid
 						getRowId={(row) => row.SHIP_NO}
 						rowHeight={25}

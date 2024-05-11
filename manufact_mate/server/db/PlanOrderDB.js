@@ -43,7 +43,71 @@ function OnePopupSelect (mssql, pool, req, res){
 	}
 }
 
+function DrawerChkWorkOrder (pool, req, res) {
+	console.log("DrawerChkPlanOrder 실행");
+	query = "SELECT 1 as isValied FROM WORKORDER_ED WHERE PLAN_ORDER_NO = '" + req.body.planOrder_no + "'"
+	pool.request()
+	.query(query)
+	.then(result => {
+		console.log("DrawerChkWorkOrder 진입");
+		console.log("DrawerChkWorkOrder 진입", result);
+		if(result.recordset.length > 0){ 
+			console.log("DrawerChkWorkOrder 진입 숫자", result.recordset[0].isValied);
+			res.json(result.recordset[0].isValied);
+		}
+		else{
+			console.log("DrawerChkWorkOrder else 숫자", result.recordset[0]);
+			res.json(result.recordset[0]);
+		}
+
+})
+}
+
+//저장
+function PlanOrderSave(mssql, pool, req, res) {
+	console.log("PlanOrderSave 실행");
+	console.log("PlanOrderSave body : " + req.body.ORDER_FLAG)
+	console.log("PlanOrderSave 실행" , req.body);
+
+
+	pool.request()
+	.input('PLANORDER_NO', mssql.VarChar,req.body.PLANORDER_NO)
+	.input('SHIP_NO', mssql.VarChar,req.body.SHIP_NO)
+	.input('CUST_CODE', mssql.VarChar,req.body.CUST_CODE)
+	.input('ITEM_CODE', mssql.VarChar,req.body.ITEM_CODE)
+	.input('PLAN_QTY', mssql.Float,req.body.PLAN_QTY)
+	.input('PLANINS_EMP_CODE', mssql.VarChar,req.body.PLANINS_EMP_CODE)
+	.input('PLAN_DATE', mssql.VarChar,req.body.PLAN_DATE)
+	.input('DELI_DATE', mssql.VarChar,req.body.DELI_DATE)
+	.input('RE_CONTENT', mssql.VarChar,req.body.RE_CONTENT)
+	.input('INS_EMP', mssql.VarChar,req.body.INS_EMP)
+	.input('UP_EMP', mssql.VarChar,req.body.UP_EMP)
+	.execute('USP_LSH_MID_002_01')
+	.then(result => {
+		res.status(200).json({ message: "성공적으로 저장되었습니다." });
+})
+.catch(error => {
+    // 에러 처리
+    console.error("데이터베이스 작업 중 에러 발생:", error);
+    res.status(500).json({ error: "서버 내부 에러." });
+});
+}
+
+//삭제
+function PlanOrderDelete (pool, req, res){
+	console.log("ShipDelete 실행", req.body.planOrder_no);
+	query = "DELETE FROM PLANORDER_ED WHERE PLAN_ORDER_NO = '" + req.body.planOrder_no +"'"
+	pool.request()
+	.query(query)
+	.then(result => {
+		res.status(200).send({ message: "삭제 완료" });
+	})
+}
+
 module.exports = {
 	SelectPlanOrder,
 	OnePopupSelect,
+	DrawerChkWorkOrder,
+	PlanOrderDelete,
+	PlanOrderSave,
 }

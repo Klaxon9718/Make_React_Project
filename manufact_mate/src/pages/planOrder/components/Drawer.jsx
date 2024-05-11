@@ -21,9 +21,8 @@ import Button from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
 import Alert from '@mui/material/Alert';
 
-import Popup from 'src/pages/ship/components/Popup';
-import Dialog from 'src/pages/ship/components/Dialog';
-import OnePopup from './OnePopup';
+import Dialog from 'src/pages/planOrder/components/Dialog';
+import OnePopup from 'src/pages/planOrder/components/OnePopup';
 
 export default function BottomDrawer(props) {
 
@@ -35,24 +34,23 @@ export default function BottomDrawer(props) {
 	const [selectedCboOrder, setSelectedCboOrder] = React.useState({ CODE: '', NAME: '' }); //cbo 선택시 값 저장
 
 	const [shipNo, setShipNo] = React.useState('');
+	const [planOrderNo, setPlanOrderNo] = React.useState('');
 	const [cust, setCust] = React.useState({ CODE: '', NAME: '' });	//거래처
 	const [item, setItem] = React.useState({ CODE: '', NAME: '' }); //품목
 	const [unit, setUnit] = React.useState('');	// 단위
 	const [remark, setRemark] = React.useState(''); // 특이사항
 	const [qty, setQty] = React.useState('');
-
 	const [dtePlan, setDtePlan] = React.useState(dayjs()); //날짜
 	const [dteDeli, setDteDeli] = React.useState(dayjs()); //날짜
 
 	const [isOnePopupOpen, setIsOnePopupOpen] = React.useState(false);
-	const [isCustPopupOpen, setIsCustPopupOpen] = React.useState(false);
-	const [isItemPopupOpen, setIsItemPopupOpen] = React.useState(false);
+
 	const [isAlert, setIsAlert] = React.useState(false);
 	const [isError, setIsError] = React.useState(false);
 	const [isDialogOpen, setIsDialogOpen] = useState(false); //알림창 생성
 	const [clickSave, setClickSave] = React.useState(false);
 
-	const [chkPlanOrder, setChkPlanOrder] = React.useState(false);
+	const [chkWorkOrder, setChkWorkOrder] = React.useState(false);
 
 	const defaultTheme = createTheme(); // 테마 적용
 
@@ -64,16 +62,6 @@ export default function BottomDrawer(props) {
 		}));
 	};
 
-	// CustPopup 값 적용
-	const handleSelectCustomer = () => {
-		// setCust(customer);
-	};
-
-	// ItemPopup 값 적용
-	const handleSelectItem = () => {
-		// setItem(Item);
-	};
-
 	//선택한 값 설정
 	const handleSelectData = (data) => {
 		console.log("팝업 받은 값 출력 ",data);
@@ -81,10 +69,12 @@ export default function BottomDrawer(props) {
 		console.log("팝업 받은 값 출력 수량 ",data.SHIP_NO);
 		setQty(data.QTY);
 		setUnit(data.UNIT);
-		setRemark(data.REMARK);
 		setShipNo(data.SHIP_NO);
 		setCust({ CODE: data.CUST_CODE, NAME: data.CUST_NAME });
 		setItem({ CODE: data.ITEM_CODE, NAME: data.ITEM_NAME });
+		setSelectedCboShip(data.SHIP_FLAG);
+		setDtePlan(data.SHIP_DATE);
+		setDteDeli(data.DELI_DATE);
 	}
 
 	//#region 요청
@@ -95,16 +85,6 @@ export default function BottomDrawer(props) {
 			setCboShip(response.data); // 콤보박스 상태 업데이트
 		} catch (error) {
 			console.error('Error fetching ship options:', error);
-		}
-	};
-
-	//주문유형 콤보박스 리스트 가져옴
-	const fetchOrderOptions = async () => {
-		try {
-			const response = await axios.post('/test/addCboOrderList');
-			setCboOrder(response.data); // 콤보박스 상태 업데이트
-		} catch (error) {
-			console.error('Error fetching order options:', error);
 		}
 	};
 
@@ -135,10 +115,9 @@ export default function BottomDrawer(props) {
 		// console.log("OREDER_FLAG':selectedCboShip.CODE, 값 async: " + selectedCboShip.CODE);
 		console.log("Drawer REMARK 출력 " + remark);
 		console.log("Drawer REMARK 출력 " + shipNo);
-		console.log("Drawer REMARK 출력 " + selectedCboShip.CODE);
 		console.log("세션 " + sessionStorage.getItem('session_id'));
 
-		if ((!selectedData) && (!selectedCboShip.CODE || !selectedCboOrder.CODE || !cust.CODE || !item.CODE || !qty || !dtePlan || !dteDeli)) {
+		if ((!selectedData) && (!shipNo)) {
 			console.log("저장 조건문에서 찍는 selectedData : ", selectedData);
 			setIsError(true)
 			return; // 함수 실행을 여기서 중단
@@ -147,17 +126,16 @@ export default function BottomDrawer(props) {
 		if (selectedData) { console.log("출력 1차 selectedData.SHIP_NO: ", selectedData.SHIP_NO); setShipNo(selectedData.SHIP_NO); console.log("출력 2차 shipNo : ", shipNo) }
 
 		try {
-			await axios.post('/test/shipSave', {
+			await axios.post('/test/planOrderSave', {
+				'PLANORDER_NO': planOrderNo ,
 				'SHIP_NO': shipNo,
-				'SHIP_FLAG': selectedCboShip.CODE,
-				'ORDER_FLAG': selectedCboOrder.CODE,
 				'CUST_CODE': cust.CODE,
 				'ITEM_CODE': item.CODE,
-				'QTY': qty,
-				'SHIP_DATE': dtePlan,
+				'PLAN_QTY': qty,
+				'PLANINS_EMP_CODE':sessionStorage.getItem('session_id'),
+				'PLAN_DATE': dtePlan,
 				'DELI_DATE': dteDeli,
-				'REMARK': remark,
-				'SHIPINS_EMP': sessionStorage.getItem('session_id'),
+				'RE_CONTENT': remark,
 				'INS_EMP': sessionStorage.getItem('session_id'),
 				'UP_EMP': sessionStorage.getItem('session_id'),
 			})
@@ -178,11 +156,6 @@ export default function BottomDrawer(props) {
 		setIsDialogOpen(true)
 }
 
-//수주번호 클릭 시
-const clickShipNo = () => {
-	setIsOnePopupOpen(true)
-}
-
 //OnePopup 열기
 const handleClosePopup = () => {
 	setIsOnePopupOpen(false);
@@ -192,34 +165,22 @@ const handleOpenPopup = () => {
 	setIsOnePopupOpen(true);
 };
 
-
-
-	// 팝업을 열기 위한 범용 함수
-	const handleOpenPopupa = (setPopupState) => {
-		setPopupState(true);
-	};
-
-	// 팝업을 닫기 위한 범용 함수
-	const handleClosePopupa = (setPopupState) => {
-		setPopupState(false);
-	};
-
 	//생산정보등록이 있는지 판별 후 상태 변경
-	const DrawerChkPlanOrder = async () => {
+	const DrawerChkWorkOrder = async () => {
 		try {
-			console.log("DrawerChkPlanOrder 실행");
-			await axios.post('/test/DrawerChkPlanOrder', {
-				'SHIP_NO': selectedData.SHIP_NO,
+			console.log("DrawerChkWorkOrder 실행");
+			await axios.post('/test/DrawerChkWorkOrder', {
+				'planOrder_no': selectedData.PLANORDER_NO,
 			})
 				.then(function (response) {
-					console.log("생산정보 응답확인 : ", response.data);
+					console.log("작업지시 응답확인 : ", response.data);
 					if (response.data) {
-						console.log("생산계획 존재");
-						setChkPlanOrder(true);
-						console.log("데이터 확인", chkPlanOrder);
+						console.log("작업지시 존재", response.data);
+						setChkWorkOrder(true);
+						console.log("데이터 확인", chkWorkOrder);
 					} else {
 						console.log("조건 밖");
-						setChkPlanOrder(false);
+						setChkWorkOrder(false);
 					}
 				})
 		} catch (error) {
@@ -232,18 +193,14 @@ const handleOpenPopup = () => {
 
 
 		if (selectedData) {
-			console.log("전달받은 행 값:");
+			// console.log("전달받은 행 값:");
 			console.log("이전 데이터 SHIP_NO ", selectedData);
-
+			DrawerChkWorkOrder();
 			// 수주 번호와 변경값 설정
 			setShipNo(selectedData.SHIP_NO)
 			setQty(selectedData.QTY);
-			setRemark(selectedData.RE_CONTENT)
-
-			// // 객체의 모든 키(칼럼명)와 값을 순회하여 출력
-			// Object.entries(selectedData).forEach(([key, value]) => {
-			//     console.log(`${key}: ${value}`);
-			// });
+			setRemark(selectedData.RE_CONTENT);
+			setPlanOrderNo(selectedData.PLANORDER_NO);
 		}
 
 
@@ -254,11 +211,11 @@ const handleOpenPopup = () => {
 			setClickSave(false);
 		}
 
-		//DrawerChkPlanOrder()
 		fetchShipOptions();
-		fetchOrderOptions();
-		console.log("리마크 ", remark);
-		console.log("리마크 ", qty);
+
+		//fetchOrderOptions();
+		console.log("리마크 날짜", dtePlan);
+		// console.log("리마크 ", qty);
 		// setRemark(remark);
 
 
@@ -267,7 +224,7 @@ const handleOpenPopup = () => {
 			fetchUnit();
 		}
 
-	}, [cust, item, selectedData, selectedCboShip, selectedCboOrder, chkPlanOrder, qty, remark, clickSave, shipNo]);
+	}, [cust, item, selectedData, selectedCboShip, selectedCboOrder, chkWorkOrder, qty, remark, clickSave, shipNo, dtePlan, dteDeli]);
 
 
 	return (
@@ -294,7 +251,7 @@ const handleOpenPopup = () => {
 								variant="outlined"
 								size="small"
 								value={selectedData ? selectedData.SHIP_NO : shipNo || ''}
-								onClick={clickShipNo}
+								onClick={() => { if (!selectedData) { handleOpenPopup(setIsOnePopupOpen) } }} 
 								InputLabelProps={{ shrink: true }}
 								InputProps={{ readOnly: true, }}
 							/>
@@ -302,9 +259,10 @@ const handleOpenPopup = () => {
 							<FormControl sx={{ ml: 1 }} >
 								<InputLabel id="demo-simple-select-label" sx={{ mt: -1 }}>수주구분</InputLabel>
 								<Select
-									value={selectedData ? selectedData.SHIP_FLAG : selectedCboShip.CODE || ''}
+									value={selectedData ? selectedData.SHIP_FLAG : selectedCboShip  || ''}
+									onClick={() => { if (!selectedData) { handleOpenPopup(setIsOnePopupOpen) } }} 
 									onChange={(event) => handleChange(setSelectedCboShip, 'CODE', event)}
-									readOnly={Boolean(selectedData)}
+									readOnly={true}
 									size="small"
 									sx={{ width: 120 }}
 								>
@@ -319,13 +277,11 @@ const handleOpenPopup = () => {
 
 						<Box sx={{ display: 'flex', width: '100%', mt: 2, ml: 1 }}>
 							<TextField onClick={() => { if (!selectedData) { handleOpenPopup(setIsOnePopupOpen) } }} value={selectedData ? selectedData.CUST_CODE : cust.CODE || ''} onChange={(e) => setCust({ 'CODE': e.target.value })} id="ship_no" label="거래처코드" variant="outlined" size="small" InputProps={{ readOnly: true, }} InputLabelProps={{ shrink: true }} sx={{ ml: 1, height: 40, width: 160 }} />
-							<TextField onClick={() => { if (!selectedData) { handleOpenPopup(setIsCustPopupOpen) } }} value={selectedData ? selectedData.CUST_NAME : cust.NAME || ''} id="ship_no" label="거래처명" variant="outlined" size="small" InputProps={{ readOnly: true, }} InputLabelProps={{ shrink: true }} sx={{ ml: 1, height: 40 }} />
-							{isCustPopupOpen && <Popup isopen={isCustPopupOpen} onClose={() => handleClosePopup(setIsCustPopupOpen)} labelCode={'거래처 코드'} labelName={'거래처 명'} tname={'Customer_Master'} calcode={'customer_code'} calname={'customer_name'} onSelect={handleSelectCustomer} />}
+							<TextField onClick={() => { if (!selectedData) { handleOpenPopup(setIsOnePopupOpen) } }}  value={selectedData ? selectedData.CUST_NAME : cust.NAME || ''} id="ship_no" label="거래처명" variant="outlined" size="small" InputProps={{ readOnly: true, }} InputLabelProps={{ shrink: true }} sx={{ ml: 1, height: 40 }} />
 							{isOnePopupOpen && <OnePopup isopen={isOnePopupOpen} onClose={() => handleClosePopup(setIsOnePopupOpen)} onSelect={handleSelectData}></OnePopup> }
 
-							<TextField onClick={() => { if (!selectedData) { handleOpenPopup(setIsItemPopupOpen) } }} value={selectedData ? selectedData.ITEM_CODE : item.CODE || ''} id="ship_no" label="품목 코드" variant="outlined" size="small" InputProps={{ readOnly: true, }} InputLabelProps={{ shrink: true }} sx={{ ml: 1, height: 40, width: 160 }} />
-							<TextField onClick={() => { if (!selectedData) { handleOpenPopup(setIsItemPopupOpen) } }} value={selectedData ? selectedData.ITEM_NAME : item.NAME || ''} id="ship_no" label="품목 명" variant="outlined" size="small" InputProps={{ readOnly: true, }} InputLabelProps={{ shrink: true }} sx={{ ml: 1, height: 40 }} />
-							{isItemPopupOpen && <Popup isopen={isItemPopupOpen} onClose={() => handleClosePopup(setIsItemPopupOpen)} labelCode={'품목 코드'} labelName={'품목 명'} tname={'Item_Master'} calcode={'Item_code'} calname={'Item_name'} onSelect={handleSelectItem} />}
+							<TextField onClick={() => { if (!selectedData) { handleOpenPopup(setIsOnePopupOpen) } }}  value={selectedData ? selectedData.ITEM_CODE : item.CODE || ''} id="ship_no" label="품목 코드" variant="outlined" size="small" InputProps={{ readOnly: true, }} InputLabelProps={{ shrink: true }} sx={{ ml: 1, height: 40, width: 160 }} />
+							<TextField onClick={() => { if (!selectedData) { handleOpenPopup(setIsOnePopupOpen) } }}  value={selectedData ? selectedData.ITEM_NAME : item.NAME || ''} id="ship_no" label="품목 명" variant="outlined" size="small" InputProps={{ readOnly: true, }} InputLabelProps={{ shrink: true }} sx={{ ml: 1, height: 40 }} />
 						</Box>
 
 						<Box sx={{ display: 'flex', width: '100%', mt: 2, ml: 1 }}>
@@ -338,7 +294,7 @@ const handleOpenPopup = () => {
 								value={selectedData ? selectedData.QTY : qty || ''}
 								onChange={(e) => {
 									if (selectedData) {  //이전 값이 있는 경우, 
-										if (!chkPlanOrder) {
+										if (!chkWorkOrder) {
 											console.log("수량 : ", e.target.value)
 											selectedData.QTY = e.target.value; // selectedData 업데이트
 											setQty(e.target.value); // 상태 업데이트
@@ -355,7 +311,7 @@ const handleOpenPopup = () => {
 								InputLabelProps={{ shrink: true }}
 								sx={{ ml: 1, height: 40, width: 140 }}
 								inputProps={{ type: 'number' }}
-								disabled={chkPlanOrder} // chkPlanOrder가 true일 때 비활성화
+								disabled={chkWorkOrder} // chkPlanOrder가 true일 때 비활성화
 							/>
 
 							<TextField id="ship_no" value={selectedData ? selectedData.UNIT : unit} label="단위" variant="outlined" size="small" InputLabelProps={{ shrink: true }} InputProps={{ readOnly: true, }} sx={{ ml: 1, height: 40, width: 100 }} />
@@ -370,7 +326,7 @@ const handleOpenPopup = () => {
 										label="계획일자"
 										views={['year', 'month', 'day']}
 										format="YYYY-MM-DD"
-										value={selectedData ? dayjs(selectedData.PLAN_DATE) : dtePlan}
+										value={selectedData ? dayjs(selectedData.PLAN_DATE) : dayjs(dtePlan)}
 										readOnly={Boolean(selectedData)}
 										sx={{ ml: 1, height: 40, width: 160 }}
 										onChange={(newValue) => setDtePlan(newValue)}
@@ -380,7 +336,7 @@ const handleOpenPopup = () => {
 										label="납기예정일"
 										views={['year', 'month', 'day']}
 										format="YYYY-MM-DD"
-										value={selectedData ? dayjs(selectedData.DELI_DATE) : dteDeli}
+										value={selectedData ? dayjs(selectedData.DELI_DATE) : dayjs(dteDeli)}
 										readOnly={Boolean(selectedData)}
 										sx={{ ml: 1, height: 40, width: 160 }}
 										onChange={(newValue) => setDteDeli(newValue)}
@@ -392,11 +348,11 @@ const handleOpenPopup = () => {
 
 						<Box sx={{ display: 'flex', width: '100%', mt: 1, ml: 1 }}>
 							<Button sx={{ ml: 1, }} variant="outlined" onClick={() => setClickSave(true)}>저장</Button>
-							{selectedData && !chkPlanOrder && ( // 생산계획정보가 존재하는 경우, 새로 추가하는 경우 삭제 버튼 안생김
+							{selectedData && !chkWorkOrder && ( // 생산계획정보가 존재하는 경우, 새로 추가하는 경우 삭제 버튼 안생김
 								<Button sx={{ ml: 1 }} variant="outlined" onClick={deleteData}>삭제</Button>
 							)}
 							{/*deleteList에서 배열로 받기 때문에 [selectedData.SHIP_NO]배열 처리를 해서 보내준다  */}
-							{isDialogOpen && <Dialog isopen={isDialogOpen} onClose={() => handleClosePopup(setIsDialogOpen)} deleteList={[selectedData.SHIP_NO]}/>}
+							{isDialogOpen && <Dialog isopen={isDialogOpen} onClose={() => handleClosePopup(setIsDialogOpen)} deleteList={[selectedData.PLANORDER_NO]}/>}
 						</Box>
 					</Box>
 
