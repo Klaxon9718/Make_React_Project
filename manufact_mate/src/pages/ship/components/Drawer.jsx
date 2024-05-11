@@ -374,6 +374,7 @@ export default function BottomDrawer(props) {
 							{selectedData && !chkPlanOrder && ( // 생산계획정보가 존재하는 경우, 새로 추가하는 경우 삭제 버튼 안생김
 								<Button sx={{ ml: 1 }} variant="outlined" onClick={deleteData}>삭제</Button>
 							)}
+							{/*deleteList에서 배열로 받기 때문에 [selectedData.SHIP_NO]배열 처리를 해서 보내준다  */}
 							{isDialogOpen && <Dialog isopen={isDialogOpen} onClose={() => handleClosePopup(setIsDialogOpen)} deleteList={[selectedData.SHIP_NO]}/>}
 						</Box>
 					</Box>

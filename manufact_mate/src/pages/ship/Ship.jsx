@@ -98,6 +98,7 @@ export default function Ship() {
 	// 팝업을 닫기 위한 범용 함수
 	const handleClosePopup = (setPopupState) => {
 		setPopupState(false);
+		handleSelect();
 	};
 
 
@@ -157,6 +158,7 @@ export default function Ship() {
 		console.log("삭제 항목 수 확인 : ", isCheckedRows.length)
 		console.log("삭제 항목 수 확인 : ", isCheckedRows)
 		setIsDialogOpen(true)
+		handleSelect();
 
 	};
 
