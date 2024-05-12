@@ -8,33 +8,49 @@ import Dialog from 'src/pages/ship/components/Dialog';
 import { useNavigate } from "react-router-dom";
 
 //#region MUI속성
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
-import TextField from '@mui/material/TextField';
-import SearchIcon from '@mui/icons-material/Search';
-import Button from '@mui/material/Button';
-import Container from '@mui/material/Container';
-import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import Bar from 'src/pages/section/Bar'
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { LineChart } from '@mui/x-charts/LineChart';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DataGrid } from '@mui/x-data-grid';
 //#endregion
 
-export default function Ship() {
+export default function Pps_mor() {
 
 	const defaultTheme = createTheme(); // 테마 적용
+	const [data, setData] = useState([]); // 데이터를 상태에 저장
+
+	const months = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월']
+	async function getData() {
+		await axios
+			.post('/test/getPpsData', {
+				dte: '2023',
+			})
+			.then(function (response) {
+				console.log("그리드 조회 성공", response);
+				setData(response.data); // 서버에서 받은 데이터를 상태에 저장
+			})
+			.catch(function (error) {
+				console.error('Error occurred during login processing:', error.message);
+			});
+	}
 
 	useEffect(() => {
-		
-	}, []); 
+		getData();
+	}, []);
+
+	// 서버에서 받은 데이터를 그래프 데이터 형식으로 변환
+	const series = data.map(item => ({
+		id: item.MODEL.trim(),
+		label: item.MODEL,
+		data: Object.keys(item)
+			.filter(key => key.startsWith('M_'))
+			.map(key => item[key] === '' ? 0 : parseFloat(item[key])), // 빈 문자열은 0으로 변환
+	}));
 
 	return (
 		<ThemeProvider theme={defaultTheme}>
@@ -48,7 +64,39 @@ export default function Ship() {
 						width: { xs: '100%', sm: '100%', md: '100%', lg: '100%' },
 					}}
 				>
-					
+					<Box sx={{ width: 200, ml: 10, paddingTop: 1 }}>
+						<LocalizationProvider dateAdapter={AdapterDayjs}>
+							{/*년도 */}
+							<DatePicker
+								id="shipFrom"
+								label="년도"
+								views={['year']}
+								format="YYYY"
+								// value={}
+								// onChange={}
+								slotProps={{ textField: { size: 'small' } }} />
+						</LocalizationProvider>
+					</Box>
+
+					<Box sx={{ mt: -1 }}>
+						<LineChart
+							xAxis={[
+								{
+									scaleType: 'point', data: months
+								},
+							]}
+							series={series}
+							width={1380}
+							height={500}
+						/>
+					</Box>
+
+					{/* <Box>
+						<DataGrid>
+
+						</DataGrid>
+					</Box> */}
+
 				</Paper>
 			</Bar>
 		</ThemeProvider>

@@ -1,6 +1,7 @@
 const ShipDB = require('./ShipDB');
 const CompoDB = require('./CompoDB');
 const PlanOrderDB = require('./PlanOrderDB');
+const Pps_mor = require('./Pps_mor');
 
 const { dbImport, express, cors, app, connectToDatabase, bodyPaser } = require("../dbImport");
 dbImport(); //함수 호출
@@ -120,6 +121,9 @@ connectToDatabase().then(pool => {
 	});
 	//#endregion
 
+	//#region PPS_MOR.jsx
+	app.post('/test/getPpsData', (req, res) => Pps_mor.getPpsData(mssql, pool, req, res));
+	//#endregion
 
 	});
 
