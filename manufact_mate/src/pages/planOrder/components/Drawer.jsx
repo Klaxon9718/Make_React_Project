@@ -42,6 +42,7 @@ export default function BottomDrawer(props) {
 	const [qty, setQty] = React.useState('');
 	const [dtePlan, setDtePlan] = React.useState(dayjs()); //날짜
 	const [dteDeli, setDteDeli] = React.useState(dayjs()); //날짜
+	const [beforeQty, setBeforeQty] = React.useState(dayjs()); // 최초수주 등록시 수량을 확인하기 위한 변수
 
 	const [isOnePopupOpen, setIsOnePopupOpen] = React.useState(false);
 
@@ -67,6 +68,7 @@ export default function BottomDrawer(props) {
 		console.log("팝업 받은 값 출력 ",data);
 		console.log("팝업 받은 값 출력 수량 ",data.QTY);
 		console.log("팝업 받은 값 출력 수량 ",data.SHIP_NO);
+		setBeforeQty(data.QTY)
 		setQty(data.QTY);
 		setUnit(data.UNIT);
 		setShipNo(data.SHIP_NO);
@@ -117,8 +119,18 @@ export default function BottomDrawer(props) {
 		console.log("Drawer REMARK 출력 " + shipNo);
 		console.log("세션 " + sessionStorage.getItem('session_id'));
 
-		if ((!selectedData) && (!shipNo)) {
+		//모든 값이 들어가야 함
+		if ((!selectedData) && (!shipNo || !qty)) {
 			console.log("저장 조건문에서 찍는 selectedData : ", selectedData);
+			setIsError(true)
+			return; // 함수 실행을 여기서 중단
+		}
+
+		// 수주 설정 수량 보다 클 수 없음
+		if ((!selectedData) && (beforeQty < qty)) {
+			console.log("수량 조건문에서 찍는 selectedData : ", selectedData);
+			console.log("수량 조건문에서 찍는 beforeQty : ", beforeQty);
+			console.log("수량 조건문에서 찍는 qty : ", qty);
 			setIsError(true)
 			return; // 함수 실행을 여기서 중단
 		}
