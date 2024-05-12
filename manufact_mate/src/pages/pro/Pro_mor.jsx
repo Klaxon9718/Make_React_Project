@@ -31,21 +31,21 @@ export default function Pro_mor() {
 
 	const handleChange = (event, newValue) => {
 		setValue(newValue);
-	  };
-	  
-	// 고유한 모델을 추출하여 탭 생성을 위한 배열 생성
-    const models = [...new Set(data.map(item => item.MODEL).filter(model => model))];
+	};
 
-    // 데이터테이블에 표시할 컬럼 설정
-    const columns = [
-        { field: 'SEQ', headerName: 'SEQ', width: 100 },
-        { field: 'ITEM_CODE', headerName: '품목코드', width: 150 },
-        { field: 'ITEM_NAME', headerName: '품목명', width: 150 },
-        { field: 'WC', headerName: '작업장', width: 100 },
-        { field: 'MC', headerName: '생산호기', width: 150 },
-        { field: 'WORK_KG', headerName: '생산실적', type: 'number', width: 100 },
+	// 고유한 모델을 추출하여 탭 생성을 위한 배열 생성
+	const models = [...new Set(data.map(item => item.MODEL).filter(model => model))];
+
+	// 데이터테이블에 표시할 컬럼 설정
+	const columns = [
+		{ field: 'SEQ', headerName: 'SEQ', width: 100 },
+		{ field: 'ITEM_CODE', headerName: '품목코드', width: 150 },
+		{ field: 'ITEM_NAME', headerName: '품목명', width: 150 },
+		{ field: 'WC', headerName: '작업장', width: 100 },
+		{ field: 'MC', headerName: '생산호기', width: 150 },
+		{ field: 'WORK_KG', headerName: '생산실적', type: 'number', width: 100 },
 		{ field: 'UNIT', headerName: '단위', type: 'number', width: 100 },
-    ];
+	];
 
 	async function getData() {
 		await axios
@@ -55,6 +55,15 @@ export default function Pro_mor() {
 			.then(function (response) {
 				console.log("그리드 조회 성공", response);
 				setData(response.data); // 서버에서 받은 데이터를 상태에 저장
+				// 데이터를 성공적으로 받아온 후, models 배열을 업데이트합니다.
+				const newModels = [...new Set(response.data.map(item => item.MODEL).filter(model => model))];
+				// models 배열이 비어있지 않다면, 첫 번째 모델을 현재 선택된 탭으로 설정합니다.
+				if (newModels.length > 0) {
+					setValue(newModels[0]);
+				} else {
+					// 모델이 없는 경우, value를 초기화하거나 다른 처리를 할 수 있습니다.
+					setValue('');
+				}
 			})
 			.catch(function (error) {
 				console.error('Error occurred during login processing:', error.message);
@@ -63,7 +72,7 @@ export default function Pro_mor() {
 
 	useEffect(() => {
 		getData();
-	},[date]);
+	}, [date]);
 
 
 	return (
@@ -83,7 +92,7 @@ export default function Pro_mor() {
 							{/*년도 */}
 							<DatePicker
 								id="shipFrom"
-								label="년도"		
+								label="년도"
 								views={['year', 'month', 'day']}
 								format="YYYY-MM-DD"
 								value={date}
@@ -92,32 +101,34 @@ export default function Pro_mor() {
 						</LocalizationProvider>
 					</Box>
 
-					 <Box sx={{ width: '100%', typography: 'body1' }}>
-                    <TabContext value={value}>
-                        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                            <TabList onChange={handleChange} aria-label="lab API tabs example">
-                                {models.map((model, index) => (
-                                    <Tab label={model} value={model} key={index} />
-                                ))}
-                            </TabList>
-                        </Box>
-                        {models.map((model, index) => (
-                            <TabPanel value={model} key={index}>
-                                <div style={{ height: 400, width: '100%' }}>
-								전체 행 수 : {data.length}
-                                    <DataGrid
-                                        rows={data.filter(item => item.MODEL === model)}
-                                        columns={columns}
-										getRowId={(row) => row.SEQ}
-                                        pageSize={5}
-                                        rowsPerPageOptions={[5]}
-                                        checkboxSelection
-                                    />
-                                </div>
-                            </TabPanel>
-                        ))}
-                    </TabContext>
-                </Box>
+					<Box sx={{ width: '100%', typography: 'body1' }}>
+						<TabContext value={value}>
+							<Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+								<TabList onChange={handleChange} aria-label="lab API tabs example">
+									{models.map((model, index) => (
+										<Tab label={model} value={model} key={index} />
+									))}
+								</TabList>
+							</Box>
+							{models.map((model, index) => (
+								<TabPanel value={model} key={index}>
+									<div style={{ height: 400, width: '100%' }}>
+										전체 행 수 : {data.length}
+										<DataGrid
+											rows={data.filter(item => item.MODEL === model)}
+											columns={columns}
+											getRowId={(row) => row.SEQ}
+											hideFooter
+											disableColumnSelector
+											disableRowSelectionOnClick
+											checkboxSelection
+											sx={{minHeight : 600, maxHeight: 600}}
+										/>
+									</div>
+								</TabPanel>
+							))}
+						</TabContext>
+					</Box>
 
 				</Paper>
 			</Bar>
