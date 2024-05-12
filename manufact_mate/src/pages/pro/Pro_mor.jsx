@@ -8,33 +8,62 @@ import Dialog from 'src/pages/ship/components/Dialog';
 import { useNavigate } from "react-router-dom";
 
 //#region MUI속성
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
-import TextField from '@mui/material/TextField';
-import SearchIcon from '@mui/icons-material/Search';
-import Button from '@mui/material/Button';
-import Container from '@mui/material/Container';
-import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import Bar from 'src/pages/section/Bar'
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import Tab from '@mui/material/Tab';
+import TabContext from '@mui/lab/TabContext';
+import TabList from '@mui/lab/TabList';
+import TabPanel from '@mui/lab/TabPanel';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DataGrid } from '@mui/x-data-grid';
 //#endregion
 
-export default function Ship() {
+export default function Pro_mor() {
 
 	const defaultTheme = createTheme(); // 테마 적용
+	const [data, setData] = useState([]); // 데이터를 상태에 저장
+	const [date, setDate] = useState(dayjs());
+	const [value, setValue] = React.useState('1');
+
+	const handleChange = (event, newValue) => {
+		setValue(newValue);
+	  };
+	  
+	// 고유한 모델을 추출하여 탭 생성을 위한 배열 생성
+    const models = [...new Set(data.map(item => item.MODEL).filter(model => model))];
+
+    // 데이터테이블에 표시할 컬럼 설정
+    const columns = [
+        { field: 'SEQ', headerName: 'SEQ', width: 100 },
+        { field: 'ITEM_CODE', headerName: 'Item Code', width: 150 },
+        { field: 'ITEM_NAME', headerName: 'Item Name', width: 150 },
+        { field: 'WC', headerName: 'WC', width: 100 },
+        { field: 'MC', headerName: 'MC', width: 150 },
+        { field: 'WORK_KG', headerName: 'Work Kg', type: 'number', width: 100 },
+    ];
+
+	async function getData() {
+		await axios
+			.post('/test/getProData', {
+				dte: '2023-03-28'
+			})
+			.then(function (response) {
+				console.log("그리드 조회 성공", response);
+				setData(response.data); // 서버에서 받은 데이터를 상태에 저장
+			})
+			.catch(function (error) {
+				console.error('Error occurred during login processing:', error.message);
+			});
+	}
 
 	useEffect(() => {
-		
-	}, []); 
+		getData();
+	},[]);
+
 
 	return (
 		<ThemeProvider theme={defaultTheme}>
@@ -48,30 +77,34 @@ export default function Ship() {
 						width: { xs: '100%', sm: '100%', md: '100%', lg: '100%' },
 					}}
 				>
-					
+					 <Box sx={{ width: '100%', typography: 'body1' }}>
+                    <TabContext value={value}>
+                        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                            <TabList onChange={handleChange} aria-label="lab API tabs example">
+                                {models.map((model, index) => (
+                                    <Tab label={model} value={model} key={index} />
+                                ))}
+                            </TabList>
+                        </Box>
+                        {models.map((model, index) => (
+                            <TabPanel value={model} key={index}>
+                                <div style={{ height: 400, width: '100%' }}>
+                                    <DataGrid
+                                        rows={data.filter(item => item.MODEL === model)}
+                                        columns={columns}
+                                        pageSize={5}
+                                        rowsPerPageOptions={[5]}
+                                        checkboxSelection
+                                    />
+                                </div>
+                            </TabPanel>
+                        ))}
+                    </TabContext>
+                </Box>
+
 				</Paper>
 			</Bar>
 		</ThemeProvider>
 
 	);
 }
-
-
-/* ModalProps={{
-	BackdropProps: {
-	  invisible: true
-	}
-  }}
-  drawer 사용시 뒤 활성화
-  
-	  const handleRowSelection = (selectionModel) => {
-		if (selectionModel.length > 0) {
-		  const selectedID = selectionModel[0]; // 여기서는 단일 선택을 가정합니다.
-		  const selectedRow = rows.find(row => row.SHIP_NO === selectedID);
-		  setSelectedRowData(selectedRow);
-		  console.log(selectedRow); // 선택된 행의 데이터를 확인할 수 있습니다.
-		}
-	  };
- 
- 
-  */

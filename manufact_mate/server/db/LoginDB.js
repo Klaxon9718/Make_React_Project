@@ -2,6 +2,7 @@ const ShipDB = require('./ShipDB');
 const CompoDB = require('./CompoDB');
 const PlanOrderDB = require('./PlanOrderDB');
 const Pps_mor = require('./Pps_mor');
+const Pro_mor = require('./Pro_mor');
 
 const { dbImport, express, cors, app, connectToDatabase, bodyPaser } = require("../dbImport");
 dbImport(); //함수 호출
@@ -13,73 +14,7 @@ app.use(bodyPaser.urlencoded({ extended: false }))
 
 connectToDatabase().then(pool => {
 
-
-//#region ShipDB.js 
-	//ShipDB.js : 수주
-	//모든 사용자 데이터 가져오기
-	//테스트용
-	app.get('/test/data', async (req, res) => ShipDB.SelectShipa(pool, req, res));
-
-	//수주 정보 가져오기
-	app.post('/test/shipSelect', (req, res) => ShipDB.SelectShip(mssql, pool, req, res));
-
-	//수주 콤보박스 처리
-	app.post('/test/cboShipList', (req, res) => ShipDB.CboShipList(pool, req, res));
-
-	//주문유형 콤보박스 처리
-	app.post('/test/cboOrderList', (req, res) => ShipDB.CboOrderList(pool, req, res));
-
-	//체크박스 비활성화를 위한 planOrder목록 확인
-	app.post('/test/chkPlanList', (req, res) => ShipDB.ChkPlanList(pool, req, res));
-
-	//삭제처리
-	app.post('/test/shipDelete', (req, res) => ShipDB.ShipDelete(pool, req, res));
-
-
-	//Drawer.jsx
-	//데이터 삽입 주문 유형 cbo
-	app.post('/test/addCboOrderList', (req, res) => ShipDB.AddCboOrderList(pool, req, res));
-
-	//데이터 삽입 수주 유형 cbo
-	app.post('/test/addCboShipList', (req, res) => ShipDB.AddCboShipList(pool, req, res));
-
-	//단위
-	app.post('/test/getUnit', (req, res) => ShipDB.GetUnit(pool, req, res));
-
-	//데이터 삽입
-	app.post('/test/shipSave', (req, res) => ShipDB.ShipSave(mssql, pool, req, res));
-
-	//수정, 삭제를 위한 planOrder 확인
-	app.post('/test/DrawerChkPlanOrder', (req, res) => ShipDB.DrawerChkPlanOrder(pool, req, res));
-
-
-	//CompoDB.js : 컴포넌트 쿼리 실행
-	app.post('/test/popupSelect', (req, res) => CompoDB.PopupSelect(mssql, pool, req, res));
-//#endregion
-
-//#region PlanOrderDB.js 
-	//PlanOrder.jsx
-	//생산정보 가져오기
-	app.post('/test/selectPlanOrder', (req, res) => PlanOrderDB.SelectPlanOrder(mssql, pool, req, res));
-
-	//작업지시 여부 확인
-	app.post('/test/DrawerChkWorkOrder', (req, res) => PlanOrderDB.DrawerChkWorkOrder(pool, req, res));
-
-	//Drawer.jsx
-	//저장 수정
-	app.post('/test/planOrderSave', (req, res) => PlanOrderDB.PlanOrderSave(mssql, pool, req, res))
-
-	//OnePopup.jsx
-	//등록안된 수주정보 가져오기
-	app.post('/test/OnePopupSelect', (req, res) => PlanOrderDB.OnePopupSelect(mssql, pool,req, res));
-
-	//Dialog.jsx
-	//삭제
-	app.post('/test/planOrderDelete', (req, res) => PlanOrderDB.PlanOrderDelete(pool, req, res));
-
-	//#endregion
-
-//#region login.jsx
+	//#region login.jsx
 	//사용자 로그인
 	app.post('/test/login', async function (req, res) {
 		console.log("Login실행");
@@ -121,11 +56,82 @@ connectToDatabase().then(pool => {
 	});
 	//#endregion
 
+	//#region ShipDB.js 
+	//ShipDB.js : 수주
+	//모든 사용자 데이터 가져오기
+	//테스트용
+	app.get('/test/data', async (req, res) => ShipDB.SelectShipa(pool, req, res));
+
+	//수주 정보 가져오기
+	app.post('/test/shipSelect', (req, res) => ShipDB.SelectShip(mssql, pool, req, res));
+
+	//수주 콤보박스 처리
+	app.post('/test/cboShipList', (req, res) => ShipDB.CboShipList(pool, req, res));
+
+	//주문유형 콤보박스 처리
+	app.post('/test/cboOrderList', (req, res) => ShipDB.CboOrderList(pool, req, res));
+
+	//체크박스 비활성화를 위한 planOrder목록 확인
+	app.post('/test/chkPlanList', (req, res) => ShipDB.ChkPlanList(pool, req, res));
+
+	//삭제처리
+	app.post('/test/shipDelete', (req, res) => ShipDB.ShipDelete(pool, req, res));
+
+
+	//Drawer.jsx
+	//데이터 삽입 주문 유형 cbo
+	app.post('/test/addCboOrderList', (req, res) => ShipDB.AddCboOrderList(pool, req, res));
+
+	//데이터 삽입 수주 유형 cbo
+	app.post('/test/addCboShipList', (req, res) => ShipDB.AddCboShipList(pool, req, res));
+
+	//단위
+	app.post('/test/getUnit', (req, res) => ShipDB.GetUnit(pool, req, res));
+
+	//데이터 삽입
+	app.post('/test/shipSave', (req, res) => ShipDB.ShipSave(mssql, pool, req, res));
+
+	//수정, 삭제를 위한 planOrder 확인
+	app.post('/test/DrawerChkPlanOrder', (req, res) => ShipDB.DrawerChkPlanOrder(pool, req, res));
+
+
+	//CompoDB.js : 컴포넌트 쿼리 실행
+	app.post('/test/popupSelect', (req, res) => CompoDB.PopupSelect(mssql, pool, req, res));
+	//#endregion
+
+	//#region PlanOrderDB.js 
+	//PlanOrder.jsx
+	//생산정보 가져오기
+	app.post('/test/selectPlanOrder', (req, res) => PlanOrderDB.SelectPlanOrder(mssql, pool, req, res));
+
+	//작업지시 여부 확인
+	app.post('/test/DrawerChkWorkOrder', (req, res) => PlanOrderDB.DrawerChkWorkOrder(pool, req, res));
+
+	//Drawer.jsx
+	//저장 수정
+	app.post('/test/planOrderSave', (req, res) => PlanOrderDB.PlanOrderSave(mssql, pool, req, res))
+
+	//OnePopup.jsx
+	//등록안된 수주정보 가져오기
+	app.post('/test/OnePopupSelect', (req, res) => PlanOrderDB.OnePopupSelect(mssql, pool, req, res));
+
+	//Dialog.jsx
+	//삭제
+	app.post('/test/planOrderDelete', (req, res) => PlanOrderDB.PlanOrderDelete(pool, req, res));
+
+	//#endregion
+
 	//#region PPS_MOR.jsx
 	app.post('/test/getPpsData', (req, res) => Pps_mor.getPpsData(mssql, pool, req, res));
 	//#endregion
 
-	});
+	//#region PRO_MOR.jsx
+	//데이터 호출
+	app.post('/test/getProData', (req, res) => Pro_mor.getProData(mssql, pool, req, res));
+		//#endregion
+	
+});
+
 
 	// app.use((req, res, next) => {
 	// 	console.log(`Received ${req.method} request for ${req.url}`);
