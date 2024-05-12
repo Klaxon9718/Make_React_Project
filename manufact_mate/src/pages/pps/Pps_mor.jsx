@@ -23,12 +23,32 @@ export default function Pps_mor() {
 
 	const defaultTheme = createTheme(); // 테마 적용
 	const [data, setData] = useState([]); // 데이터를 상태에 저장
+	const [year, setYear] = useState(dayjs());
 
 	const months = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월']
+
+	const columns = [
+		{ field: 'MODEL', headerName: '품목명', width: 150 },
+		{ field: 'M_1', headerName: '1월', width: 100 },
+		{ field: 'M_2', headerName: '2월', width: 100 },
+		{ field: 'M_3', headerName: '3월', width: 100 },
+		{ field: 'M_4', headerName: '4월', width: 100 },
+		{ field: 'M_5', headerName: '5월', width: 100 },
+		{ field: 'M_6', headerName: '6월', width: 100 },
+		{ field: 'M_7', headerName: '7월', width: 100 },
+		{ field: 'M_8', headerName: '8월', width: 100 },
+		{ field: 'M_9', headerName: '9월', width: 100 },
+		{ field: 'M_10', headerName: '10월', width: 100 },
+		{ field: 'M_11', headerName: '11월', width: 100 },
+		{ field: 'M_12', headerName: '12월', width: 100 },
+	];
+
+	const rows = data.map((item, index) => ({ id: index, ...item }));
+
 	async function getData() {
 		await axios
 			.post('/test/getPpsData', {
-				dte: '2023',
+				dte: year.format("YYYY"),
 			})
 			.then(function (response) {
 				console.log("그리드 조회 성공", response);
@@ -41,7 +61,8 @@ export default function Pps_mor() {
 
 	useEffect(() => {
 		getData();
-	}, []);
+		console.log("날짜 변경 ", year);
+	}, [year]);
 
 	// 서버에서 받은 데이터를 그래프 데이터 형식으로 변환
 	const series = data.map(item => ({
@@ -72,8 +93,8 @@ export default function Pps_mor() {
 								label="년도"
 								views={['year']}
 								format="YYYY"
-								// value={}
-								// onChange={}
+								value={year}
+								onChange={(newValue) => setYear(newValue)}
 								slotProps={{ textField: { size: 'small' } }} />
 						</LocalizationProvider>
 					</Box>
@@ -91,11 +112,15 @@ export default function Pps_mor() {
 						/>
 					</Box>
 
-					{/* <Box>
-						<DataGrid>
-
-						</DataGrid>
-					</Box> */}
+					<Box sx={{ height: 400, width: '100%' }}>
+						<DataGrid
+							rows={rows}
+							columns={columns}
+							disableColumnFilter
+							hideFooter
+							hideFooterPagination
+						/>
+					</Box>
 
 				</Paper>
 			</Bar>
