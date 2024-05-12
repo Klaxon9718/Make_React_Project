@@ -39,17 +39,18 @@ export default function Pro_mor() {
     // 데이터테이블에 표시할 컬럼 설정
     const columns = [
         { field: 'SEQ', headerName: 'SEQ', width: 100 },
-        { field: 'ITEM_CODE', headerName: 'Item Code', width: 150 },
-        { field: 'ITEM_NAME', headerName: 'Item Name', width: 150 },
-        { field: 'WC', headerName: 'WC', width: 100 },
-        { field: 'MC', headerName: 'MC', width: 150 },
-        { field: 'WORK_KG', headerName: 'Work Kg', type: 'number', width: 100 },
+        { field: 'ITEM_CODE', headerName: '품목코드', width: 150 },
+        { field: 'ITEM_NAME', headerName: '품목명', width: 150 },
+        { field: 'WC', headerName: '작업장', width: 100 },
+        { field: 'MC', headerName: '생산호기', width: 150 },
+        { field: 'WORK_KG', headerName: '생산실적', type: 'number', width: 100 },
+		{ field: 'UNIT', headerName: '단위', type: 'number', width: 100 },
     ];
 
 	async function getData() {
 		await axios
 			.post('/test/getProData', {
-				dte: '2023-03-28'
+				dte: date
 			})
 			.then(function (response) {
 				console.log("그리드 조회 성공", response);
@@ -62,7 +63,7 @@ export default function Pro_mor() {
 
 	useEffect(() => {
 		getData();
-	},[]);
+	},[date]);
 
 
 	return (
@@ -77,6 +78,20 @@ export default function Pro_mor() {
 						width: { xs: '100%', sm: '100%', md: '100%', lg: '100%' },
 					}}
 				>
+					<Box sx={{ width: 200, ml: 2, paddingTop: 1 }}>
+						<LocalizationProvider dateAdapter={AdapterDayjs}>
+							{/*년도 */}
+							<DatePicker
+								id="shipFrom"
+								label="년도"		
+								views={['year', 'month', 'day']}
+								format="YYYY-MM-DD"
+								value={date}
+								onChange={(newValue) => setDate(newValue)}
+								slotProps={{ textField: { size: 'small' } }} />
+						</LocalizationProvider>
+					</Box>
+
 					 <Box sx={{ width: '100%', typography: 'body1' }}>
                     <TabContext value={value}>
                         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -89,9 +104,11 @@ export default function Pro_mor() {
                         {models.map((model, index) => (
                             <TabPanel value={model} key={index}>
                                 <div style={{ height: 400, width: '100%' }}>
+								전체 행 수 : {data.length}
                                     <DataGrid
                                         rows={data.filter(item => item.MODEL === model)}
                                         columns={columns}
+										getRowId={(row) => row.SEQ}
                                         pageSize={5}
                                         rowsPerPageOptions={[5]}
                                         checkboxSelection
