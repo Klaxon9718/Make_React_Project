@@ -24,6 +24,15 @@ import { DataGrid } from '@mui/x-data-grid';
 
 export default function Pro_mor() {
 
+	const navigate = useNavigate(); //#region 사용자 세션처리
+
+	const chk_session = () => {
+		if (sessionStorage.getItem('session_id') === null) {
+			sessionStorage.clear();
+			navigate("/login"); // "/login"으로 이동
+		}
+	}
+
 	const defaultTheme = createTheme(); // 테마 적용
 	const [data, setData] = useState([]); // 데이터를 상태에 저장
 	const [date, setDate] = useState(dayjs());
@@ -71,6 +80,7 @@ export default function Pro_mor() {
 	}
 
 	useEffect(() => {
+		chk_session();
 		getData();
 	}, [date]);
 

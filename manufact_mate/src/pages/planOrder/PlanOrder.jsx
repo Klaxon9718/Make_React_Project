@@ -29,6 +29,14 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 //#endregion
 
 export default function PlanOrder() {
+	const navigate = useNavigate(); //#region 사용자 세션처리
+
+	const chk_session = () => {
+		if (sessionStorage.getItem('session_id') === null) {
+			sessionStorage.clear();
+			navigate("/login"); // "/login"으로 이동
+		}
+	}
 
 	//그리드 설정
 	const columns = [
@@ -82,14 +90,7 @@ export default function PlanOrder() {
 	const [isAddDrawerOpen, setIsAddDrawerOpen] = useState(false); // 추가 하단 Drawer 생성
 	const [isDialogOpen, setIsDialogOpen] = useState(false); //알림창 생성
 
-	const navigate = useNavigate(); //#region 사용자 세션처리
-
-	const chk_session = () => {
-		if (sessionStorage.getItem('session_id') === null) {
-			sessionStorage.clear();
-			navigate("/login"); // "/login"으로 이동
-		}
-	}
+	
 
 	// 팝업을 열기 위한 범용 함수
 	const handleOpenPopup = (setPopupState) => {

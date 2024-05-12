@@ -83,7 +83,7 @@ export default function AlertDialog(props) {
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Sign up
+            신규 사원 등록
           </Typography>
           <Box component="form" noValidate sx={{ mt: 3 }}>
             <Grid container spacing={2}>
@@ -94,7 +94,7 @@ export default function AlertDialog(props) {
                   required
                   fullWidth
                   id="firstName"
-                  label="First Name"
+                  label="이름"
                   autoFocus
                 />
               </Grid>
@@ -102,10 +102,7 @@ export default function AlertDialog(props) {
                 <TextField
                   required
                   fullWidth
-                  id="lastName"
-                  label="Last Name"
-                  name="lastName"
-                  autoComplete="family-name"
+                  label="부서"
                 />
               </Grid>
               <Grid item xs={12}>

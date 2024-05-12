@@ -30,6 +30,14 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 //#endregion
 
 export default function Ship() {
+	const navigate = useNavigate(); //#region 사용자 세션처리
+
+const chk_session = () => {
+	if (sessionStorage.getItem('session_id') === null) {
+		sessionStorage.clear();
+		navigate("/login"); // "/login"으로 이동
+	}
+}
 
 	const [emp, setEmp] = React.useState({ CODE: '', NAME: '' });
 	const [rows, setRows] = React.useState([]);
@@ -65,12 +73,14 @@ export default function Ship() {
 	// 팝업을 닫기 위한 범용 함수
 	const handleClosePopup = (setPopupState) => {
 		setPopupState(false);
+		getHumanData();
 	};
 
 
 	const defaultTheme = createTheme(); // 테마 적용
 
 	useEffect(() => {
+		chk_session();
 		getHumanData();
 	}, []);
 
