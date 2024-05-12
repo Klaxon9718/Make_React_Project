@@ -6,6 +6,7 @@ import Popup from 'src/pages/ship/components/Popup';
 import Drawer from 'src/pages/ship/components/Drawer';
 import Dialog from 'src/pages/ship/components/Dialog';
 import { useNavigate } from "react-router-dom";
+import AddHuman from 'src/pages/human_resources/component/AddHuman'
 
 //#region MUI속성
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
@@ -30,11 +31,48 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 export default function Ship() {
 
+	const [emp, setEmp] = React.useState({ CODE: '', NAME: '' });
+	const [rows, setRows] = React.useState([]);
+
+	const [isAddModal, setIsAddModal] =  React.useState(false);
+
+	//그리드 설정
+	const columns = [
+		{ field: 'EMP_CODE', headerName: '사원번호', width: 120, editable: false },
+		{ field: 'EMP_NAME', headerName: '사원 명', width: 80, editable: false },
+		{ field: 'DEPT_NAME', headerName: '부서 명', width: 120, editable: false },
+		{ field: 'EMAIL', headerName: '이메일 주소', width: 200, editable: false },
+		{ field: 'MOBILE', headerName: '휴대전화', width: 150, editable: false },
+	];
+
+	const getHumanData = async () => {
+		await axios.post('/test/getHumanData', {
+			'emp_code': '',
+			'emp_name': ''
+		}).then(function (response) {
+			//console.log("그리드 조회 성공 " + response.status);
+			setRows(response.data);
+		})
+			.catch(function (error) {
+				console.error('Error occurred during login processing:', error.message);
+			})
+	}
+
+	const ClickAddHuman = () => {
+		setIsAddModal(true)
+	}
+
+	// 팝업을 닫기 위한 범용 함수
+	const handleClosePopup = (setPopupState) => {
+		setPopupState(false);
+	};
+
+
 	const defaultTheme = createTheme(); // 테마 적용
 
 	useEffect(() => {
-		
-	}, []); 
+		getHumanData();
+	}, []);
 
 	return (
 		<ThemeProvider theme={defaultTheme}>
@@ -48,7 +86,26 @@ export default function Ship() {
 						width: { xs: '100%', sm: '100%', md: '100%', lg: '100%' },
 					}}
 				>
-					
+					<Box>
+						<TextField id="standard-basic" label="사원번호" value={emp.CODE} variant="standard" size={"small"} sx={{ p: 1, mt: -1 }} />
+						<TextField id="standard-basic" label="사원명" value={emp.NAME} variant="standard" size={"small"} sx={{ p: 1, mt: -1, editable: true }} />
+						<Button variant="outlined" sx={{ mr: 2 }} onClick={ClickAddHuman}>신규 사원추가</Button>
+						{isAddModal && <AddHuman isopen={isAddModal} onClose={() => handleClosePopup(setIsAddModal)} ></AddHuman>}
+					</Box>
+
+					<Box>
+						<DataGrid
+							rows={rows}
+							columns={columns}
+							getRowId={(row) => row.EMP_CODE}
+							hideFooter
+							sx={{ width: 800, minHeight:720, maxHeight:720 }}
+						>
+						</DataGrid>
+
+					</Box>
+
+
 				</Paper>
 			</Bar>
 		</ThemeProvider>

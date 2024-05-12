@@ -1,8 +1,9 @@
 const ShipDB = require('./ShipDB');
 const CompoDB = require('./CompoDB');
 const PlanOrderDB = require('./PlanOrderDB');
-const Pps_mor = require('./Pps_mor');
-const Pro_mor = require('./Pro_mor');
+const Pps_mor = require('./Pps_morDB');
+const Pro_mor = require('./Pro_morDB');
+const Human = require('./HumanDB');
 
 const { dbImport, express, cors, app, connectToDatabase, bodyPaser } = require("../dbImport");
 dbImport(); //함수 호출
@@ -128,8 +129,12 @@ connectToDatabase().then(pool => {
 	//#region PRO_MOR.jsx
 	//데이터 호출
 	app.post('/test/getProData', (req, res) => Pro_mor.getProData(mssql, pool, req, res));
-		//#endregion
+	//#endregion
 	
+	//#region Human.jsx
+	//'test/getHumanData'
+	app.post('/test/getHumanData', (req, res) => Human.getHumanData(mssql, pool,req, res));
+	//#endregion
 });
 
 
