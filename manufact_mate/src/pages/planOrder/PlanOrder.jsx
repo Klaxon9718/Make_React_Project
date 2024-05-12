@@ -122,10 +122,10 @@ export default function PlanOrder() {
 		console.log('Selected Row Count: 뉴 로우 행수', newRowSelectionModel.length);
 		console.log('Selected Rows: 데이터 출력 is', newRowSelectionModel);
 
-		// 선택된 행의 'desk' 속성값 출력하기
-		newRowSelectionModel.forEach((row) => {
-			console.log('Desk Value:', row.SHIP_NO);
-		});
+		// // 선택된 행의 'desk' 속성값 출력하기
+		// newRowSelectionModel.forEach((row) => {
+		// 	console.log('Desk Value:', row.SHIP_NO);
+		// });
 
 		// 선택된 행의 데이터 가져오기
 		// const selectedRows = rows.filter((row) => newRowSelectionModel.includes(row.id)); => 안됨
@@ -148,12 +148,12 @@ export default function PlanOrder() {
 
 	// "삭제" 버튼을 눌렀을 때 실행되는 함수
 	const handleDeleteButtonClick = () => {
+
 		if(isCheckedRows.length === 0) return;
 		console.log("삭제 항목 수 확인 : ", isCheckedRows.length)
 		console.log("삭제 항목 수 확인 : ", isCheckedRows)
 		setIsDialogOpen(true)
 		handleSelect();
-
 	};
 
 
@@ -287,7 +287,7 @@ export default function PlanOrder() {
 							<Grid item xs={12} sx={{ minHeight:640, maxHeight: 640, maxWidth: '100%', mt: -3 }}>
 								전체 행 수 : {rows.length}
 								<DataGrid 
-									rows={rows} columns={columns} getRowId={(row) => row.SHIP_NO}
+									rows={rows} columns={columns} getRowId={(row) => row.PLANORDER_NO}
 									rowHeight={25}
 									hideFooter
 									checkboxSelection

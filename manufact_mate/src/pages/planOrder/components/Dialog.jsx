@@ -8,14 +8,16 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 
-export default function AlertDialog(props) {
+export default function AlertDialog (props) {
 	const [insideD, setInsideD] = React.useState(false)
 
 	const handleClose = () => {
+		console.log('handleClose 호출됨');
 		props.onClose();
 	};
 
 	const handleInsideDClose = () => {
+		console.log('handleInsideDClose 호출됨');
 		setInsideD(false);
 		props.onClose();
 	};
