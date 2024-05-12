@@ -143,7 +143,7 @@ export default function Bar( {children} ) {
           <List component="nav">
             <MainListItems />
             <Divider sx={{ my: 1 }} />
-            {SecondaryListItems}
+            <SecondaryListItems />
           </List>
         </Drawer>
         <Box

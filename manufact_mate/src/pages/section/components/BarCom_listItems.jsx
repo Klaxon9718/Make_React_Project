@@ -66,7 +66,7 @@ export function MainListItems () {
 	  <Collapse in={open} timeout="auto" unmountOnExit>
         <List component="div" disablePadding>
 			{/*세부 메뉴 : 생산현황*/}
-          <ListItemButton id="pps_mor" sx={{ pl: 4 }}>
+          <ListItemButton id="pps_mor" sx={{ pl: 4 }} onClick={handleMovePageClick}>
             <ListItemIcon>
               <HorizontalRuleIcon />
             </ListItemIcon>
@@ -74,7 +74,7 @@ export function MainListItems () {
           </ListItemButton>
 
 			{/*세부 메뉴 : 생산부 모니터링*/}
-		  <ListItemButton id="pps_mor" sx={{ pl: 4 }}>
+		  <ListItemButton id="pro_mor" sx={{ pl: 4 }} onClick={handleMovePageClick}>
             <ListItemIcon>
               <HorizontalRuleIcon />
             </ListItemIcon>
@@ -86,25 +86,35 @@ export function MainListItems () {
   );
 }
 
-//하단부 ListItem
-export const SecondaryListItems = (
+  //하단부 ListItem
+// SecondaryListItems 컴포넌트 정의
+export function SecondaryListItems (){
+  const navigate = useNavigate(); // 로그인 성공 시, 경로 이동을 위한 함수
+  //사이드 바 페이지 이동 이벤트
+  const handleMovePageClick = (e) => {
+    console.log("페이지 경로 id 확인 : " + e.currentTarget.id);
+    navigate("/"+e.currentTarget.id);
+    }
+  
+    return (
   <React.Fragment>
     <ListSubheader component="div" inset>
-	Human Resources
+      Human Resources
     </ListSubheader>
 
-    <ListItemButton>
+    <ListItemButton id="human_resources" onClick={handleMovePageClick}>
       <ListItemIcon>
         <AssignmentIcon />
       </ListItemIcon>
       <ListItemText primary="사원정보" />
     </ListItemButton>
 
-    <ListItemButton>
+    <ListItemButton id="personal" onClick={handleMovePageClick}>
       <ListItemIcon>
         <AssignmentIcon />
       </ListItemIcon>
       <ListItemText primary="개인정보 관리" />
     </ListItemButton>
   </React.Fragment>
-);
+    );
+}
