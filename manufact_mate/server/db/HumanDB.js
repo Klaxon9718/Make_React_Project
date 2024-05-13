@@ -15,19 +15,22 @@ function getHumanData(mssql, pool, req, res) {
 	}
 }
 
+//저장, 수정
 function personaolData(mssql, pool, req, res) {
 	try {
-		console.log('/test/personaolData 실행');
+		console.log('/test/personaolData 실행1');
+		// console.log('/test/personaolData req', req.body);
+		// console.log("비밀번호 ", req.body.pw);
 		pool.request()
 			.input('EMP_CODE', mssql.VarChar, req.body.emp_code)
 			.input('EMP_NAME', mssql.VarChar, req.body.emp_name)
-			.input('PW', mssql.VarChar, req.body.emp_code)
+			.input('PW', mssql.VarChar, req.body.pw)
 			.input('DEPT_CODE', mssql.VarChar, req.body.dept_no)
 			.input('MOBILE', mssql.VarChar, req.body.mobile)
 			.input('INS_EMP', mssql.VarChar, req.body.insEmp)
 			.execute('USP_HUMAN_WEB_002')
 			.then(result => {
-				console.log("result 데이터 출력 : ", result)
+				console.log("result 데이터 출력 저장 및 수정: ", result)
 				res.json(result.recordset); //받아온 데이터를 json형식으로 가져옴
 			});
 	} catch (error) {

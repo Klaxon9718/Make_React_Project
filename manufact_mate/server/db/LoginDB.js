@@ -4,6 +4,7 @@ const PlanOrderDB = require('./PlanOrderDB');
 const Pps_mor = require('./Pps_morDB');
 const Pro_mor = require('./Pro_morDB');
 const Human = require('./HumanDB');
+const Personal = require('./PersonalDB');
 
 const { dbImport, express, cors, app, connectToDatabase, bodyPaser } = require("../dbImport");
 dbImport(); //함수 호출
@@ -135,8 +136,15 @@ connectToDatabase().then(pool => {
 	//'test/getHumanData'
 	app.post('/test/getHumanData', (req, res) => Human.getHumanData(mssql, pool,req, res));
 	
-	//사원정보 수정, 저장
+	//사원정보 수정, 저장 //Personal.jsx의 개인정보 수정도 같이 사용
 	app.post('/test/personaolData', (req, res) => Human.personaolData(mssql, pool, req, res));
+	//#endregion
+
+	//#region Personal.jsx
+	//selectPersonalData
+	app.post('/test/selectPersonalData', (req, res) => Personal.selectPersonalData(pool, req, res));
+
+	app.post('/test/deletePersonalData', (req, res) => Personal.deletePersonalData(pool, req, res));
 	//#endregion
 });
 
