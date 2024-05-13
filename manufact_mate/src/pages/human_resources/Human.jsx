@@ -32,17 +32,17 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 export default function Ship() {
 	const navigate = useNavigate(); //#region 사용자 세션처리
 
-const chk_session = () => {
-	if (sessionStorage.getItem('session_id') === null) {
-		sessionStorage.clear();
-		navigate("/login"); // "/login"으로 이동
+	const chk_session = () => {
+		if (sessionStorage.getItem('session_id') === null) {
+			sessionStorage.clear();
+			navigate("/login"); // "/login"으로 이동
+		}
 	}
-}
 
 	const [emp, setEmp] = React.useState({ CODE: '', NAME: '' });
 	const [rows, setRows] = React.useState([]);
 
-	const [isAddModal, setIsAddModal] =  React.useState(false);
+	const [isAddModal, setIsAddModal] = React.useState(false);
 
 	//그리드 설정
 	const columns = [
@@ -55,8 +55,8 @@ const chk_session = () => {
 
 	const getHumanData = async () => {
 		await axios.post('/test/getHumanData', {
-			'emp_code': '',
-			'emp_name': ''
+			'emp_code': emp.CODE,
+			'emp_name': emp.NAME
 		}).then(function (response) {
 			//console.log("그리드 조회 성공 " + response.status);
 			setRows(response.data);
@@ -76,6 +76,13 @@ const chk_session = () => {
 		getHumanData();
 	};
 
+	//텍스트필드 값 변경
+	const handleChange = (setter, key, event) => { //setter는 컴포넌트를 가짐
+		setter(prevState => ({
+			...prevState, //이전 상태 저장
+			[key]: event.target.value //해당 키에 대한 값을 변경
+		}));
+	};
 
 
 	const defaultTheme = createTheme(); // 테마 적용
@@ -83,7 +90,7 @@ const chk_session = () => {
 	useEffect(() => {
 		chk_session();
 		getHumanData();
-	}, []);
+	}, [emp]);
 
 	return (
 		<ThemeProvider theme={defaultTheme}>
@@ -98,8 +105,8 @@ const chk_session = () => {
 					}}
 				>
 					<Box>
-						<TextField id="standard-basic" label="사원번호" value={emp.CODE} variant="standard" size={"small"} sx={{ p: 1, mt: -1 }} />
-						<TextField id="standard-basic" label="사원명" value={emp.NAME} variant="standard" size={"small"} sx={{ p: 1, mt: -1, editable: true }} />
+						<TextField id="standard-basic" label="사원번호" value={emp.CODE} variant="standard" size={"small"} sx={{ p: 1, mt: -1 }} onChange={(event) => handleChange(setEmp, 'CODE', event)} />
+						<TextField id="standard-basic" label="사원명" value={emp.NAME} variant="standard" size={"small"} sx={{ p: 1, mt: -1, editable: true }} onChange={(event) => handleChange(setEmp, 'NAME', event)}/>
 						<Button variant="outlined" sx={{ mr: 2 }} onClick={ClickAddHuman}>신규 사원추가</Button>
 						{isAddModal && <AddHuman isopen={isAddModal} onClose={() => handleClosePopup(setIsAddModal)} ></AddHuman>}
 					</Box>
@@ -110,7 +117,7 @@ const chk_session = () => {
 							columns={columns}
 							getRowId={(row) => row.EMP_CODE}
 							hideFooter
-							sx={{ width: 800, minHeight:720, maxHeight:720 }}
+							sx={{ width: 800, minHeight: 720, maxHeight: 720 }}
 						>
 						</DataGrid>
 
