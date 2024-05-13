@@ -134,6 +134,9 @@ connectToDatabase().then(pool => {
 	//#region Human.jsx
 	//'test/getHumanData'
 	app.post('/test/getHumanData', (req, res) => Human.getHumanData(mssql, pool,req, res));
+	
+	//사원정보 수정, 저장
+	app.post('/test/personaolData', (req, res) => Human.personaolData(mssql, pool, req, res));
 	//#endregion
 });
 

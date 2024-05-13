@@ -77,6 +77,7 @@ const chk_session = () => {
 	};
 
 
+
 	const defaultTheme = createTheme(); // 테마 적용
 
 	useEffect(() => {
