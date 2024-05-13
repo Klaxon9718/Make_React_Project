@@ -5,6 +5,7 @@ const Pps_mor = require('./Pps_morDB');
 const Pro_mor = require('./Pro_morDB');
 const Human = require('./HumanDB');
 const Personal = require('./PersonalDB');
+const Home = require('./HomeDB');
 
 const { dbImport, express, cors, app, connectToDatabase, bodyPaser } = require("../dbImport");
 dbImport(); //함수 호출
@@ -145,6 +146,10 @@ connectToDatabase().then(pool => {
 	app.post('/test/selectPersonalData', (req, res) => Personal.selectPersonalData(pool, req, res));
 
 	app.post('/test/deletePersonalData', (req, res) => Personal.deletePersonalData(pool, req, res));
+	//#endregion
+
+	//#region Home.jsx
+	app.post('/test/selectStore', (req, res) => Home.selectStore(pool, req, res));
 	//#endregion
 });
 

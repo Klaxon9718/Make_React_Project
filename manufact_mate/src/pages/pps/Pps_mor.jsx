@@ -2,9 +2,6 @@ import * as React from 'react';
 import { useState, useEffect } from 'react';
 import dayjs from 'dayjs';
 import axios from 'axios';
-import Popup from 'src/pages/ship/components/Popup';
-import Drawer from 'src/pages/ship/components/Drawer';
-import Dialog from 'src/pages/ship/components/Dialog';
 import { useNavigate } from "react-router-dom";
 
 //#region MUI속성
