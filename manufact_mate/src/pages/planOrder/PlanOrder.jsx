@@ -174,8 +174,8 @@ export default function PlanOrder() {
 		await axios.post('/test/selectPlanOrder', {
 			'ship_no': shipNo,	//수주번호
 			'plan_order': planOrderNo, //생산계획 번호
-			'dte_planfrom': planFrom.add(1, "day"),	//계획일자 시작
-			'dte_planto': planTo.add(1, "day"),		//계획일자 끝
+			'dte_planfrom': planFrom,	//계획일자 시작
+			'dte_planto': planTo,		//계획일자 끝
 			'item_code': selectedItem.CODE, //품목 코드
 			'item_name': selectedItem.NAME, //품목 명
 		})
