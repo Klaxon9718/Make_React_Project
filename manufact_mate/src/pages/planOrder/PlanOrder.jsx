@@ -64,7 +64,7 @@ export default function PlanOrder() {
 	const defaultTheme = createTheme(); // 테마 적용
 
 	const [rows, setRows] = React.useState([]);
-	const [shipNoList, setShipNoList] = React.useState([]);
+	const [workOrderList, setWorkOrderList] = React.useState([]);
 
 	//조회조건
 	const [planFrom, setPlanFrom] = React.useState(dayjs().subtract(1, 'month')); //날짜
@@ -135,15 +135,15 @@ export default function PlanOrder() {
 		// console.log('Selected Rows: 데이터 출력 is', isCheckedRows);
 	};
 
-	//PlanOrder있는 지 확인
-	const chkPlanList = async() =>{
+	//작업지시 존재 확인
+	const chkWorkOrderList = async() =>{
 		try {
-		const response = await axios.post('/test/chkPlanList');
-		//console.log("PLANORDER 데이터 : ", response.data.map(item => item.SHIP_NO));
-		setShipNoList(response.data.map(item => item.SHIP_NO));
+		const response = await axios.post('/test/chkWorkOrderList');
+		console.log("PLANORDER 데이터 : ", response.data);
+		setWorkOrderList(response.data.map(item => item.PLAN_ORDER_NO));
 	} catch (error) {
 		console.error('Error occurred during chkPlanList processing:', error.message);
-		return [];
+		return;
 	  }
 	} 
 
@@ -174,8 +174,8 @@ export default function PlanOrder() {
 		await axios.post('/test/selectPlanOrder', {
 			'ship_no': shipNo,	//수주번호
 			'plan_order': planOrderNo, //생산계획 번호
-			'dte_planfrom': planFrom,	//계획일자 시작
-			'dte_planto': planTo,		//계획일자 끝
+			'dte_planfrom': planFrom.add(1, "day"),	//계획일자 시작
+			'dte_planto': planTo.add(1, "day"),		//계획일자 끝
 			'item_code': selectedItem.CODE, //품목 코드
 			'item_name': selectedItem.NAME, //품목 명
 		})
@@ -213,7 +213,7 @@ export default function PlanOrder() {
 		handleSelect();
 		fetchShipOptions();
 		fetchOrderOptions();
-		//chkPlanList();
+		chkWorkOrderList();
 	}, [selectedCustomer, selectedItem, selectedCboOrder, selectedCboShip, planOrderNo, shipNo, planFrom, planTo]); 
 
 	return (
@@ -303,7 +303,7 @@ export default function PlanOrder() {
 									}}
 									onRowClick={(params) => handleRowClick(params)} //행 클릭 시
 									onRowSelectionModelChange={handleCheckRows}//삭제 처리
-									//isRowSelectable={(params) => !shipNoList.includes(params.row.SHIP_NO)}
+									isRowSelectable={(params) => !workOrderList.includes(params.row.PLANORDER_NO)}
 									isCheckedRows={isCheckedRows}
 								/>
 								{isDrawerOpen && <Drawer route={'Grid'} selectedData={selectedRowData} isopen={isDrawerOpen} onClose={() => handleClosePopup(setIsDrawerOpen)} />}

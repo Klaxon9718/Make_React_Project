@@ -110,9 +110,12 @@ connectToDatabase().then(pool => {
 	//작업지시 여부 확인
 	app.post('/test/DrawerChkWorkOrder', (req, res) => PlanOrderDB.DrawerChkWorkOrder(pool, req, res));
 
+	//작업지시 여부 목록 조회
+	app.post('/test/chkWorkOrderList', (req, res) => PlanOrderDB.chkWorkOrderList(pool, req, res));
+
 	//Drawer.jsx
 	//저장 수정
-	app.post('/test/planOrderSave', (req, res) => PlanOrderDB.PlanOrderSave(mssql, pool, req, res))
+	app.post('/test/planOrderSave', (req, res) => PlanOrderDB.PlanOrderSave(mssql, pool, req, res));
 
 	//OnePopup.jsx
 	//등록안된 수주정보 가져오기

@@ -50,13 +50,9 @@ export default function Orders() {
 				rows={rows} columns={columns} getRowId={(row) => row.LOT_NO}
 				rowHeight={25}
 				hideFooter
-				
 				disableRowSelectionOnClick
 				columnHeaderHeight={25}
 				sx={{ pagination: false }}
-				slots={{
-					toolbar: GridToolbar,
-				}}
 			/>
 		</React.Fragment>
 	);

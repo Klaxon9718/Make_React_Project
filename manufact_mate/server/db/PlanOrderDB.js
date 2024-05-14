@@ -104,10 +104,22 @@ function PlanOrderDelete (pool, req, res){
 	})
 }
 
+function chkWorkOrderList (pool, req, res){
+	console.log("chkWorkOrderList 실행");
+	query = "SELECT DISTINCT PLAN_ORDER_NO FROM WORKORDER_ED"
+	pool.request()
+	.query(query)
+	.then(result => {
+		console.log(result.recordset);
+		return res.json(result.recordset);
+	})
+}
+
 module.exports = {
 	SelectPlanOrder,
 	OnePopupSelect,
 	DrawerChkWorkOrder,
 	PlanOrderDelete,
 	PlanOrderSave,
+	chkWorkOrderList,
 }

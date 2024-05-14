@@ -144,11 +144,11 @@ export default function Ship() {
 	const chkPlanList = async() =>{
 		try {
 		const response = await axios.post('/test/chkPlanList');
-		//console.log("PLANORDER 데이터 : ", response.data.map(item => item.SHIP_NO));
+		console.log("PLANORDER 데이터 : ", response.data.map(item => item.SHIP_NO));
 		setShipNoList(response.data.map(item => item.SHIP_NO));
 	} catch (error) {
 		console.error('Error occurred during chkPlanList processing:', error.message);
-		return [];
+		return;
 	  }
 	} 
 
@@ -175,10 +175,10 @@ export default function Ship() {
 		event?.preventDefault(); // event가 존재하면 preventDefault() 호출
 
 		await axios.post('/test/shipSelect', {
-			'dte_shipfrom': shipFrom,
-			'dte_shipto': shipTo,
-			'dte_delidate': deliFrom,
-			'dte_delito': deliTo,
+			'dte_shipfrom': shipFrom.add(1, "day"),
+			'dte_shipto': shipTo.add(1, "day"),
+			'dte_delidate': deliFrom.add(1, "day"),
+			'dte_delito': deliTo.add(1, "day"),
 			'shipflag': selectedCboShip.CODE,
 			'orderflag': selectedCboOrder.CODE,
 			'cust_code': selectedCustomer.CODE,
@@ -255,7 +255,7 @@ export default function Ship() {
 											views={['year', 'month', 'day']}
 											format="YYYY-MM-DD"
 											value={shipTo}
-											onChange={(newValue) => setShipTo(newValue)}
+											onChange={(newValue) => {console.log("새로운 값 : newValue", newValue); setShipTo(newValue); console.log("적용 값 : newValue", shipTo); }}
 											slotProps={{ textField: { size: 'small' } }} />
 									</DemoContainer>
 								</LocalizationProvider>

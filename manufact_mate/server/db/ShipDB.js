@@ -155,6 +155,7 @@ function ChkPlanList (pool, req, res){
 	pool.request()
 	.query(query)
 	.then(result => {
+		console.log(result.recordset);
 		return res.json(result.recordset);
 	})
 }
