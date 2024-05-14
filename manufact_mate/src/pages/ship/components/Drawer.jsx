@@ -139,8 +139,8 @@ export default function BottomDrawer(props) {
 				'CUST_CODE': cust.CODE,
 				'ITEM_CODE': item.CODE,
 				'QTY': qty,
-				'SHIP_DATE': dteShip.add(1, "day"),
-				'DELI_DATE': dteDeli.add(1, "day"),
+				'SHIP_DATE': dteShip,
+				'DELI_DATE': dteDeli,
 				'REMARK': remark,
 				'SHIPINS_EMP': sessionStorage.getItem('session_id'),
 				'INS_EMP': sessionStorage.getItem('session_id'),
@@ -206,9 +206,11 @@ export default function BottomDrawer(props) {
 			console.log("이전 데이터 SHIP_NO ", selectedData);
 
 			// 수주 번호와 변경값 설정
-			setShipNo(selectedData.SHIP_NO)
+			setShipNo(selectedData.SHIP_NO);
 			setQty(selectedData.QTY);
-			setRemark(selectedData.RE_CONTENT)
+			setRemark(selectedData.RE_CONTENT);
+			setDteShip(selectedData.SHIP_DATE);
+			setDteDeli(selectedData.DELI_DATE);
 
 			// // 객체의 모든 키(칼럼명)와 값을 순회하여 출력
 			// Object.entries(selectedData).forEach(([key, value]) => {

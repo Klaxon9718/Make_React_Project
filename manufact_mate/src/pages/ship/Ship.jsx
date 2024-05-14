@@ -175,10 +175,10 @@ export default function Ship() {
 		event?.preventDefault(); // event가 존재하면 preventDefault() 호출
 
 		await axios.post('/test/shipSelect', {
-			'dte_shipfrom': shipFrom.add(1, "day"),
-			'dte_shipto': shipTo.add(1, "day"),
-			'dte_delidate': deliFrom.add(1, "day"),
-			'dte_delito': deliTo.add(1, "day"),
+			'dte_shipfrom': shipFrom,
+			'dte_shipto': shipTo,
+			'dte_delidate': deliFrom,
+			'dte_delito': deliTo,
 			'shipflag': selectedCboShip.CODE,
 			'orderflag': selectedCboOrder.CODE,
 			'cust_code': selectedCustomer.CODE,
