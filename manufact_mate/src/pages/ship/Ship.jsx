@@ -144,7 +144,7 @@ export default function Ship() {
 	const chkPlanList = async() =>{
 		try {
 		const response = await axios.post('/test/chkPlanList');
-		console.log("PLANORDER 데이터 : ", response.data.map(item => item.SHIP_NO));
+		//console.log("chkPlanList 데이터 : ", response.data.map(item => item.SHIP_NO));
 		setShipNoList(response.data.map(item => item.SHIP_NO));
 	} catch (error) {
 		console.error('Error occurred during chkPlanList processing:', error.message);
@@ -187,7 +187,7 @@ export default function Ship() {
 			'item_name': selectedItem.NAME,
 		})
 			.then(function (response) {
-				//console.log("그리드 조회 성공 " + response.status);
+				console.log("그리드 조회 성공 " + response.data);
 				setRows(response.data);
 			})
 			.catch(function (error) {

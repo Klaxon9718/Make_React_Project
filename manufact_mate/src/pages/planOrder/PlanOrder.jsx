@@ -214,6 +214,7 @@ export default function PlanOrder() {
 		fetchShipOptions();
 		fetchOrderOptions();
 		chkWorkOrderList();
+		console.log("전 -> 후", planFrom, planTo)
 	}, [selectedCustomer, selectedItem, selectedCboOrder, selectedCboShip, planOrderNo, shipNo, planFrom, planTo]); 
 
 	return (
