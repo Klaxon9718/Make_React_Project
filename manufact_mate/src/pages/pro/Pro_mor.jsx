@@ -64,13 +64,13 @@ export default function Pro_mor() {
 			.then(function (response) {
 				console.log("그리드 조회 성공", response);
 				setData(response.data); // 서버에서 받은 데이터를 상태에 저장
-				// 데이터를 성공적으로 받아온 후, models 배열을 업데이트합니다.
+				// 데이터를 성공적으로 받아온 후, models 배열을 업데이트
 				const newModels = [...new Set(response.data.map(item => item.MODEL).filter(model => model))];
-				// models 배열이 비어있지 않다면, 첫 번째 모델을 현재 선택된 탭으로 설정합니다.
+				// models 배열이 비어있지 않다면, 첫 번째 모델을 현재 선택된 탭으로 설정
 				if (newModels.length > 0) {
 					setValue(newModels[0]);
 				} else {
-					// 모델이 없는 경우, value를 초기화하거나 다른 처리를 할 수 있습니다.
+					// 모델이 없는 경우, value를 초기화하거나 다른 처리
 					setValue('');
 				}
 			})

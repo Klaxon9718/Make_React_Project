@@ -71,7 +71,7 @@ export const LoginSection = ({getHandleSubmit, getHandleInputId, getHandleInputP
               required
               fullWidth
               id="email"
-              label="Email Address"
+              label="사원번호"
               name="email"
               autoComplete="email"
               autoFocus
@@ -82,17 +82,14 @@ export const LoginSection = ({getHandleSubmit, getHandleInputId, getHandleInputP
               required
               fullWidth
               name="password"
-              label="Password"
+              label="비밀번호"
               type="password"
               id="password"
               autoComplete="current-password"
 
 			  onChange={getHandleInputPw}
             />
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            />
+            
             <Button
               type="submit"
               fullWidth
@@ -103,9 +100,7 @@ export const LoginSection = ({getHandleSubmit, getHandleInputId, getHandleInputP
             </Button>
 
             <Grid container justifyContent="center" >
-              <Grid item>
-                <Link href="#" variant="body2" >Forgot password?</Link>
-              </Grid>
+              
             </Grid>
 
           </Box>
